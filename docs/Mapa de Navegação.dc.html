@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+  <style>body{margin:0;background:#EDEDF3} *{box-sizing:border-box} a{color:#C2410C} a:hover{color:#9A3412}</style>
+</helmet>
+<section data-screen-label="Mapa de Navegação" style="padding:64px 72px 96px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E;display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:15px;font-weight:800;letter-spacing:0.1em;color:#7C3AED">PRÁXIS EDU</div>
+      <h1 style="margin:8px 0 0;font-size:56px;font-weight:800;line-height:1.05">Mapa de Navegação</h1>
+      <p style="margin:12px 0 0;font-size:20px;font-weight:500;color:#475569;max-width:820px;line-height:1.5">Splash → Login → Home do perfil. O perfil vem da conta (definido no cadastro), então não há tela de escolha de perfil. Clique em um frame para abri-lo no protótipo.</p>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;font-size:15px;font-weight:700;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;background:#DC2626"></span>Login / Cadastro</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;background:#1D4ED8"></span>Professor</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;background:#087A45"></span>Estudante</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;border:2px dashed #7C3AED"></span>Frame novo</span>
+    </div>
+  </div>
+  <div style="position:relative;width:1920px;height:1290px;background:#fff;border-radius:32px;overflow:hidden">
+    <sc-for list="{{ lanes }}" as="l" hint-placeholder-count="3">
+      <div style="position:absolute;left:16px;right:16px;border-radius:24px;top:{{ l.y }}px;height:{{ l.h }}px;background:{{ l.bg }}">
+        <div style="position:absolute;left:24px;top:20px;display:flex;align-items:center;gap:10px"><span style="height:30px;padding:0 12px;border-radius:999px;color:#fff;display:flex;align-items:center;font-size:13px;font-weight:800;background:{{ l.cor }}">{{ l.tag }}</span><span style="font-size:20px;font-weight:800">{{ l.nome }}</span></div>
+      </div>
+    </sc-for>
+    {{ arrows }}
+    <sc-for list="{{ nodes }}" as="n" hint-placeholder-count="20">
+      <a href="{{ n.href }}" style="position:absolute;width:168px;height:64px;border-radius:16px;background:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 14px;text-decoration:none;color:#1A1A2E;box-shadow:0 3px 0 {{ n.sh }};left:{{ n.x }}px;top:{{ n.y }}px;border:2px {{ n.bs }} {{ n.cor }}">
+        <span style="font-size:14px;font-weight:800;color:{{ n.tc }}">{{ n.id }}</span>
+        <span style="font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ n.nome }}</span>
+      </a>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:20px;font-size:16px;font-weight:700"><a href="Práxis Edu - Protótipo.dc.html">Protótipo navegável →</a><a href="Brand & Design System.dc.html">Brand &amp; Design System →</a></div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const W = 168, H = 64;
+const MOD = { a: ['#DC2626', '#B91C1C', '#F5B5B5'], p: ['#1D4ED8', '#1D4ED8', '#C7D5F8'], e: ['#087A45', '#087A45', '#A7DFC1'] };
+const N = [
+  ['01', 'Splash', 60, 110, 'a'], ['03', 'Login', 300, 110, 'a'], ['03e', 'Login · erro', 300, 210, 'a'], ['04', 'Cadastro', 560, 70, 'a'], ['05', 'Esqueceu a Senha', 560, 170, 'a'], ['05ok', 'Confirmação', 800, 170, 'a'],
+  ['06', 'Minhas Turmas', 300, 470, 'p'], ['32a', 'Vazio · turmas', 300, 600, 'p', 1], ['24', 'Perfil Professor', 60, 470, 'p', 1],
+  ['07', 'Criar Turma', 560, 380, 'p'], ['18a', 'Ações da turma', 560, 470, 'p', 1], ['18b', 'Excluir turma', 800, 470, 'p', 1],
+  ['08', 'Alunos', 560, 580, 'p'], ['19', 'Desempenho', 800, 580, 'p', 1], ['09', 'Atividades', 1040, 580, 'p'], ['32b', 'Vazio · quizzes', 1040, 680, 'p', 1],
+  ['22', 'Ativar Modo Sala', 1300, 420, 'p', 1], ['20', 'Resultados', 1300, 510, 'p', 1], ['21a', 'Ações do quiz', 1300, 600, 'p', 1], ['21b', 'Excluir quiz', 1540, 600, 'p', 1],
+  ['10', 'Criar Atividade IA', 1300, 690, 'p'], ['23a', 'IA · gerando', 1540, 690, 'p', 1], ['23b', 'IA · revisar', 1720, 690, 'p', 1],
+  ['25', 'Entrar na turma', 60, 860, 'e', 1], ['25ok', 'Entrou na turma', 60, 960, 'e', 1], ['11', 'Trilhas', 560, 960, 'e'], ['17', 'Perfil & Badges', 560, 1150, 'e'], ['33', 'Minha Turma', 60, 1150, 'e', 1],
+  ['12', 'Lição', 800, 860, 'e'], ['12ok', 'Feedback correto', 1040, 830, 'e'], ['27', 'Feedback errado', 1040, 920, 'e', 1], ['26', 'Fim de lição', 1300, 860, 'e', 1],
+  ['14', 'Modo Sala', 800, 1010, 'e'], ['31', 'Modo Sala bloqueado', 1040, 1010, 'e', 1],
+  ['13', 'Duelos 1x1', 800, 1110, 'e'], ['28', 'Escolher colega', 1040, 1110, 'e', 1], ['29', 'Partida', 1300, 1110, 'e', 1], ['30', 'Resultado', 1540, 1110, 'e', 1], ['32c', 'Vazio · duelos', 800, 1200, 'e', 1],
+  ['15', 'BioBot IA', 300, 1060, 'e'], ['16', 'Ranking', 300, 1150, 'e']
+];
+const E = [
+  ['01', '03'], ['03', '04'], ['03', '05'], ['05', '05ok'], ['03', '03e'], ['03', '06', [[468, 142], [488, 142], [488, 440], [384, 440], [384, 466]]], ['03', '25', [[468, 150], [508, 150], [508, 820], [260, 820], [260, 892], [232, 892]]], ['04', '25', [[560, 102], [508, 102], [508, 820], [260, 820], [260, 892], [232, 892]]],
+  ['06', '07'], ['06', '18a'], ['18a', '18b'], ['06', '08'], ['06', '24'], ['06', '32a'], ['08', '19'], ['19', '09'], ['09', '22'], ['09', '20'], ['09', '21a'], ['21a', '21b'], ['09', '10'], ['09', '32b'], ['10', '23a'], ['23a', '23b'],
+  ['25', '25ok'], ['25ok', '11'], ['11', '12'], ['12', '12ok'], ['12', '27'], ['12ok', '26'], ['27', '26'], ['11', '14'], ['14', '31'], ['11', '13'], ['13', '28'], ['28', '29'], ['29', '30'], ['13', '32c'], ['11', '17'], ['17', '33'], ['11', '15'], ['11', '16']
+];
+class Component extends DCLogic {
+  renderVals() {
+    const h = React.createElement;
+    const pos = {};
+    const nodes = N.map(([id, nome, x, y, m, nova]) => { pos[id] = { x, y, m }; return { id, nome, x, y, href: `Práxis Edu - Protótipo.dc.html#${id}`, cor: MOD[m][0], tc: MOD[m][1], sh: MOD[m][2], bs: nova ? 'dashed' : 'solid' }; });
+    const paths = E.map(([a, b, via], i) => {
+      const A = pos[a], B = pos[b];
+      if (via) return h('path', { key: i, d: 'M' + via.map(p => p.join(' ')).join(' L'), fill: 'none', stroke: MOD[B.m][0], strokeWidth: 2.5, strokeLinejoin: 'round', strokeLinecap: 'round', markerEnd: `url(#ar-${B.m})`, opacity: 0.85 });
+      let x1, y1, x2, y2, d;
+      if (Math.abs(A.x - B.x) < 20) {
+        const down = B.y > A.y;
+        x1 = A.x + W / 2; y1 = down ? A.y + H : A.y; x2 = B.x + W / 2; y2 = down ? B.y - 4 : B.y + H + 4;
+        d = `M${x1} ${y1} L${x2} ${y2}`;
+      } else if (B.x > A.x) {
+        x1 = A.x + W; y1 = A.y + H / 2; x2 = B.x - 4; y2 = B.y + H / 2;
+        const mx = (x1 + x2) / 2; d = `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`;
+      } else {
+        x1 = A.x; y1 = A.y + H / 2; x2 = B.x + W + 4; y2 = B.y + H / 2;
+        const mx = (x1 + x2) / 2; d = `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`;
+      }
+      const c = MOD[B.m][0];
+      return h('path', { key: i, d, fill: 'none', stroke: c, strokeWidth: 2.5, strokeLinecap: 'round', markerEnd: `url(#ar-${B.m})`, opacity: 0.85 });
+    });
+    const defs = h('defs', null, ...Object.keys(MOD).map(k => h('marker', { key: k, id: `ar-${k}`, viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, h('path', { d: 'M0 0 L10 5 L0 10 z', fill: MOD[k][0] }))));
+    const arrows = h('svg', { width: 1920, height: 1290, style: { position: 'absolute', inset: 0, pointerEvents: 'none' } }, defs, paths);
+    const lanes = [
+      { tag: 'Módulo 1', nome: 'Login / Cadastro', y: 16, h: 290, bg: '#FDF3F3', cor: '#DC2626' },
+      { tag: 'Módulo 2', nome: 'Professor', y: 322, h: 470, bg: '#F2F5FF', cor: '#1D4ED8' },
+      { tag: 'Módulo 3', nome: 'Estudante', y: 808, h: 466, bg: '#F0F9F4', cor: '#087A45' }
+    ];
+    return { nodes, arrows, lanes };
+  }
+}
+</script>
+</body>
+</html>

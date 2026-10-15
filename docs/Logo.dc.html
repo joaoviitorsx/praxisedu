@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:{{ dir }};align-items:center;gap:{{ gap }}px;font-family:'Plus Jakarta Sans',system-ui,sans-serif">
+  {{ symbol }}
+  <sc-if value="{{ showWord }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;align-items:{{ align }};gap:6px">
+      <div style="display:flex;gap:0.28em;font-weight:800;letter-spacing:0.02em;line-height:1;white-space:nowrap;font-size:{{ fs }}px;color:{{ c1 }}">
+        <span>PRÁXIS</span><span style="color:{{ c2 }}">EDU</span>
+      </div>
+      <sc-if value="{{ showSub }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:{{ subFs }}px;font-weight:600;color:{{ c3 }};white-space:nowrap">Biologia no Ensino Médio</div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:300,&quot;height&quot;:120},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;horizontal&quot;,&quot;stacked&quot;,&quot;symbol&quot;,&quot;appicon&quot;,&quot;adaptive&quot;],&quot;default&quot;:&quot;horizontal&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;tone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;color&quot;,&quot;mono&quot;,&quot;white&quot;],&quot;default&quot;:&quot;color&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:40,&quot;tsType&quot;:&quot;number&quot;},&quot;sub&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const h = React.createElement;
+    const variant = this.props.variant || 'horizontal';
+    const tone = this.props.tone || 'color';
+    const size = Number(this.props.size || 40);
+    let bg, fg, dot, core;
+    if (tone === 'mono') { bg = '#1A1A2E'; fg = '#fff'; dot = '#fff'; core = '#1A1A2E'; }
+    else if (tone === 'white') { bg = '#fff'; fg = '#7C3AED'; dot = '#7C3AED'; core = '#fff'; }
+    else { bg = '#7C3AED'; fg = '#fff'; dot = '#FFC53D'; core = '#FFC53D'; }
+    const inner = [-35, 35].map(a => h('ellipse', { key: 'o' + a, cx: 32, cy: 32, rx: 24, ry: 9, transform: `rotate(${a} 32 32)`, fill: 'none', stroke: fg, strokeWidth: 2.6 }));
+    inner.push(
+      h('path', { key: 'leaf', d: 'M32 20 C40.5 24.5 41.5 36 32 44 C22.5 36 23.5 24.5 32 20 Z', fill: fg }),
+      h('path', { key: 'vein', d: 'M32 25 V40 M32 31.5 l3.6 -3.2 M32 36 l-3.6 -3.2', fill: 'none', stroke: bg, strokeWidth: 1.8, strokeLinecap: 'round' }),
+      h('circle', { key: 'e', cx: 51.7, cy: 18.2, r: 3.8, fill: dot, stroke: bg, strokeWidth: 1.5 }),
+      h('circle', { key: 'e2', cx: 12.3, cy: 45.8, r: 2.6, fill: fg })
+    );
+    let symbol;
+    if (variant === 'appicon') {
+      symbol = h('svg', { width: size, height: size, viewBox: '0 0 64 64', style: { display: 'block', flexShrink: 0 } },
+        h('rect', { x: 0, y: 0, width: 64, height: 64, rx: 14.5, fill: bg }), h('g', { transform: 'translate(4.8 4.8) scale(0.85)' }, inner));
+    } else if (variant === 'adaptive') {
+      symbol = h('svg', { width: size, height: size, viewBox: '0 0 64 64', style: { display: 'block', flexShrink: 0 } },
+        h('circle', { cx: 32, cy: 32, r: 32, fill: bg }), h('g', { transform: 'translate(9.6 9.6) scale(0.7)' }, inner));
+    } else {
+      symbol = h('svg', { width: size, height: size, viewBox: '0 0 64 64', style: { display: 'block', flexShrink: 0 } },
+        h('circle', { cx: 32, cy: 32, r: 31, fill: bg }), inner);
+    }
+    const stacked = variant === 'stacked';
+    const word = tone === 'mono' ? ['#1A1A2E', '#1A1A2E', '#475569'] : tone === 'white' ? ['#fff', '#fff', '#fff'] : ['#1A1A2E', '#7C3AED', '#475569'];
+    return {
+      symbol, showWord: variant === 'horizontal' || stacked, showSub: this.props.sub === true || this.props.sub === 'true',
+      dir: stacked ? 'column' : 'row', gap: stacked ? Math.round(size * 0.25) : Math.round(size * 0.28), align: stacked ? 'center' : 'flex-start',
+      fs: Math.round(size * (stacked ? 0.34 : 0.5)), subFs: Math.max(13, Math.round(size * (stacked ? 0.14 : 0.26))), c1: word[0], c2: word[1], c3: word[2]
+    };
+  }
+}
+</script>
+</body>
+</html>

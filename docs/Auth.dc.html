@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:absolute;inset:0;background:#F7F7FA;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E">
+
+<sc-if value="{{ is.s01 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="01 Splash" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:96px 20px 50px;background:#F7F7FA">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <div style="font-size:36px;font-weight:800;letter-spacing:0.02em;display:flex;gap:10px"><span>PRÁXIS</span><span style="color:#7C3AED">EDU</span></div>
+      <p style="margin:0;font-size:18px;font-weight:600;color:#475569;text-align:center">Aprender nunca foi tão divertido</p>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px">
+      <img src="assets/mascotes/turma.png" alt="Dinho, Mandu, Sapo, Guará, Medusa e Baleia" style="width:350px;max-width:100%;display:block">
+      <div style="padding:8px 16px;border-radius:999px;background:#fff;border:2px solid #E2E8F0;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px">
+        <dc-import name="Icon" n="leaf" size="20" color="#087A45" hint-size="20px,20px"></dc-import>Biologia no Ensino Médio
+      </div>
+    </div>
+    <button onClick="{{ toProfile }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#1A1A2E;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #000;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #000">Entrar</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.login }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="03 Login" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;padding:55px 20px 42px;overflow-y:auto" class="px-scroll">
+    <button onClick="{{ back }}" style="align-self:flex-start;min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer;border-radius:12px" style-active="background:#E2E8F0">
+      <dc-import name="Icon" n="chevron-left" size="22" color="#1A1A2E" sw="2.6" hint-size="22px,22px"></dc-import>Voltar
+    </button>
+    <div style="margin-top:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h1 style="margin:0;font-size:32px;font-weight:800">Login</h1>
+        <p style="margin:0;font-size:16px;font-weight:500;color:#475569">Entre na sua conta</p>
+      </div>
+      <sc-if value="{{ isStud }}" hint-placeholder-val="{{ true }}"><dc-import name="Mascote" id="sapo" estado="feliz" size="58" selo="{{ false }}" hint-size="92px,58px"></dc-import></sc-if>
+      <sc-if value="{{ isProf }}" hint-placeholder-val="{{ false }}"><span style="margin-top:6px;display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:999px;background:#EAF0FF;color:#1D4ED8;font-size:13px;font-weight:800"><dc-import name="Icon" n="graduation-cap" size="16" color="#1D4ED8" hint-size="16px,16px"></dc-import>Conta de professor</span></sc-if>
+    </div>
+    <sc-if value="{{ is.s03e }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:20px;display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px;background:#FDECEC;border:2px solid #F5B5B5">
+        <dc-import name="Icon" n="alert-triangle" size="22" color="#B91C1C" hint-size="22px,22px"></dc-import>
+        <div><div style="font-size:16px;font-weight:800;color:#B91C1C">E-mail ou senha incorretos</div><div style="font-size:15px;font-weight:500;color:#1A1A2E;margin-top:2px">Confira os dados e tente de novo.</div></div>
+      </div>
+    </sc-if>
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:20px">
+      <label style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">E-MAIL</span>
+        <input value="{{ loginEmail }}" onChange="{{ on.email }}" type="email" placeholder="seu@email.com" style="width:100%;height:56px;border-radius:14px;border:2px solid {{ errBorder }};background:#fff;padding:0 16px;font-size:16px;font-weight:500;color:#1A1A2E;outline:none" style-focus="border-color:#7C3AED;box-shadow:0 0 0 4px #F3EEFF">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">SENHA</span>
+        <div style="position:relative">
+          <input value="{{ st.pw }}" onChange="{{ on.pw }}" type="{{ pwType }}" placeholder="Sua senha" style="width:100%;height:56px;border-radius:14px;border:2px solid {{ errBorder }};background:#fff;padding:0 56px 0 16px;font-size:16px;font-weight:500;color:#1A1A2E;outline:none" style-focus="border-color:#7C3AED;box-shadow:0 0 0 4px #F3EEFF">
+          <button onClick="{{ togglePw }}" aria-label="Mostrar senha" style="position:absolute;right:6px;top:6px;width:44px;height:44px;border:none;background:none;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="background:#F1F5F9"><dc-import name="Icon" n="{{ eyeIcon }}" size="22" color="#475569" hint-size="22px,22px"></dc-import></button>
+        </div>
+        <sc-if value="{{ is.s03e }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:700;color:#B91C1C">Verifique a senha digitada</span></sc-if>
+      </label>
+      <button onClick="{{ toForgot }}" style="align-self:flex-end;min-height:44px;margin:-12px -8px -8px 0;padding:0 8px;border:none;background:none;font-size:16px;font-weight:800;color:#C2410C;cursor:pointer">Esqueci a senha!</button>
+    </div>
+    <div style="flex:1;min-height:24px"></div>
+    <button onClick="{{ doLogin }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E;display:flex;align-items:center;justify-content:center;gap:10px"><sc-if value="{{ st.loading }}" hint-placeholder-val="{{ false }}">{{ spinner }}Entrando…</sc-if><sc-if value="{{ notLoading }}" hint-placeholder-val="{{ true }}">Entrar</sc-if></button>
+    <div style="margin-top:16px;display:flex;justify-content:center;align-items:center;gap:4px;font-size:16px;font-weight:500;color:#475569">
+      Não está cadastrado?<button onClick="{{ toSignup }}" style="min-height:44px;padding:0 4px;border:none;background:none;font-size:16px;font-weight:800;color:#C2410C;cursor:pointer">Cadastre-se</button>
+    </div>
+    <div style="margin-top:8px;padding-top:12px;border-top:2px dashed #E2E8F0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center">
+      <span style="font-size:13px;font-weight:700;color:#475569">Contas de teste:</span>
+      <button onClick="{{ demoStud }}" style="height:44px;padding:0 14px;border-radius:999px;border:2px solid #A7DFC1;background:#E7F6EE;color:#05592F;font-size:13px;font-weight:800;cursor:pointer">Estudante</button>
+      <button onClick="{{ demoProf }}" style="height:44px;padding:0 14px;border-radius:999px;border:2px solid #C7D5F8;background:#EAF0FF;color:#1D4ED8;font-size:13px;font-weight:800;cursor:pointer">Professor</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s04 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="04 Cadastro" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;padding:55px 20px 42px;overflow-y:auto" class="px-scroll">
+    <button onClick="{{ back }}" style="align-self:flex-start;min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer;border-radius:12px" style-active="background:#E2E8F0">
+      <dc-import name="Icon" n="chevron-left" size="22" color="#1A1A2E" sw="2.6" hint-size="22px,22px"></dc-import>Voltar
+    </button>
+    <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px">
+      <h1 style="margin:0;font-size:32px;font-weight:800">Cadastro</h1>
+      <p style="margin:0;font-size:16px;font-weight:500;color:#475569">Crie sua conta</p>
+    </div>
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">EU SOU</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:16px;background:#E2E8F0">
+          <sc-for list="{{ roles }}" as="ro" hint-placeholder-count="2">
+            <sc-if value="{{ ro.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ro.pick }}" style="height:44px;border-radius:12px;border:none;background:#fff;font-size:16px;font-weight:800;box-shadow:0 2px 0 #CBD5E1;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:{{ ro.c }}"><dc-import name="Icon" n="{{ ro.icon }}" size="18" color="{{ ro.c }}" hint-size="18px,18px"></dc-import>{{ ro.label }}</button></sc-if>
+            <sc-if value="{{ ro.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ ro.pick }}" style="height:44px;border-radius:12px;border:none;background:none;color:#475569;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><dc-import name="Icon" n="{{ ro.icon }}" size="18" color="#475569" hint-size="18px,18px"></dc-import>{{ ro.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+      <sc-for list="{{ fields }}" as="f" hint-placeholder-count="4">
+        <label style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">{{ f.label }}</span>
+          <div style="position:relative">
+            <input value="{{ f.value }}" onChange="{{ f.onChange }}" type="{{ f.type }}" placeholder="{{ f.ph }}" style="width:100%;height:56px;border-radius:14px;border:2px solid {{ f.border }};background:#fff;padding:0 52px 0 16px;font-size:16px;font-weight:500;color:#1A1A2E;outline:none" style-focus="border-color:#7C3AED;box-shadow:0 0 0 4px #F3EEFF">
+            <div style="position:absolute;right:16px;top:17px;display:flex">
+              <sc-if value="{{ f.ok }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" n="check-circle" size="22" color="#087A45" hint-size="22px,22px"></dc-import></sc-if>
+              <sc-if value="{{ f.bad }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" n="alert-triangle" size="22" color="#DC2626" hint-size="22px,22px"></dc-import></sc-if>
+            </div>
+          </div>
+          <sc-if value="{{ f.bad }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:700;color:#B91C1C">{{ f.msg }}</span></sc-if>
+          <sc-if value="{{ f.hint }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:600;color:#475569">{{ f.hintText }}</span></sc-if>
+        </label>
+      </sc-for>
+    </div>
+    <div style="flex:1;min-height:24px"></div>
+    <sc-if value="{{ formOk }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ doSignup }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Cadastrar</button>
+    </sc-if>
+    <sc-if value="{{ formBad }}" hint-placeholder-val="{{ true }}">
+      <button style="width:100%;height:56px;border:none;border-radius:14px;background:#E2E8F0;color:#475569;font-size:18px;font-weight:800;box-shadow:0 4px 0 #CBD5E1;cursor:default">Cadastrar</button>
+    </sc-if>
+    <div style="margin-top:12px;display:flex;justify-content:center;align-items:center;gap:4px;font-size:16px;font-weight:500;color:#475569">
+      Já está cadastrado?<button onClick="{{ toLoginBack }}" style="min-height:44px;padding:0 4px;border:none;background:none;font-size:16px;font-weight:800;color:#C2410C;cursor:pointer">Login!</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.forgot }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="05 Esqueceu a Senha" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;padding:55px 20px 42px">
+    <button onClick="{{ back }}" style="align-self:flex-start;min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer;border-radius:12px" style-active="background:#E2E8F0">
+      <dc-import name="Icon" n="chevron-left" size="22" color="#1A1A2E" sw="2.6" hint-size="22px,22px"></dc-import>Voltar
+    </button>
+    <div style="margin-top:24px;display:flex;justify-content:center"><dc-import name="Mascote" id="guara" estado="pensativo" size="100" hint-size="160px,100px"></dc-import></div>
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:6px">
+      <h1 style="margin:0;font-size:28px;font-weight:800">Esqueceu a Senha?</h1>
+      <p style="margin:0;font-size:16px;font-weight:500;color:#475569;line-height:1.5">Digite o e-mail da sua conta. Vamos enviar um link para você criar uma nova senha.</p>
+    </div>
+    <label style="margin-top:24px;display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">E-MAIL</span>
+      <input value="{{ st.fe }}" onChange="{{ on.fe }}" type="email" placeholder="seu@email.com" style="width:100%;height:56px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;padding:0 16px;font-size:16px;font-weight:500;color:#1A1A2E;outline:none" style-focus="border-color:#7C3AED;box-shadow:0 0 0 4px #F3EEFF">
+    </label>
+    <sc-if value="{{ is.s05ok }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:20px;display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:16px;background:#E7F6EE;border:2px solid #A7DFC1">
+        <dc-import name="Icon" n="check-circle" size="24" color="#087A45" hint-size="24px,24px"></dc-import>
+        <div style="font-size:16px;font-weight:600;color:#05592F;line-height:1.45">Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.</div>
+      </div>
+    </sc-if>
+    <div style="flex:1"></div>
+    <sc-if value="{{ is.s05 }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ sendReset }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Enviar</button>
+    </sc-if>
+    <sc-if value="{{ is.s05ok }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button onClick="{{ toLoginReplace }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Voltar para o login</button>
+        <button style="width:100%;height:48px;border:none;border-radius:14px;background:none;color:#C2410C;font-size:16px;font-weight:800;cursor:pointer" style-active="background:#FFEDD5">Reenviar e-mail</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { email: null, pw: 'biologia2026', show: false, name: 'Jiara Martins', ce: 'jiara.martins@aluno.ce.gov.br', cp: 'biologia2026', cp2: 'biologia20', fe: 'jiara.martins@aluno.ce.gov.br', pick: null };
+  set = (k) => (e) => this.setState({ [k]: e.target.value });
+  renderVals() {
+    const { screen = '01', go = () => {}, back = () => {}, role, setRole = () => {} } = this.props;
+    const st = this.state;
+    const pick = st.pick;
+    const loginEmail = st.email != null ? st.email : 'jiara.martins@aluno.ce.gov.br';
+    const prof = /@prof\./i.test(loginEmail);
+    const home = prof ? '06' : (this.props.joined === false ? '25' : '11');
+    const cRole = st.cRole || 'estudante';
+    const roles = [['estudante', 'Estudante', 'book-open', '#087A45'], ['professor', 'Professor', 'graduation-cap', '#1D4ED8']].map(([k, label, icon, c]) => ({ label, icon, c, on: cRole === k, off: cRole !== k, pick: () => this.setState({ cRole: k, ce: k === 'professor' ? 'mauricio.linhares@prof.ce.gov.br' : 'jiara.martins@aluno.ce.gov.br', name: k === 'professor' ? 'Maurício Linhares' : 'Jiara Martins' }) }));
+    const nameOk = st.name.trim().split(/\s+/).length >= 2;
+    const emailOk = /^\S+@\S+\.\S+$/.test(st.ce);
+    const pwOk = st.cp.length >= 8;
+    const matchOk = st.cp2.length > 0 && st.cp === st.cp2;
+    const bd = (ok, val) => ok ? '#E2E8F0' : (val ? '#DC2626' : '#E2E8F0');
+    const fields = [
+      { label: 'NOME COMPLETO', value: st.name, onChange: this.set('name'), type: 'text', ph: 'Seu nome e sobrenome', ok: nameOk, bad: !nameOk && !!st.name, msg: 'Digite nome e sobrenome', border: bd(nameOk, st.name) },
+      { label: 'E-MAIL', value: st.ce, onChange: this.set('ce'), type: 'email', ph: 'seu@email.com', ok: emailOk, bad: !emailOk && !!st.ce, msg: 'Digite um e-mail válido', border: bd(emailOk, st.ce) },
+      { label: 'SENHA', value: st.cp, onChange: this.set('cp'), type: 'password', ph: 'Mínimo de 8 caracteres', ok: pwOk, bad: !pwOk && !!st.cp, msg: 'A senha precisa ter 8 caracteres ou mais', hint: pwOk, hintText: 'Senha forte o suficiente', border: bd(pwOk, st.cp) },
+      { label: 'CONFIRMAR SENHA', value: st.cp2, onChange: this.set('cp2'), type: 'password', ph: 'Repita a senha', ok: matchOk, bad: !matchOk && !!st.cp2, msg: 'As senhas não coincidem', border: bd(matchOk, st.cp2) }
+    ].map(f => ({ ...f, hint: !!f.hint && !f.bad }));
+    const formOk = nameOk && emailOk && pwOk && matchOk;
+    const err = screen === '03e';
+    return {
+      is: { s01: screen === '01', s02: screen === '02', login: screen === '03' || err, s03e: err, s04: screen === '04', forgot: screen === '05' || screen === '05ok', s05: screen === '05', s05ok: screen === '05ok' },
+      st, back, isProf: prof, isStud: !prof, roleLabel: prof ? 'professor' : 'estudante',
+      pickProf: pick === 'professor', notProf: pick !== 'professor', pickStud: pick === 'estudante', notStud: pick !== 'estudante', hasPick: !!pick, noPick: !pick,
+      pickP: () => { this.setState({ pick: 'professor' }); setRole('professor'); },
+      pickS: () => { this.setState({ pick: 'estudante' }); setRole('estudante'); },
+      roles, demoStud: () => this.setState({ email: 'jiara.martins@aluno.ce.gov.br', pw: 'biologia2026' }), demoProf: () => this.setState({ email: 'mauricio.linhares@prof.ce.gov.br', pw: 'biologia2026' }),
+      toProfile: () => go('03'), toLogin: () => go('03'), toForgot: () => go('05'), toSignup: () => go('04'),
+      toLoginBack: () => go('03'), toLoginReplace: () => go('03'),
+      loginEmail, errBorder: err ? '#DC2626' : '#E2E8F0',
+      on: { email: this.set('email'), pw: this.set('pw'), fe: this.set('fe') },
+      pwType: st.show ? 'text' : 'password', eyeIcon: st.show ? 'eye-off' : 'eye', togglePw: () => this.setState(s => ({ show: !s.show })),
+      notLoading: !st.loading,
+      spinner: React.createElement('span', { style: { width: 20, height: 20, borderRadius: '50%', border: '3px solid rgba(26,26,46,.25)', borderTopColor: '#1A1A2E', animation: 'pxSpin .7s linear infinite', display: 'inline-block' } }),
+      doLogin: () => {
+        if (st.loading) return;
+        this.setState({ loading: true });
+        clearTimeout(this.lt);
+        this.lt = setTimeout(() => {
+          this.setState({ loading: false });
+          if (!err && st.pw.length < 6) go('03e'); else { setRole(prof ? 'professor' : 'estudante'); go(home); }
+        }, 800);
+      },
+      fields, formOk, formBad: !formOk, doSignup: () => { if (cRole !== 'professor' && this.props.setJoined) this.props.setJoined(false); setRole(cRole); go(cRole === 'professor' ? '06' : '25'); }, sendReset: () => go('05ok')
+    };
+  }
+}
+</script>
+</body>
+</html>

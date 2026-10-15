@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#F7F7FA;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E">
+<div style="flex:1;position:relative;min-height:0">
+
+<sc-if value="{{ is.join }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="25 Entrar na turma" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;padding:67px 20px 42px">
+    <sc-if value="{{ is.s25 }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;justify-content:center"><dc-import name="Mascote" id="dinho" estado="feliz" size="110" selo="{{ false }}" hint-size="176px,110px"></dc-import></div>
+      <h1 style="margin:20px 0 6px;font-size:28px;font-weight:800;text-align:center">Entre na sua turma</h1>
+      <p style="margin:0;font-size:16px;font-weight:500;color:#475569;text-align:center;line-height:1.5">Digite o código que seu professor compartilhou.</p>
+      <input value="{{ st.code }}" onChange="{{ onCode }}" maxlength="6" placeholder="BIO000" style="margin-top:28px;width:100%;height:88px;border-radius:20px;border:3px solid #087A45;background:#fff;text-align:center;font-size:40px;font-weight:800;letter-spacing:0.2em;color:#1A1A2E;outline:none;text-transform:uppercase;box-shadow:0 4px 0 #087A45" style-focus="box-shadow:0 4px 0 #087A45,0 0 0 6px #E7F6EE">
+      <div style="margin-top:12px;text-align:center;font-size:13px;font-weight:600;color:#475569">6 caracteres · letras e números</div>
+      <div style="flex:1"></div>
+      <button onClick="{{ joinClass }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Entrar na turma</button>
+      <button style="margin-top:8px;width:100%;height:48px;border:none;background:none;color:#C2410C;font-size:16px;font-weight:800;cursor:pointer;border-radius:14px" style-active="background:#FFEDD5">Onde encontro o código?</button>
+    </sc-if>
+    <sc-if value="{{ is.s25ok }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px">
+        <img src="assets/mascotes/turma.png" alt="Mascotes do Práxis Edu" style="width:340px;max-width:100%;display:block">
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:#05592F;background:#E7F6EE;padding:6px 12px;border-radius:999px;margin-top:8px"><dc-import name="Icon" n="check-circle" size="18" color="#087A45" hint-size="18px,18px"></dc-import>CÓDIGO BIO101 ACEITO</div>
+        <h1 style="margin:0;font-size:28px;font-weight:800;line-height:1.2">Você entrou no<br>1º A – Manhã!</h1>
+        <div style="width:100%;margin-top:12px;background:#fff;border:2px solid #E2E8F0;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;text-align:left">
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:50%;background:#1D4ED8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">ML</div><div><div style="font-size:16px;font-weight:800">Prof. Maurício Linhares</div><div style="font-size:13px;font-weight:600;color:#475569">EEMTI Rachel de Queiroz</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#475569"><dc-import name="Icon" n="users" size="20" color="#087A45" hint-size="20px,20px"></dc-import>28 colegas já estão na turma</div>
+        </div>
+      </div>
+      <button onClick="{{ toTrilha }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#087A45;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #05592F;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #05592F">Continuar</button>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s11 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="11 Trilhas" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:55px 20px 12px;display:flex;align-items:center;gap:8px;background:#fff;border-bottom:2px solid #E2E8F0">
+      <button onClick="{{ toPerfil }}" aria-label="Perfil" style="width:44px;height:44px;border-radius:50%;border:none;background:#087A45;color:#fff;font-size:15px;font-weight:800;cursor:pointer;flex-shrink:0">JM</button>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:4px;height:40px;padding:0 10px;border-radius:999px;background:#FFEDD5"><dc-import name="Icon" n="flame" size="20" color="#F97316" fill="#F97316" hint-size="20px,20px"></dc-import><span style="font-size:15px;font-weight:800">5 dias</span></div>
+      <div style="display:flex;align-items:center;gap:4px;height:40px;padding:0 10px;border-radius:999px;background:#F3EEFF"><dc-import name="Icon" n="zap" size="20" color="#7C3AED" fill="#7C3AED" hint-size="20px,20px"></dc-import><span style="font-size:15px;font-weight:800">480 XP</span></div>
+      <div style="display:flex;align-items:center;gap:4px;height:40px;padding:0 10px;border-radius:999px;background:#FDECEC"><dc-import name="Icon" n="heart" size="20" color="#DC2626" fill="#DC2626" hint-size="20px,20px"></dc-import><span style="font-size:15px;font-weight:800">5/5</span></div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:14px">
+      <div>
+        <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#087A45">{{ ano.label }}</div>
+        <h1 style="margin:4px 0 0;font-size:22px;font-weight:800;line-height:1.25">{{ ano.titulo }}</h1>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:4px;border-radius:16px;background:#E2E8F0">
+        <sc-for list="{{ anos }}" as="o" hint-placeholder-count="3">
+          <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.pick }}" style="height:44px;border-radius:12px;border:none;background:#fff;color:#05592F;font-size:16px;font-weight:800;box-shadow:0 2px 0 #CBD5E1;cursor:pointer">{{ o.label }}</button></sc-if>
+          <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ o.pick }}" style="height:44px;border-radius:12px;border:none;background:none;color:#475569;font-size:16px;font-weight:700;cursor:pointer">{{ o.label }}</button></sc-if>
+        </sc-for>
+      </div>
+      <div class="px-scroll" style="display:flex;gap:10px;overflow-x:auto;margin:0 -20px;padding:2px 20px 8px;flex-shrink:0">
+        <sc-for list="{{ temas }}" as="tm" hint-placeholder-count="3">
+          <button onClick="{{ tm.pick }}" style="flex-shrink:0;width:128px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px 12px;border-radius:18px;cursor:pointer;font-family:inherit;transition:transform .08s,box-shadow .08s;border:2px solid {{ tm.border }};background:{{ tm.bg }};box-shadow:0 4px 0 {{ tm.border }}" style-active="transform:translateY(4px);box-shadow:none">
+            <dc-import name="Mascote" id="{{ tm.mascote }}" estado="feliz" size="50" selo="{{ false }}" hint-size="80px,50px"></dc-import>
+            <span style="font-size:14px;font-weight:800;color:#1A1A2E;text-align:center;line-height:1.2">{{ tm.tema }}</span>
+            <span style="font-size:12px;font-weight:700;color:#475569">{{ tm.nome }} · {{ tm.prog }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ salaOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toSala }}" style="position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border:none;border-radius:18px;background:#FFC53D;box-shadow:0 4px 0 #D99A1E;cursor:pointer;text-align:left;font-family:inherit;flex-shrink:0" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">
+        {{ bannerGlow }}
+        <div style="width:44px;height:44px;border-radius:12px;background:#1A1A2E;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="radio" size="24" color="#FFC53D" hint-size="24px,24px"></dc-import></div>
+        <div style="flex:1;min-width:0"><div style="font-size:17px;font-weight:800;color:#1A1A2E">Modo Sala: Quiz Liberado!</div><div style="font-size:14px;font-weight:600;color:#1A1A2E">{{ salaNome }} · Prof. Maurício</div></div>
+        <dc-import name="Icon" n="arrow-right" size="24" sw="2.6" color="#1A1A2E" hint-size="24px,24px"></dc-import>
+      </button></sc-if>
+      <div style="position:relative;display:flex;flex-direction:column;padding-top:8px">
+        <sc-for list="{{ nodes }}" as="nd" hint-placeholder-count="5">
+          <div style="position:relative;height:116px;width:100%">
+            <div style="position:absolute;top:0;display:flex;flex-direction:column;align-items:center;gap:6px;left:{{ nd.left }}px">
+              <sc-if value="{{ nd.done }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ toLicao }}" aria-label="{{ nd.nome }}" style="width:72px;height:68px;border-radius:50%;border:none;background:#087A45;box-shadow:0 6px 0 #05592F;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="transform:translateY(6px);box-shadow:0 0 0 #05592F"><dc-import name="Icon" n="check" size="34" sw="3.4" color="#fff" hint-size="34px,34px"></dc-import></button>
+                <div style="display:flex;gap:2px;margin-top:4px"><sc-for list="{{ nd.stars }}" as="s" hint-placeholder-count="3"><dc-import name="Icon" n="star" size="18" color="{{ s.c }}" fill="{{ s.c }}" hint-size="18px,18px"></dc-import></sc-for></div>
+              </sc-if>
+              <sc-if value="{{ nd.cur }}" hint-placeholder-val="{{ false }}">
+                <div style="position:relative;width:84px;height:78px">
+                  {{ nodePulse }}
+                  <button onClick="{{ toLicao }}" style="position:relative;width:84px;height:78px;border-radius:50%;border:none;background:#FFC53D;box-shadow:0 6px 0 #D99A1E;cursor:pointer;font-size:17px;font-weight:800;color:#1A1A2E;letter-spacing:0.04em" style-active="transform:translateY(6px);box-shadow:0 0 0 #D99A1E">JOGAR</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ nd.lock }}" hint-placeholder-val="{{ true }}">
+                <div style="width:72px;height:68px;border-radius:50%;background:#E2E8F0;box-shadow:0 6px 0 #CBD5E1;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ nd.icon }}" size="28" sw="2.4" color="#475569" hint-size="28px,28px"></dc-import></div>
+              </sc-if>
+            </div>
+            <div style="position:absolute;top:22px;width:104px;font-size:13px;font-weight:700;line-height:1.3;left:{{ nd.labelLeft }}px;text-align:{{ nd.align }};color:{{ nd.labelColor }}">{{ nd.nome }}</div>
+          </div>
+        </sc-for>
+        <div style="position:absolute;pointer-events:none;top:{{ deco.top }}px;left:{{ deco.left }}px"><dc-import name="Mascote" id="{{ tema.mascote }}" estado="feliz" size="50" selo="{{ false }}" hint-size="80px,50px"></dc-import></div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.licao }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="12 Lição Interativa" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;background:#fff">
+    <div style="padding:55px 20px 8px;display:flex;align-items:center;gap:12px">
+      <button onClick="{{ toTrilha }}" style="min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:4px;font-size:16px;font-weight:700;color:#475569;cursor:pointer;border-radius:12px" style-active="background:#F1F5F9"><dc-import name="Icon" n="x" size="22" sw="2.6" color="#475569" hint-size="22px,22px"></dc-import>Sair</button>
+      <div style="flex:1;height:14px;border-radius:999px;background:#E2E8F0;overflow:hidden"><div style="height:100%;border-radius:999px;background:#087A45;width:{{ progress }}%"></div></div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:800"><dc-import name="Icon" n="heart" size="22" color="#DC2626" fill="#DC2626" hint-size="22px,22px"></dc-import>{{ vidas }}</div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#087A45">{{ tema.label }} · QUESTÃO 4 DE 10</div>
+      <h1 style="margin:0 0 12px;font-size:22px;font-weight:800;line-height:1.35">{{ tema.q }}</h1>
+      <sc-for list="{{ licaoAlts }}" as="al" hint-placeholder-count="4">
+        <button onClick="{{ al.pick }}" style="display:flex;align-items:center;gap:12px;min-height:60px;padding:8px 14px 8px 8px;border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;transition:background-color .15s,border-color .15s,box-shadow .15s,transform .08s;border:2px solid {{ al.border }};background:{{ al.bg }};box-shadow:0 4px 0 {{ al.border }}">
+          <span style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;background:{{ al.badgeBg }};color:{{ al.badgeColor }}">{{ al.letra }}</span>
+          <span style="flex:1;font-size:17px;font-weight:700;color:#1A1A2E">{{ al.texto }}</span>
+          <sc-if value="{{ al.showIcon }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" n="{{ al.icon }}" size="24" sw="2.6" color="{{ al.iconColor }}" hint-size="24px,24px"></dc-import></sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ is.s12 }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:16px 20px 42px;border-top:2px solid #E2E8F0">
+        <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}"><button onClick="{{ verificar }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Verificar</button></sc-if>
+        <sc-if value="{{ noSel }}" hint-placeholder-val="{{ true }}"><button style="width:100%;height:56px;border:none;border-radius:14px;background:#E2E8F0;color:#475569;font-size:18px;font-weight:800;box-shadow:0 4px 0 #CBD5E1;cursor:default">Verificar</button></sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ is.s12ok }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:pxUp .34s cubic-bezier(.2,.8,.2,1) both;position:relative;padding:20px 20px 42px;background:#E7F6EE;border-top:3px solid #087A45;border-radius:24px 24px 0 0;display:flex;flex-direction:column;gap:12px">
+        <div style="position:absolute;right:14px;top:-60px;pointer-events:none;animation:pxBounce .5s .1s cubic-bezier(.2,.8,.2,1) both"><dc-import name="Mascote" id="{{ tema.mascote }}" estado="comemorando" size="62" hint-size="99px,62px"></dc-import></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:48px;height:48px;border-radius:50%;background:#087A45;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="check" size="28" sw="3.4" color="#fff" hint-size="28px,28px"></dc-import></div>
+          <div style="flex:1;font-size:22px;font-weight:800;color:#05592F">Correto!</div>
+          <span style="display:flex;align-items:center;gap:4px;font-size:15px;font-weight:800;color:#fff;background:#7C3AED;padding:6px 12px;border-radius:999px"><dc-import name="Icon" n="zap" size="16" color="#fff" fill="#fff" hint-size="16px,16px"></dc-import>+15 XP</span>
+        </div>
+        <div style="font-size:16px;font-weight:500;line-height:1.5">{{ tema.ok }}</div>
+        <button onClick="{{ toFim }}" style="width:100%;height:56px;margin-top:4px;border:none;border-radius:14px;background:#087A45;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #05592F;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #05592F">Continuar</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ is.s27 }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="27 Feedback errado" style="position:relative;animation:pxUp .34s cubic-bezier(.2,.8,.2,1) both;padding:20px 20px 42px;background:#FDECEC;border-top:3px solid #DC2626;border-radius:24px 24px 0 0;display:flex;flex-direction:column;gap:12px">
+        <div style="position:absolute;right:14px;top:-60px;pointer-events:none"><dc-import name="Mascote" id="{{ tema.mascote }}" estado="triste" size="62" hint-size="99px,62px"></dc-import></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:48px;height:48px;border-radius:50%;background:#DC2626;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="x" size="28" sw="3.4" color="#fff" hint-size="28px,28px"></dc-import></div>
+          <div style="flex:1"><div style="font-size:22px;font-weight:800;color:#B91C1C">Quase lá!</div><div style="font-size:15px;font-weight:700">Resposta certa: {{ tema.certa }}</div></div>
+          <span style="display:flex;align-items:center;gap:4px;font-size:15px;font-weight:800;color:#B91C1C;background:#fff;border:2px solid #F5B5B5;padding:5px 10px;border-radius:999px"><dc-import name="Icon" n="heart-crack" size="16" color="#DC2626" hint-size="16px,16px"></dc-import>−1 vida</span>
+        </div>
+        <div style="font-size:16px;font-weight:500;line-height:1.5">{{ tema.ok }}</div>
+        <button onClick="{{ toFim }}" style="width:100%;height:56px;margin-top:4px;border:none;border-radius:14px;background:#DC2626;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #991B1B;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #991B1B">Entendi</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s26 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="26 Fim de lição" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:80px 20px 42px;background:#087A45;color:#fff">
+    <div style="animation:pxBounce .6s cubic-bezier(.2,.8,.2,1) both"><dc-import name="Mascote" id="{{ tema.mascote }}" estado="comemorando" size="120" hint-size="192px,120px"></dc-import></div>
+    <h1 style="margin:16px 0 4px;font-size:32px;font-weight:800">Lição concluída!</h1>
+    <div style="font-size:16px;font-weight:600">{{ tema.licaoNome }} · {{ tema.tema }}</div>
+    <div style="display:flex;gap:8px;margin-top:16px;animation:pxBounce .6s .25s cubic-bezier(.2,.8,.2,1) both"><sc-for list="{{ fimStars }}" as="s" hint-placeholder-count="3"><dc-import name="Icon" n="star" size="44" sw="1.6" color="{{ s.stroke }}" fill="{{ s.c }}" hint-size="44px,44px"></dc-import></sc-for></div>
+    <div style="width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:24px;color:#1A1A2E">
+      <div style="background:#fff;border-radius:16px;padding:14px 8px;text-align:center"><div style="display:flex;justify-content:center"><dc-import name="Icon" n="zap" size="24" color="#7C3AED" fill="#7C3AED" hint-size="24px,24px"></dc-import></div><div style="font-size:22px;font-weight:800;color:#5B21B6;margin-top:4px">+{{ fim.xp }}</div><div style="font-size:13px;font-weight:600;color:#475569">XP ganho</div></div>
+      <div style="background:#fff;border-radius:16px;padding:14px 8px;text-align:center"><div style="display:flex;justify-content:center"><dc-import name="Icon" n="target" size="24" color="#087A45" hint-size="24px,24px"></dc-import></div><div style="font-size:22px;font-weight:800;color:#05592F;margin-top:4px">{{ fim.prec }}%</div><div style="font-size:13px;font-weight:600;color:#475569">precisão</div></div>
+      <div style="background:#fff;border-radius:16px;padding:14px 8px;text-align:center"><div style="display:flex;justify-content:center"><dc-import name="Icon" n="flame" size="24" color="#F97316" fill="#F97316" hint-size="24px,24px"></dc-import></div><div style="font-size:22px;font-weight:800;margin-top:4px">6 dias</div><div style="font-size:13px;font-weight:600;color:#475569">ofensiva</div></div>
+    </div>
+    <div style="margin-top:16px;font-size:16px;font-weight:700;text-align:center">Sua ofensiva subiu para 6 dias. Volte amanhã!</div>
+    <div style="flex:1"></div>
+    <button onClick="{{ toTrilha }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Continuar</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.duelos }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="13 Duelos 1x1" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:59px 20px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div><h1 style="margin:0;font-size:28px;font-weight:800;color:#7C3AED">Duelos 1x1</h1><div style="font-size:15px;font-weight:600;color:#475569;margin-top:2px">Duelos da Turma 1º A</div></div>
+      <button onClick="{{ toDesafiar }}" style="height:48px;padding:0 16px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:16px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;display:flex;align-items:center;gap:6px;flex-shrink:0" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E"><dc-import name="Icon" n="plus" size="20" sw="3" color="#1A1A2E" hint-size="20px,20px"></dc-import>Desafiar</button>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:8px 20px 24px;display:flex;flex-direction:column;gap:12px">
+      <sc-if value="{{ is.s13 }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ duelos }}" as="d" hint-placeholder-count="2">
+          <button onClick="{{ d.open }}" style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;border:2px solid {{ d.border }};background:#fff;box-shadow:0 4px 0 {{ d.border }};cursor:pointer;text-align:left;font-family:inherit">
+            <div style="width:48px;height:48px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;background:{{ d.cor }}">{{ d.ini }}</div>
+            <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800;color:#1A1A2E">{{ d.nome }}</div><div style="font-size:13px;font-weight:600;color:#475569;margin-top:2px">{{ d.tema }}</div></div>
+            <span style="font-size:13px;font-weight:800;padding:6px 10px;border-radius:999px;white-space:nowrap;color:{{ d.chipColor }};background:{{ d.chipBg }}">{{ d.status }}</span>
+          </button>
+        </sc-for>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:#F3EEFF;margin-top:4px">
+          <dc-import name="Icon" n="swords" size="22" color="#7C3AED" hint-size="22px,22px"></dc-import>
+          <div style="font-size:15px;font-weight:500;line-height:1.45"><b style="color:#5B21B6">Mecânica estilo Perguntados.</b> 5 perguntas por duelo. Quem acertar mais leva os pontos da semana.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ is.s32c }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="32c Sem duelos" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:40px 12px">
+          <dc-import name="Mascote" id="guara" estado="pensativo" size="110" hint-size="176px,110px"></dc-import>
+          <div style="font-size:20px;font-weight:800">Nenhum duelo ainda</div>
+          <div style="font-size:16px;font-weight:500;color:#475569;line-height:1.5">Desafie um colega da turma e descubra quem sabe mais Biologia.</div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s28 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="28 Escolher colega" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:51px 20px 12px">
+      <button onClick="{{ back }}" style="min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer;border-radius:12px" style-active="background:#E2E8F0"><dc-import name="Icon" n="chevron-left" size="22" color="#1A1A2E" sw="2.6" hint-size="22px,22px"></dc-import>Duelos</button>
+      <h1 style="margin:4px 0 0;font-size:26px;font-weight:800;color:#7C3AED">Desafiar colega</h1>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:4px 20px 24px;display:flex;flex-direction:column;gap:12px">
+      <div style="position:relative"><div style="position:absolute;left:16px;top:16px"><dc-import name="Icon" n="search" size="22" color="#475569" hint-size="22px,22px"></dc-import></div><input placeholder="Buscar colega do 1º A" style="width:100%;height:54px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;padding:0 16px 0 48px;font-size:16px;font-weight:500;outline:none" style-focus="border-color:#7C3AED;box-shadow:0 0 0 4px #F3EEFF"></div>
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">TEMA DO DUELO</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ temasDuelo }}" as="o" hint-placeholder-count="4">
+          <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.pick }}" style="height:44px;padding:0 16px;border-radius:999px;border:2px solid #7C3AED;background:#F3EEFF;color:#5B21B6;font-size:15px;font-weight:800;cursor:pointer">{{ o.label }}</button></sc-if>
+          <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ o.pick }}" style="height:44px;padding:0 16px;border-radius:999px;border:2px solid #E2E8F0;background:#fff;color:#1A1A2E;font-size:15px;font-weight:700;cursor:pointer">{{ o.label }}</button></sc-if>
+        </sc-for>
+      </div>
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569;margin-top:4px">COLEGAS DA TURMA</div>
+      <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;overflow:hidden">
+        <sc-for list="{{ colegas }}" as="c" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px 10px 14px;border-bottom:2px solid #F1F5F9">
+            <div style="width:44px;height:44px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;background:{{ c.cor }}">{{ c.ini }}</div>
+            <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">{{ c.nome }}</div><div style="font-size:13px;font-weight:600;color:#475569">{{ c.xp }} XP</div></div>
+            <button onClick="{{ toPartida }}" style="height:44px;padding:0 14px;border:none;border-radius:12px;background:#FFC53D;color:#1A1A2E;font-size:15px;font-weight:800;box-shadow:0 3px 0 #D99A1E;cursor:pointer" style-active="transform:translateY(3px);box-shadow:0 0 0 #D99A1E">Desafiar</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s29 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="29 Partida de Duelo" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;background:#fff">
+    <div style="padding:55px 20px 8px;display:flex;align-items:center;gap:8px">
+      <button onClick="{{ toDuelos }}" aria-label="Sair do duelo" style="width:44px;height:44px;margin-left:-10px;border:none;background:none;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="background:#F1F5F9"><dc-import name="Icon" n="x" size="24" sw="2.6" color="#475569" hint-size="24px,24px"></dc-import></button>
+      <div style="flex:1;font-size:16px;font-weight:800;color:#5B21B6">Duelo · Citologia Celular</div>
+      <div style="display:flex;align-items:center;gap:6px;height:40px;padding:0 12px;border-radius:999px;background:#FFEDD5;font-size:16px;font-weight:800;color:#9A3412"><dc-import name="Icon" n="clock" size="18" color="#C2410C" hint-size="18px,18px"></dc-import>{{ duelTime }}</div>
+    </div>
+    <div style="margin:4px 20px 0;padding:14px 16px;border-radius:20px;background:#F3EEFF;display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:#087A45;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">JM</div><div style="font-size:15px;font-weight:800">Você</div></div>
+      <div style="font-size:30px;font-weight:800;color:#5B21B6">2 × 1</div>
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:1"><div style="font-size:15px;font-weight:800">Gabriel</div><div style="width:44px;height:44px;border-radius:50%;background:#C2410C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">GM</div></div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 42px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">PERGUNTA 3 DE 5</span>
+        <div style="display:flex;gap:6px"><sc-for list="{{ duelDots }}" as="dd" hint-placeholder-count="5"><div style="width:28px;height:8px;border-radius:999px;background:{{ dd.c }}"></div></sc-for></div>
+      </div>
+      <div style="height:8px;border-radius:999px;background:#FFEDD5;overflow:hidden"><div style="height:100%;border-radius:999px;background:#F97316;transition:width 1s linear;width:{{ duelPct }}%"></div></div>
+      <h1 style="margin:8px 0;font-size:22px;font-weight:800;line-height:1.35">Qual organela é responsável pela síntese de proteínas?</h1>
+      <sc-for list="{{ duelAlts }}" as="al" hint-placeholder-count="4">
+        <button onClick="{{ al.pick }}" style="display:flex;align-items:center;gap:12px;min-height:60px;padding:8px 14px 8px 8px;border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;transition:background-color .15s,border-color .15s,box-shadow .15s,transform .08s;border:2px solid {{ al.border }};background:{{ al.bg }};box-shadow:0 4px 0 {{ al.border }}">
+          <span style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;background:{{ al.badgeBg }};color:{{ al.badgeColor }}">{{ al.letra }}</span>
+          <span style="flex:1;font-size:17px;font-weight:700;color:#1A1A2E">{{ al.texto }}</span>
+          <sc-if value="{{ al.showIcon }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" n="{{ al.icon }}" size="24" sw="2.6" color="{{ al.iconColor }}" hint-size="24px,24px"></dc-import></sc-if>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s30 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="30 Resultado do Duelo" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:80px 20px 42px;background:#7C3AED;color:#fff">
+    <dc-import name="Mito" mood="comemorando" size="160" hint-size="160px,160px"></dc-import>
+    <div style="font-size:13px;font-weight:800;letter-spacing:0.1em;margin-top:12px">DUELO · CITOLOGIA CELULAR</div>
+    <h1 style="margin:4px 0 0;font-size:40px;font-weight:800;animation:pxBounce .6s .2s cubic-bezier(.2,.8,.2,1) both">Vitória!</h1>
+    <div style="width:100%;margin-top:20px;background:#fff;border-radius:20px;padding:16px;display:flex;align-items:center;gap:12px;color:#1A1A2E">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:52px;height:52px;border-radius:50%;background:#087A45;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;box-shadow:0 0 0 3px #FFC53D">JM</div><div style="font-size:15px;font-weight:800">Você</div></div>
+      <div style="font-size:40px;font-weight:800;color:#5B21B6">3 × 2</div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:52px;height:52px;border-radius:50%;background:#C2410C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">GM</div><div style="font-size:15px;font-weight:800">Gabriel M.</div></div>
+    </div>
+    <div style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;color:#1A1A2E">
+      <div style="background:#fff;border-radius:16px;padding:12px;display:flex;align-items:center;gap:8px"><dc-import name="Icon" n="trophy" size="24" color="#C2410C" hint-size="24px,24px"></dc-import><div><div style="font-size:18px;font-weight:800">+30 pts</div><div style="font-size:13px;font-weight:600;color:#475569">ranking semanal</div></div></div>
+      <div style="background:#fff;border-radius:16px;padding:12px;display:flex;align-items:center;gap:8px"><dc-import name="Icon" n="zap" size="24" color="#7C3AED" fill="#7C3AED" hint-size="24px,24px"></dc-import><div><div style="font-size:18px;font-weight:800">+45 XP</div><div style="font-size:13px;font-weight:600;color:#475569">pelas respostas</div></div></div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:12px">
+      <button onClick="{{ toPartida }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E"><dc-import name="Icon" n="refresh-cw" size="20" sw="2.6" color="#1A1A2E" hint-size="20px,20px"></dc-import>Revanche</button>
+      <button onClick="{{ toDuelos }}" style="width:100%;height:56px;border:2px solid #fff;border-radius:14px;background:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer" style-active="background:#6D28D9">Voltar aos duelos</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.sala }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="14 Modo Sala de Aula" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:55px 20px 14px;background:#fff;border-bottom:2px solid #E2E8F0;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <h1 style="margin:0;font-size:24px;font-weight:800;color:#C2410C">Modo Sala de Aula</h1>
+        <sc-if value="{{ is.s14 }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:6px;height:44px;padding:0 14px;border-radius:14px;background:#1A1A2E;color:#FFC53D;font-size:22px;font-weight:800;letter-spacing:0.04em"><dc-import name="Icon" n="clock" size="20" color="#FFC53D" hint-size="20px,20px"></dc-import>{{ salaTime }}</div></sc-if>
+      </div>
+      <sc-if value="{{ is.s14 }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800">{{ liveDot }}{{ salaNome }} (Ao Vivo)</div>
+          <div style="font-size:15px;font-weight:600;color:#475569;margin-top:2px">Orientado pelo Prof. Maurício</div>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ is.s14 }}" hint-placeholder-val="{{ true }}">
+      <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569;white-space:nowrap">QUESTÃO 2 DE 3</span><div style="flex:1;height:10px;border-radius:999px;background:#E2E8F0;overflow:hidden"><div style="width:66%;height:100%;border-radius:999px;background:#F97316"></div></div></div>
+        <h2 style="margin:4px 0 8px;font-size:22px;font-weight:800;line-height:1.35">{{ salaQ }}</h2>
+        <sc-for list="{{ salaAlts }}" as="al" hint-placeholder-count="4">
+          <button onClick="{{ al.pick }}" style="display:flex;align-items:center;gap:12px;min-height:60px;padding:8px 14px 8px 8px;border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;transition:background-color .15s,border-color .15s,box-shadow .15s,transform .08s;border:2px solid {{ al.border }};background:{{ al.bg }};box-shadow:0 4px 0 {{ al.border }}">
+            <span style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;background:{{ al.badgeBg }};color:{{ al.badgeColor }}">{{ al.letra }}</span>
+            <span style="flex:1;font-size:17px;font-weight:700;color:#1A1A2E">{{ al.texto }}</span>
+          </button>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#475569;margin-top:4px"><dc-import name="Icon" n="info" size="18" color="#475569" hint-size="18px,18px"></dc-import>O professor vê as respostas da turma em tempo real.</div>
+      </div>
+      <div style="padding:12px 20px 42px;border-top:2px solid #E2E8F0;background:#fff">
+        <sc-if value="{{ salaHasSel }}" hint-placeholder-val="{{ false }}"><button onClick="{{ enviarSala }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#FFC53D;color:#1A1A2E;font-size:18px;font-weight:800;box-shadow:0 4px 0 #D99A1E;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #D99A1E">Enviar Resposta</button></sc-if>
+        <sc-if value="{{ salaNoSel }}" hint-placeholder-val="{{ true }}"><button style="width:100%;height:56px;border:none;border-radius:14px;background:#E2E8F0;color:#475569;font-size:18px;font-weight:800;box-shadow:0 4px 0 #CBD5E1;cursor:default">Enviar Resposta</button></sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ is.s31 }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="31 Modo Sala bloqueado" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:20px">
+        <dc-import name="Mascote" id="{{ waitMascote }}" estado="{{ waitMood }}" size="120" hint-size="190px,120px"></dc-import>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:#475569;background:#E2E8F0;padding:6px 12px;border-radius:999px"><dc-import name="Icon" n="{{ waitIcon }}" size="16" color="#475569" hint-size="16px,16px"></dc-import>{{ waitChip }}</div>
+        <div style="font-size:22px;font-weight:800;line-height:1.3">{{ waitTitle }}</div>
+        <div style="font-size:16px;font-weight:500;color:#475569;line-height:1.5">{{ waitBody }}</div>
+        <div style="margin-top:8px;width:100%;display:flex;gap:12px;align-items:flex-start;text-align:left;padding:14px 16px;border-radius:16px;background:#FFEDD5">
+          <dc-import name="Icon" n="shield-check" size="22" color="#C2410C" hint-size="22px,22px"></dc-import>
+          <div style="font-size:15px;font-weight:500;line-height:1.45"><b style="color:#9A3412">Lei 15.100/2025.</b> Em sala, o celular é usado só para atividades pedagógicas orientadas pelo professor.</div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s15 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="15 BioBot IA" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#087A45;padding:55px 20px 14px;display:flex;align-items:center;gap:12px;color:#fff">
+      <div style="position:relative;width:52px;height:52px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 0 #05592F"><dc-import name="Icon" n="leaf" size="30" color="#087A45" fill="#087A45" hint-size="30px,30px"></dc-import><div style="position:absolute;right:-6px;top:-6px;width:22px;height:22px;border-radius:50%;background:#7C3AED;border:2px solid #fff;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="sparkles" size="12" sw="2.6" color="#fff" hint-size="12px,12px"></dc-import></div></div>
+      <div style="flex:1"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px;font-weight:800">BioBot IA</span><span style="font-size:13px;font-weight:800;color:#5B21B6;background:#fff;padding:3px 10px;border-radius:999px;display:flex;align-items:center;gap:4px"><dc-import name="Icon" n="sparkles" size="14" color="#7C3AED" hint-size="14px,14px"></dc-import>Gemini</span></div><div style="font-size:14px;font-weight:600">Seu tutor de Biologia</div></div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 16px 12px;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="3">
+        <sc-if value="{{ m.bot }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:flex-end;gap:8px;max-width:88%">
+            <div style="width:32px;height:32px;border-radius:10px;background:#087A45;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="leaf" size="18" color="#fff" fill="#fff" hint-size="18px,18px"></dc-import></div>
+            <div style="background:#fff;border:2px solid #E2E8F0;border-radius:18px 18px 18px 6px;padding:10px 14px;font-size:16px;font-weight:500;line-height:1.45;white-space:pre-wrap">{{ m.text }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.me }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-end;max-width:80%;background:#087A45;color:#fff;border-radius:18px 18px 6px 18px;padding:10px 14px;font-size:16px;font-weight:600;line-height:1.45">{{ m.text }}</div>
+        </sc-if>
+      </sc-for>
+      <sc-if value="{{ st.typing }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <div style="width:32px;height:32px;border-radius:10px;background:#087A45;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="leaf" size="18" color="#fff" fill="#fff" hint-size="18px,18px"></dc-import></div>
+          <div style="background:#fff;border:2px solid #E2E8F0;border-radius:18px 18px 18px 6px;padding:14px 16px;display:flex;gap:5px">{{ typingDots }}</div>
+        </div>
+      </sc-if>
+    </div>
+    <div class="px-scroll" style="padding:8px 16px 0;display:flex;gap:8px;overflow-x:auto">
+      <sc-for list="{{ sugest }}" as="sg" hint-placeholder-count="3">
+        <button onClick="{{ sg.send }}" style="height:44px;padding:0 14px;border-radius:999px;border:2px solid #A7DFC1;background:#E7F6EE;color:#05592F;font-size:15px;font-weight:700;white-space:nowrap;cursor:pointer;flex-shrink:0">{{ sg.t }}</button>
+      </sc-for>
+    </div>
+    <div style="padding:10px 16px 6px;display:flex;gap:8px;align-items:center">
+      <input value="{{ st.draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onKey }}" placeholder="Digite sua dúvida..." style="flex:1;height:52px;border-radius:999px;border:2px solid #E2E8F0;background:#fff;padding:0 18px;font-size:16px;font-weight:500;outline:none" style-focus="border-color:#087A45;box-shadow:0 0 0 4px #E7F6EE">
+      <button onClick="{{ sendDraft }}" aria-label="Enviar" style="width:52px;height:52px;border-radius:50%;border:none;background:#087A45;box-shadow:0 3px 0 #05592F;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0" style-active="transform:translateY(3px);box-shadow:0 0 0 #05592F"><dc-import name="Icon" n="send" size="22" color="#fff" hint-size="22px,22px"></dc-import></button>
+    </div>
+    <div style="padding:0 16px 10px;text-align:center;font-size:13px;font-weight:600;color:#475569">Respostas geradas por IA podem conter erros.</div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s16 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="16 Ranking Semanal" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:59px 20px 8px">
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#7C3AED">LIGA SEMANAL DE BIOLOGIA</div>
+      <h1 style="margin:4px 0 0;font-size:24px;font-weight:800">Ranking da Turma (1º A)</h1>
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;font-weight:800;color:#9A3412;background:#FFEDD5;padding:6px 12px;border-radius:999px"><dc-import name="Icon" n="clock" size="16" color="#C2410C" hint-size="16px,16px"></dc-import>Reinicia em 2 dias</div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:8px 20px 24px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end;padding-top:8px">
+        <sc-for list="{{ podio }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;width:{{ p.av }}px;height:{{ p.av }}px;background:{{ p.cor }};box-shadow:0 0 0 4px {{ p.ring }}">{{ p.ini }}</div>
+            <div style="font-size:15px;font-weight:800;text-align:center">{{ p.nome }}</div>
+            <div style="font-size:13px;font-weight:800;color:#5B21B6">{{ p.xp }} XP</div>
+            <div style="width:100%;border-radius:14px 14px 4px 4px;display:flex;justify-content:center;padding-top:10px;font-size:28px;font-weight:800;height:{{ p.h }}px;background:{{ p.bg }}">{{ p.pos }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;overflow:hidden">
+        <sc-for list="{{ rankList }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px solid #F1F5F9">
+            <span style="width:22px;font-size:16px;font-weight:800;color:#475569">{{ r.pos }}</span>
+            <div style="width:40px;height:40px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:{{ r.cor }}">{{ r.ini }}</div>
+            <span style="flex:1;font-size:16px;font-weight:700">{{ r.nome }}</span>
+            <span style="font-size:15px;font-weight:800;color:#5B21B6">{{ r.xp }} XP</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:#E7F6EE;border:2px solid #087A45">
+        <dc-import name="Icon" n="trophy" size="24" color="#087A45" hint-size="24px,24px"></dc-import>
+        <div style="font-size:15px;font-weight:600;line-height:1.4"><b style="color:#05592F">Você está em 2º!</b> Faltam 40 XP para alcançar o Lucas.</div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s33 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="33 Minha Turma" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#087A45;padding:51px 20px 20px;color:#fff;display:flex;flex-direction:column;gap:12px">
+      <button onClick="{{ back }}" style="align-self:flex-start;min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;border-radius:12px" style-active="background:#05592F"><dc-import name="Icon" n="chevron-left" size="22" color="#fff" sw="2.6" hint-size="22px,22px"></dc-import>Perfil</button>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-size:13px;font-weight:800;letter-spacing:0.08em">MINHA TURMA</div>
+          <div style="font-size:28px;font-weight:800;margin-top:2px">1º A – Manhã</div>
+          <div style="font-size:15px;font-weight:600;margin-top:2px">EEMTI Rachel de Queiroz · Biologia</div>
+        </div>
+        <span style="font-size:13px;font-weight:800;color:#05592F;background:#fff;padding:6px 12px;border-radius:999px;letter-spacing:0.08em;flex-shrink:0">BIO101</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px">
+        <div style="background:#fff;border-radius:14px;padding:10px 12px;color:#1A1A2E"><div style="font-size:20px;font-weight:800">29</div><div style="font-size:13px;font-weight:600;color:#475569">estudantes</div></div>
+        <div style="background:#fff;border-radius:14px;padding:10px 12px;color:#1A1A2E"><div style="font-size:20px;font-weight:800">5</div><div style="font-size:13px;font-weight:600;color:#475569">quizzes</div></div>
+        <div style="background:#fff;border-radius:14px;padding:10px 12px;color:#1A1A2E"><div style="font-size:20px;font-weight:800;color:#05592F">2º</div><div style="font-size:13px;font-weight:600;color:#475569">sua posição</div></div>
+      </div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 42px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">PROFESSOR</div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;background:#fff;border:2px solid #E2E8F0">
+        <div style="width:48px;height:48px;border-radius:50%;background:#1D4ED8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0">ML</div>
+        <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">Prof. Maurício Linhares</div><div style="font-size:13px;font-weight:600;color:#475569">Responsável pela turma</div></div>
+        <span style="font-size:13px;font-weight:800;color:#1D4ED8;background:#EAF0FF;padding:4px 10px;border-radius:999px">Professor</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">COLEGAS · {{ membrosCount }}</span>
+        <span style="font-size:13px;font-weight:700;color:#475569">A–Z</span>
+      </div>
+      <div style="position:relative"><div style="position:absolute;left:16px;top:16px"><dc-import name="Icon" n="search" size="22" color="#475569" hint-size="22px,22px"></dc-import></div><input value="{{ st.turmaQ }}" onChange="{{ onTurmaQ }}" placeholder="Buscar colega" style="width:100%;height:54px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;padding:0 16px 0 48px;font-size:16px;font-weight:500;outline:none" style-focus="border-color:#087A45;box-shadow:0 0 0 4px #E7F6EE"></div>
+      <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;overflow:hidden">
+        <sc-for list="{{ membros }}" as="mb" hint-placeholder-count="8">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px 10px 14px;border-bottom:2px solid #F1F5F9;background:{{ mb.bg }}">
+            <div style="width:44px;height:44px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;background:{{ mb.cor }}">{{ mb.ini }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ mb.nome }}</span><sc-if value="{{ mb.eu }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:800;color:#fff;background:#087A45;padding:2px 8px;border-radius:999px">Você</span></sc-if></div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#5B21B6;margin-top:2px"><dc-import name="Icon" n="zap" size="14" color="#7C3AED" fill="#7C3AED" hint-size="14px,14px"></dc-import>{{ mb.xp }} XP</div>
+            </div>
+            <sc-if value="{{ mb.outro }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ toPartida }}" style="height:44px;padding:0 12px;border:2px solid #E2E8F0;border-radius:12px;background:#fff;color:#1A1A2E;font-size:14px;font-weight:800;box-shadow:0 3px 0 #E2E8F0;cursor:pointer;display:flex;align-items:center;gap:6px" style-active="transform:translateY(3px);box-shadow:0 0 0 #E2E8F0"><dc-import name="Icon" n="swords" size="16" color="#7C3AED" hint-size="16px,16px"></dc-import>Desafiar</button>
+            </sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{ semMembros }}" hint-placeholder-val="{{ false }}"><div style="padding:20px;text-align:center;font-size:15px;font-weight:600;color:#475569">Nenhum colega com esse nome.</div></sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s17 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="17 Perfil e Badges" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:51px 20px 0">
+      <button onClick="{{ back }}" style="min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer;border-radius:12px" style-active="background:#E2E8F0"><dc-import name="Icon" n="chevron-left" size="22" color="#1A1A2E" sw="2.6" hint-size="22px,22px"></dc-import>Voltar</button>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:4px 20px 42px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
+        <div style="width:96px;height:96px;border-radius:50%;background:#087A45;color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;box-shadow:0 0 0 5px #E7F6EE">JM</div>
+        <div style="font-size:24px;font-weight:800;margin-top:6px">Jiara Martins</div>
+        <div style="font-size:15px;font-weight:600;color:#475569">1º A • EEMTI Rachel de Queiroz</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:14px;display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:{{ s.bg }}"><dc-import name="Icon" n="{{ s.icon }}" size="22" color="{{ s.c }}" fill="{{ s.fill }}" hint-size="22px,22px"></dc-import></div>
+            <div><div style="font-size:20px;font-weight:800">{{ s.v }}</div><div style="font-size:13px;font-weight:600;color:#475569">{{ s.l }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ toTurma }}" style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;border:2px solid #E2E8F0;background:#fff;box-shadow:0 4px 0 #E2E8F0;cursor:pointer;text-align:left;font-family:inherit" style-active="transform:translateY(4px);box-shadow:0 0 0 #E2E8F0">
+        <div style="width:48px;height:48px;border-radius:14px;background:#E7F6EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="users" size="24" color="#087A45" hint-size="24px,24px"></dc-import></div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">MINHA TURMA</div><div style="font-size:17px;font-weight:800;color:#1A1A2E">1º A – Manhã</div><div style="font-size:13px;font-weight:600;color:#475569">Prof. Maurício · 29 estudantes</div></div>
+        <div style="display:flex;margin-right:4px">
+          <div style="width:30px;height:30px;border-radius:50%;background:#1D4ED8;color:#fff;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">LF</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:#7C3AED;color:#fff;border:2px solid #fff;margin-left:-10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">BV</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:#E2E8F0;color:#1A1A2E;border:2px solid #fff;margin-left:-10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">+26</div>
+        </div>
+        <dc-import name="Icon" n="chevron-right" size="20" color="#475569" hint-size="20px,20px"></dc-import>
+      </button>
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569;margin-top:4px">INSÍGNIAS DESBLOQUEADAS</div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <sc-for list="{{ badges }}" as="b" hint-placeholder-count="3">
+          <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+            <div style="position:relative;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ b.bg }};box-shadow:0 4px 0 {{ b.sh }}">
+              <dc-import name="Mascote" id="{{ b.mid }}" estado="{{ b.est }}" size="{{ b.ms }}" selo="{{ false }}" bloqueado="{{ b.locked }}" hint-size="54px,40px"></dc-import>
+              <sc-if value="{{ b.locked }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:#475569;border:2px solid #fff;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="lock" size="12" sw="2.6" color="#fff" hint-size="12px,12px"></dc-import></div></sc-if>
+            </div>
+            <div style="font-size:13px;font-weight:800;line-height:1.25;color:{{ b.tc }}">{{ b.nome }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ logout }}" style="width:100%;height:56px;margin-top:6px;border:none;border-radius:14px;background:#DC2626;color:#fff;font-size:17px;font-weight:800;box-shadow:0 4px 0 #991B1B;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0" style-active="transform:translateY(4px);box-shadow:0 0 0 #991B1B"><dc-import name="Icon" n="log-out" size="20" color="#fff" hint-size="20px,20px"></dc-import>Sair da Conta (Logout)</button>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;background:#fff;border-top:2px solid #E2E8F0;padding:6px 4px 34px;flex-shrink:0">
+    <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
+      <button onClick="{{ tb.go }}" style="flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0;cursor:pointer;min-height:56px;min-width:0">
+        <sc-if value="{{ tb.on }}" hint-placeholder-val="{{ false }}">
+          <div style="width:56px;height:32px;border-radius:999px;background:#E7F6EE;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ tb.icon }}" size="24" sw="2.4" color="#087A45" hint-size="24px,24px"></dc-import></div>
+          <span style="font-size:13px;font-weight:800;color:#05592F">{{ tb.label }}</span>
+        </sc-if>
+        <sc-if value="{{ tb.off }}" hint-placeholder-val="{{ true }}">
+          <div style="width:56px;height:32px;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ tb.icon }}" size="24" color="#475569" hint-size="24px,24px"></dc-import></div>
+          <span style="font-size:13px;font-weight:600;color:#475569">{{ tb.label }}</span>
+        </sc-if>
+      </button>
+    </sc-for>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:20px;right:20px;bottom:112px;z-index:80;display:flex;justify-content:center;pointer-events:none">
+    <div style="animation:pxToast .3s cubic-bezier(.2,.8,.2,1) both;pointer-events:auto;background:#1A1A2E;color:#fff;border-radius:14px;padding:12px 16px;display:flex;gap:10px;align-items:center;font-size:15px;font-weight:700;box-shadow:0 10px 30px rgba(26,26,46,.3)"><dc-import name="Icon" n="check-circle" size="20" color="#FFC53D" hint-size="20px,20px"></dc-import>{{ st.toast }}</div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const REPLIES = {
+  'O que é mitose?': 'Mitose é a divisão que gera duas células-filhas idênticas à célula-mãe. Ela tem 4 fases: prófase, metáfase, anáfase e telófase. É assim que seu corpo cresce e cicatriza.',
+  'Explique DNA com analogia': 'Pense no DNA como um livro de receitas. Cada gene é uma receita, e as letras A, T, C e G formam as instruções que a célula lê para fabricar proteínas.',
+  'Célula animal x vegetal': 'A célula vegetal tem parede celular, cloroplastos e um vacúolo grande. A animal não tem parede nem cloroplastos, mas tem centríolos.'
+};
+const SEL = { border: '#087A45', bg: '#E7F6EE', badgeBg: '#087A45', badgeColor: '#fff' };
+const NEU = { border: '#E2E8F0', bg: '#fff', badgeBg: '#F1F5F9', badgeColor: '#1A1A2E' };
+const OK = { border: '#087A45', bg: '#E7F6EE', badgeBg: '#087A45', badgeColor: '#fff', showIcon: true, icon: 'check-circle', iconColor: '#087A45' };
+const BAD = { border: '#DC2626', bg: '#FDECEC', badgeBg: '#DC2626', badgeColor: '#fff', showIcon: true, icon: 'x-circle', iconColor: '#DC2626' };
+class Component extends DCLogic {
+  state = {
+    code: 'BIO101', ano: '1º', sel: null, out: 'ok', duelSel: null, duelT: 14, salaSel: null, salaSec: 765, temaDuelo: 'Citologia', toast: null, typing: false, draft: '',
+    msgs: [
+      { bot: true, text: 'Olá Jiara! O que quer revisar de Biologia hoje?' },
+      { me: true, text: 'O que é mitocôndria?' },
+      { bot: true, text: 'É a usina de energia da célula! Ela faz a respiração celular e transforma a glicose em ATP, a energia que a célula usa para funcionar.' }
+    ]
+  };
+  componentDidMount() {
+    this.iv = setInterval(() => {
+      const sc = this.props.screen;
+      if (sc === '29' && this.state.duelSel == null && this.state.duelT > 0) this.setState(s => ({ duelT: s.duelT - 1 }));
+      if (sc === '14' && this.state.salaSec > 0) this.setState(s => ({ salaSec: s.salaSec - 1 }));
+    }, 1000);
+  }
+  componentDidUpdate(pp) {
+    if (pp.salaQuiz !== this.props.salaQuiz) { this.setState({ salaSent: false, salaSel: null, salaSec: 900 }); if (this.props.salaQuiz && this.props.screen === '31') this.props.go('14'); }
+    if (pp.screen !== this.props.screen && this.props.screen === '29') this.setState({ duelSel: null, duelT: 14 });
+    if (pp.screen !== this.props.screen && this.props.screen === '12') this.setState({ sel: null });
+  }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.tt); clearTimeout(this.dt); }
+  toast(msg) { clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(() => this.setState({ toast: null }), 2200); }
+  async ask(q) {
+    q = (q || '').trim(); if (!q || this.state.typing) return;
+    this.setState(s => ({ msgs: [...s.msgs, { me: true, text: q }], draft: '', typing: true }));
+    let reply = REPLIES[q];
+    if (!reply) {
+      try {
+        if (window.claude && window.claude.complete) reply = await window.claude.complete(`Você é o BioBot, tutor de Biologia para estudantes do Ensino Médio (15 a 17 anos) em Fortaleza. Responda em português do Brasil, em até 3 frases curtas, tom jovem e encorajador, falando com "você". Pergunta: ${q}`);
+      } catch (e) {}
+    }
+    if (!reply) reply = 'Boa pergunta! Vou te explicar em partes. Que tal revisar a lição de Organelas na sua trilha?';
+    setTimeout(() => this.setState(s => ({ typing: false, msgs: [...s.msgs, { bot: true, text: reply }] })), REPLIES[q] ? 1400 : 300);
+  }
+  renderVals() {
+    const { screen = '11', go = () => {}, back = () => {} } = this.props;
+    const salaQuiz = this.props.salaQuiz; const salaOn = !!salaQuiz; const salaLive = salaOn && !this.state.salaSent;
+    const st = this.state, sc = screen;
+    const h = React.createElement;
+    const is = {
+      join: sc === '25' || sc === '25ok', s25: sc === '25', s25ok: sc === '25ok', s11: sc === '11',
+      licao: ['12', '12ok', '27'].includes(sc), s12: sc === '12', s12ok: sc === '12ok', s27: sc === '27', s26: sc === '26',
+      duelos: sc === '13' || sc === '32c', s13: sc === '13', s32c: sc === '32c', s28: sc === '28', s29: sc === '29', s30: sc === '30',
+      sala: sc === '14' || sc === '31', s14: sc === '14' && salaLive, s31: sc === '31' || (sc === '14' && !salaLive), s15: sc === '15', s33: sc === '33', s16: sc === '16', s17: sc === '17'
+    };
+    const showTabs = ['11', '13', '32c', '28', '31', '15', '16'].includes(sc);
+    const tabs = [['Trilhas', 'book-open', '11', ['11']], ['Duelos', 'swords', '13', ['13', '28', '32c']], ['Sala', 'presentation', salaLive ? '14' : '31', ['14', '31']], ['BioBot', 'message-circle', '15', ['15']], ['Ranking', 'trophy', '16', ['16']]]
+      .map(([label, icon, id, ids]) => ({ label, icon, go: () => go(id), on: ids.includes(sc), off: !ids.includes(sc) }));
+    const ANOS = { '1º': ['1º ANO (CITOLOGIA)', 'A Célula como Unidade da Vida'], '2º': ['2º ANO (GENÉTICA)', 'Hereditariedade e DNA'], '3º': ['3º ANO (ECOLOGIA)', 'Ecossistemas e Evolução'] };
+    const anos = ['1º', '2º', '3º'].map(a => ({ label: a + ' Ano', on: st.ano === a, off: st.ano !== a, pick: () => this.setState({ ano: a, temaSel: null }) }));
+    const C = 175;
+    const TEMAS = {
+      '1º': [
+        ['mito', 'Mito', 'Citologia', 'A Célula como Unidade da Vida', ['A célula', 'Membrana plasmática', 'Organelas', 'Respiração celular', 'Revisão da unidade'], 2, [3, 2], 'Qual organela citoplasmática realiza a respiração celular?', ['Ribossomo', 'Mitocôndria', 'Complexo de Golgi', 'Lisossomo'], 1, 'A mitocôndria realiza a respiração celular e produz ATP, a energia que a célula usa para funcionar.'],
+        ['medusa', 'Medusa', 'Microbiologia', 'Vírus, Bactérias e Fungos', ['O que são micróbios', 'Bactérias', 'Vírus', 'Fungos', 'Revisão da unidade'], 1, [3], 'Qual destes NÃO é formado por células?', ['Bactéria', 'Fungo', 'Vírus', 'Protozoário'], 2, 'Os vírus são acelulares: só se reproduzem dentro de uma célula hospedeira.'],
+        ['teco', 'Teco', 'Anatomia e Fisiologia', 'Sistemas do Corpo Humano', ['Sistema digestório', 'Sistema respiratório', 'Sistema circulatório', 'Sistema nervoso', 'Revisão da unidade'], 0, [], 'Em qual órgão ocorre a maior parte da absorção dos nutrientes?', ['Estômago', 'Intestino delgado', 'Esôfago', 'Fígado'], 1, 'As vilosidades do intestino delgado aumentam a área de contato e absorvem os nutrientes.']
+      ],
+      '2º': [
+        ['mandu', 'Mandu', 'Zoologia', 'Classificação dos Animais', ['Classificação', 'Invertebrados', 'Vertebrados', 'Mamíferos', 'Revisão da unidade'], 0, [], 'O tamanduá-bandeira pertence a qual classe?', ['Aves', 'Répteis', 'Mamíferos', 'Anfíbios'], 2, 'Ele tem pelos e amamenta os filhotes, características dos mamíferos.'],
+        ['sapo', 'Sapo', 'Botânica', 'Plantas: Estrutura e Ciclos', ['Grupos de plantas', 'Raiz, caule e folha', 'Fotossíntese', 'Reprodução', 'Revisão da unidade'], 0, [], 'Qual pigmento capta a luz na fotossíntese?', ['Hemoglobina', 'Clorofila', 'Melanina', 'Queratina'], 1, 'A clorofila, nos cloroplastos, absorve a luz usada para produzir glicose.'],
+        ['baleia', 'Baleia', 'Biologia Marinha', 'Vida nos Oceanos', ['Zonas do oceano', 'Plâncton', 'Recifes de coral', 'Mamíferos marinhos', 'Revisão da unidade'], 0, [], 'Qual é a base da cadeia alimentar marinha?', ['Tubarões', 'Fitoplâncton', 'Baleias', 'Corais'], 1, 'O fitoplâncton faz fotossíntese e alimenta quase toda a vida marinha.']
+      ],
+      '3º': [
+        ['borbo', 'Borbo', 'Genética', 'Hereditariedade e DNA', ['DNA e genes', '1ª Lei de Mendel', 'Heredogramas', 'Mutações', 'Revisão da unidade'], 0, [], 'Quantos tipos de base nitrogenada existem no DNA?', ['2', '3', '4', '5'], 2, 'Adenina, timina, citosina e guanina: A pareia com T, e C pareia com G.'],
+        ['dinho', 'Dinho', 'Ecologia', 'Ecossistemas e Meio Ambiente', ['Cadeias alimentares', 'Ciclos da matéria', 'Relações ecológicas', 'Conservação', 'Revisão da unidade'], 0, [], 'Em uma cadeia alimentar, quem são os produtores?', ['Fungos', 'Herbívoros', 'Plantas e algas', 'Carnívoros'], 2, 'Produtores fazem fotossíntese e transformam a energia do Sol em alimento.'],
+        ['guara', 'Guará', 'Biomas do Brasil', 'Biomas Brasileiros', ['Amazônia', 'Caatinga', 'Cerrado', 'Mata Atlântica', 'Revisão da unidade'], 0, [], 'Qual bioma é exclusivamente brasileiro e cobre boa parte do Ceará?', ['Pampa', 'Cerrado', 'Caatinga', 'Pantanal'], 2, 'A Caatinga só existe no Brasil e é adaptada ao clima semiárido.'],
+        ['abelha', 'Abelha', 'Biotecnologia', 'Ciência no Dia a Dia', ['O que é biotecnologia', 'Fermentação', 'Transgênicos', 'Vacinas', 'Revisão da unidade'], 0, [], 'Qual micro-organismo faz a massa do pão crescer?', ['Bactéria lática', 'Levedura', 'Vírus', 'Alga'], 1, 'A levedura fermenta o açúcar e libera gás carbônico, que faz a massa crescer.']
+      ]
+    };
+    const lista = TEMAS[st.ano];
+    const selId = lista.some(t => t[0] === st.temaSel) ? st.temaSel : lista[0][0];
+    const T = lista.find(t => t[0] === selId);
+    const cur = Math.min(T[5], 4);
+    const tema = { mascote: T[0], nome: T[1], tema: T[2], titulo: T[3], q: T[7], alts: T[8], c: T[9], certa: T[8][T[9]], ok: T[10], licaoNome: T[4][cur], label: T[4][cur].toUpperCase() };
+    const temas = lista.map(t => { const on = t[0] === selId; return { mascote: t[0], nome: t[1], tema: t[2], prog: Math.min(t[5], 5) + '/5', border: on ? '#087A45' : '#E2E8F0', bg: on ? '#E7F6EE' : '#fff', pick: () => this.setState({ temaSel: t[0] }) }; });
+    const OFFS = [0, 60, -50, 10, 60];
+    const deco = { top: 8 + cur * 116 + 6, left: OFFS[cur] >= 0 ? -4 : 270 };
+    const nodes = T[4].map((nome, i) => [nome, OFFS[i], i < T[5] ? 'done' : i === cur ? 'cur' : 'lock', T[6][i] || 0, i === 4 ? 'trophy' : 'lock']).map(([nome, off, kind, stars, icon]) => {
+      const w = kind === 'cur' ? 84 : 72;
+      const right = off <= 0;
+      return {
+        nome, done: kind === 'done', cur: kind === 'cur', lock: kind === 'lock', icon: icon || 'lock',
+        left: C - w / 2 + off, labelLeft: right ? C + off + w / 2 + 12 : C + off - w / 2 - 12 - 104, align: right ? 'left' : 'right',
+        labelColor: kind === 'lock' ? '#475569' : '#1A1A2E',
+        stars: [0, 1, 2].map(i => ({ c: i < (stars || 0) ? '#FFC53D' : '#CBD5E1' }))
+      };
+    });
+    const nodePulse = h('div', { style: { position: 'absolute', inset: 0, borderRadius: '50%', background: '#FFC53D', animation: 'pxPulse 1.6s ease-out infinite' } });
+    const bannerGlow = h('div', { style: { position: 'absolute', inset: 0, borderRadius: 18, animation: 'pxGlow 1.8s ease-in-out infinite', pointerEvents: 'none' } });
+    const liveDot = h('span', { style: { position: 'relative', width: 10, height: 10, display: 'inline-block', flexShrink: 0 } },
+      h('span', { style: { position: 'absolute', inset: 0, borderRadius: '50%', background: '#DC2626', animation: 'pxPulse 1.4s ease-out infinite' } }),
+      h('span', { style: { position: 'absolute', inset: 0, borderRadius: '50%', background: '#DC2626' } }));
+    const typingDots = [0, 1, 2].map(i => h('span', { key: i, style: { width: 8, height: 8, borderRadius: '50%', background: '#475569', display: 'inline-block', animation: `pxDot 1.2s ${i * 0.15}s infinite` } }));
+    const LA = tema.alts;
+    const wrongSel = st.sel != null && st.sel !== tema.c ? st.sel : (tema.c === 0 ? 1 : 0);
+    const licaoAlts = LA.map((texto, i) => {
+      let s = NEU;
+      if (sc === '12') s = st.sel === i ? SEL : NEU;
+      if (sc === '12ok') s = i === tema.c ? OK : NEU;
+      if (sc === '27') s = i === tema.c ? OK : i === wrongSel ? BAD : NEU;
+      return { letra: 'ABCD'[i], texto, showIcon: false, ...s, pick: () => { if (sc === '12') this.setState({ sel: i }); } };
+    });
+    const DA = ['Ribossomo', 'Lisossomo', 'Vacúolo', 'Centríolo'];
+    const duelAlts = DA.map((texto, i) => {
+      let s = NEU;
+      if (st.duelSel != null) s = i === 0 ? OK : i === st.duelSel ? BAD : NEU;
+      return { letra: 'ABCD'[i], texto, showIcon: false, ...s, pick: () => { if (st.duelSel != null) return; this.setState({ duelSel: i }); clearTimeout(this.dt); this.dt = setTimeout(() => go('30'), 1000); } };
+    });
+    const bio = salaQuiz === 'Bioquímica';
+    const SA = bio ? ['Glicose', 'Lipídio', 'Vitamina C', 'Água'] : ['Mosaico fluido', 'Bloco rígido', 'Camada única de proteínas', 'Parede de celulose'];
+    const salaAlts = SA.map((texto, i) => ({ letra: 'ABCD'[i], texto, ...(st.salaSel === i ? SEL : NEU), pick: () => this.setState({ salaSel: i }) }));
+    const mm = Math.floor(st.salaSec / 60), ss = st.salaSec % 60;
+    const fromWrong = st.out === 'bad';
+    const duelos = [
+      { nome: 'Gabriel Menezes', ini: 'GM', cor: '#C2410C', tema: 'Citologia Celular', status: 'Seu turno!', chipColor: '#1A1A2E', chipBg: '#FFC53D', border: '#FFC53D', open: () => go('29') },
+      { nome: 'Lucas Ferreira', ini: 'LF', cor: '#1D4ED8', tema: 'Bioquímica', status: 'Vitória 3x2', chipColor: '#05592F', chipBg: '#E7F6EE', border: '#E2E8F0', open: () => go('30') }
+    ];
+    const colegas = [['Gabriel Menezes', 'GM', 240, '#C2410C'], ['Lucas Ferreira', 'LF', 520, '#1D4ED8'], ['Beatriz Vasconcelos', 'BV', 390, '#7C3AED'], ['Ana Clara Sousa', 'AS', 360, '#087A45'], ['Pedro Henrique Lima', 'PL', 310, '#475569']].map(([nome, ini, xp, cor]) => ({ nome, ini, xp, cor }));
+    const temasDuelo = ['Aleatório', 'Citologia', 'Bioquímica', 'Genética'].map(t => ({ label: t, on: st.temaDuelo === t, off: st.temaDuelo !== t, pick: () => this.setState({ temaDuelo: t }) }));
+    const podio = [
+      { pos: '2', nome: 'Você', ini: 'JM', xp: 480, cor: '#087A45', ring: '#A7DFC1', av: 60, h: 92, bg: '#E2E8F0' },
+      { pos: '1', nome: 'Lucas', ini: 'LF', xp: 520, cor: '#1D4ED8', ring: '#FFC53D', av: 72, h: 124, bg: '#FFC53D' },
+      { pos: '3', nome: 'Beatriz', ini: 'BV', xp: 390, cor: '#7C3AED', ring: '#FDBA74', av: 56, h: 72, bg: '#FFEDD5' }
+    ];
+    const rankList = [['4', 'Ana Clara Sousa', 'AS', 360, '#087A45'], ['5', 'Pedro Henrique Lima', 'PL', 310, '#475569'], ['6', 'Mariana Castro', 'MC', 290, '#1D4ED8'], ['7', 'Gabriel Menezes', 'GM', 240, '#C2410C']].map(([pos, nome, ini, xp, cor]) => ({ pos, nome, ini, xp, cor }));
+    const stats = [
+      { icon: 'zap', v: '480 XP', l: 'total', c: '#7C3AED', fill: '#7C3AED', bg: '#F3EEFF' },
+      { icon: 'flame', v: '5 dias', l: 'de ofensiva', c: '#F97316', fill: '#F97316', bg: '#FFEDD5' },
+      { icon: 'target', v: '88%', l: 'de acerto', c: '#087A45', fill: 'none', bg: '#E7F6EE' },
+      { icon: 'book-open', v: '5 lições', l: 'concluídas', c: '#1D4ED8', fill: 'none', bg: '#EAF0FF' }
+    ];
+    const badges = [
+      { nome: 'Mestre da Citologia', mid: 'mito', est: 'comemorando', ms: 48, bg: '#FFEDD5', sh: '#FDBA74', tc: '#1A1A2E' },
+      { nome: 'Duelista Nato', mid: 'guara', est: 'feliz', ms: 34, bg: '#FFEDD5', sh: '#FDBA74', tc: '#1A1A2E' },
+      { nome: 'Guardião do DNA', mid: 'borbo', est: 'feliz', ms: 34, bg: '#E2E8F0', sh: '#CBD5E1', tc: '#475569', locked: true }
+    ];
+    const sugest = Object.keys(REPLIES).map(t => ({ t, send: () => this.ask(t) }));
+    return {
+      salaOn, salaNome: bio ? 'Quiz 2: Bioquímica' : 'Quiz 1: A Célula', salaQ: bio ? 'Qual molécula é a principal fonte de energia imediata da célula?' : 'A membrana celular tem modelo de:',
+      waitTitle: st.salaSent && salaOn ? 'Resposta enviada!' : (salaOn ? 'Modo Sala liberado' : 'Nenhuma atividade em sala agora'),
+      waitBody: st.salaSent && salaOn ? 'Aguarde o Prof. Maurício liberar a próxima questão. O resultado aparece no fim da atividade.' : 'Quando o Prof. Maurício liberar uma atividade, ela aparece aqui e como aviso na sua trilha.',
+      waitChip: st.salaSent && salaOn ? 'AGUARDANDO PRÓXIMA QUESTÃO' : 'AGUARDANDO O PROFESSOR', waitIcon: st.salaSent && salaOn ? 'check-circle' : 'hourglass', waitMood: st.salaSent && salaOn ? 'comemorando' : 'dormindo', waitMascote: st.salaSent && salaOn ? 'mito' : 'teco',
+      ...(() => {
+        const M = [['Ana Clara Sousa', 360, '#087A45'], ['Beatriz Vasconcelos', 390, '#7C3AED'], ['Camila Rocha', 190, '#C2410C'], ['Gabriel Menezes', 240, '#C2410C'], ['Jiara Martins', 480, '#087A45', 1], ['João Victor Alencar', 200, '#1D4ED8'], ['Larissa Freitas', 210, '#7C3AED'], ['Lucas Ferreira', 520, '#1D4ED8'], ['Mariana Castro', 290, '#1D4ED8'], ['Pedro Henrique Lima', 310, '#475569'], ['Rafael Oliveira', 220, '#087A45'], ['Thiago Bezerra', 170, '#475569']];
+        const q = (st.turmaQ || '').trim().toLowerCase();
+        const membros = M.filter(m => !q || m[0].toLowerCase().includes(q)).map(([nome, xp, cor, eu]) => ({ nome, xp, cor, eu: !!eu, outro: !eu, ini: nome.split(' ').filter(w => w.length > 2).slice(0, 2).map(w => w[0]).join(''), bg: eu ? '#F3FBF6' : '#fff' }));
+        return { membros, semMembros: membros.length === 0, membrosCount: q ? membros.length + ' encontrados' : '29 estudantes' };
+      })(),
+      onTurmaQ: (ev) => this.setState({ turmaQ: ev.target.value }), toTurma: () => go('33'),
+      is, st, back, showTabs, tabs, ano: { label: st.ano + ' ANO · ' + tema.tema.toUpperCase(), titulo: tema.titulo }, tema, temas, deco, anos, nodes, nodePulse, bannerGlow, liveDot, typingDots,
+      licaoAlts, hasSel: st.sel != null, noSel: st.sel == null, progress: sc === '12' ? 30 : 40, vidas: sc === '27' ? 4 : 5,
+      duelAlts, duelTime: '0:' + String(st.duelT).padStart(2, '0'), duelPct: Math.round(st.duelT / 15 * 100),
+      duelDots: [{ c: '#087A45' }, { c: '#DC2626' }, { c: '#F97316' }, { c: '#E2E8F0' }, { c: '#E2E8F0' }],
+      salaAlts, salaHasSel: st.salaSel != null, salaNoSel: st.salaSel == null, salaTime: `${mm}:${String(ss).padStart(2, '0')}`,
+      fimStars: [0, 1, 2].map(i => { const on = i < (fromWrong ? 2 : 3); return { c: on ? '#FFC53D' : '#05592F', stroke: on ? '#D99A1E' : '#A7DFC1' }; }),
+      fim: { xp: fromWrong ? 105 : 120, prec: fromWrong ? 90 : 100 },
+      duelos, colegas, temasDuelo, podio, rankList, stats, badges, sugest, msgs: st.msgs,
+      hasToast: !!st.toast,
+      onCode: (e) => this.setState({ code: e.target.value.toUpperCase() }),
+      joinClass: () => { if (st.code.length < 6) { this.toast('O código tem 6 caracteres'); return; } go('25ok'); },
+      onDraft: (e) => this.setState({ draft: e.target.value }), onKey: (e) => { if (e.key === 'Enter') this.ask(st.draft); }, sendDraft: () => this.ask(st.draft),
+      verificar: () => { const ok = st.sel === tema.c; this.setState({ out: ok ? 'ok' : 'bad' }); go(ok ? '12ok' : '27'); },
+      enviarSala: () => { this.setState({ salaSel: null, salaSent: true }); go('31'); },
+      toTrilha: () => { if (this.props.setJoined) this.props.setJoined(true); go('11'); }, toPerfil: () => go('17'), toSala: () => go(salaLive ? '14' : '31'), toLicao: () => go('12'), toFim: () => go('26'),
+      toDesafiar: () => go('28'), toPartida: () => go('29'), toDuelos: () => go('13'), logout: () => go('03')
+    };
+  }
+}
+</script>
+</body>
+</html>

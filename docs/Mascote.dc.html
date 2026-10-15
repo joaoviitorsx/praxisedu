@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:{{ w }}px;height:{{ h }}px">
+  <sc-if value="{{ isMito }}" hint-placeholder-val="{{ false }}"><dc-import name="Mito" mood="{{ estado }}" size="{{ h }}" hint-size="{{ h }}px,{{ h }}px"></dc-import></sc-if>
+  <sc-if value="{{ isImg }}" hint-placeholder-val="{{ false }}"><img src="{{ src }}" alt="{{ alt }}" style="width:100%;height:100%;object-fit:contain;display:block;opacity:{{ op }};filter:{{ filt }}"></sc-if>
+  <sc-if value="{{ badge }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:{{ bTop }}px;right:{{ bRight }}px;border-radius:999px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;width:{{ bs }}px;height:{{ bs }}px;background:{{ bBg }}">{{ bIcon }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:200,&quot;height&quot;:140},&quot;id&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mito&quot;,&quot;dinho&quot;,&quot;mandu&quot;,&quot;guara&quot;,&quot;sapo&quot;,&quot;baleia&quot;,&quot;medusa&quot;,&quot;borbo&quot;,&quot;teco&quot;,&quot;abelha&quot;],&quot;default&quot;:&quot;dinho&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;feliz&quot;,&quot;comemorando&quot;,&quot;pensativo&quot;,&quot;triste&quot;,&quot;dormindo&quot;],&quot;default&quot;:&quot;feliz&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:96,&quot;tsType&quot;:&quot;number&quot;},&quot;bloqueado&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;selo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+// Estado padronizado: arte dedicada quando existe; senão arte base + selo de estado.
+const M = {
+  dinho:  { nome: 'Dinho',  feliz: 'dinho',  comemorando: 'dinho-1', pensativo: 'dinho-2' },
+  mandu:  { nome: 'Mandu',  feliz: 'mandu',  pensativo: 'mandu-3', dormindo: 'mandu-2' },
+  guara:  { nome: 'Guará',  feliz: 'guara',  pensativo: 'guara-2' },
+  sapo:   { nome: 'Sapo',   feliz: 'sapo',   comemorando: 'sapo-2', dormindo: 'sapo-3' },
+  baleia: { nome: 'Baleia', feliz: 'baleia', comemorando: 'baleia-2', dormindo: 'baleia-3' },
+  medusa: { nome: 'Medusa', feliz: 'medusa', comemorando: 'medusa-3', pensativo: 'medusa-2' },
+  borbo:  { nome: 'Borbo',  feliz: 'borbo',  comemorando: 'borbo-3' },
+  teco:   { nome: 'Teco',   feliz: 'teco',   dormindo: 'teco-3' },
+  abelha: { nome: 'Abelha', feliz: 'abelha', comemorando: 'abelha-3', pensativo: 'abelha-2' }
+};
+const BADGE = { comemorando: ['#FFC53D', 'star', '#1A1A2E'], pensativo: ['#7C3AED', 'help-circle', '#fff'], triste: ['#3B82F6', 'heart-crack', '#fff'], dormindo: ['#475569', 'moon', '#fff'] };
+const PATHS = { star: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z', 'help-circle': 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3 M12 17h.01', 'heart-crack': 'M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z m12 13-1-1 2-2-3-3 2-2', moon: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z' };
+class Component extends DCLogic {
+  renderVals() {
+    const h = React.createElement;
+    const id = this.props.id || 'dinho';
+    const estado = this.props.estado || 'feliz';
+    const size = Number(this.props.size || 96);
+    const locked = this.props.bloqueado === true || this.props.bloqueado === 'true';
+    if (id === 'mito') return { isMito: true, isImg: false, estado, w: size, h: size, badge: false };
+    const m = M[id] || M.dinho;
+    let file = m[estado] || m.feliz;
+    let dedicated = !!m[estado];
+    if (/-\d$/.test(file) && size > 90) { file = m.feliz; dedicated = false; }
+    const big = !/-\d$/.test(file);
+    const w = big ? Math.round(size * 1.59) : Math.round(size * 1.07);
+    const showBadge = !locked && !dedicated && estado !== 'feliz' && this.props.selo !== false && this.props.selo !== 'false';
+    const b = BADGE[estado] || BADGE.comemorando;
+    const bs = Math.max(18, Math.round(size * 0.26));
+    const ic = Math.round(bs * 0.6);
+    return {
+      isMito: false, isImg: true, src: `assets/mascotes/${file}.png`, alt: `${m.nome} ${estado}`, w, h: size,
+      op: locked ? 0.35 : 1, filt: locked ? 'grayscale(1)' : (estado === 'triste' && !dedicated ? 'saturate(.55)' : 'none'),
+      badge: showBadge, bs, bBg: b[0], bTop: big ? 0 : -2, bRight: big ? Math.round(w * 0.12) : -2,
+      bIcon: h('svg', { width: ic, height: ic, viewBox: '0 0 24 24', fill: b[1] === 'star' || b[1] === 'moon' ? b[2] : 'none', stroke: b[2], strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' }, h('path', { d: PATHS[b[1]] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

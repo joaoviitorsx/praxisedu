@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#F7F7FA;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E">
+<div style="flex:1;position:relative;min-height:0">
+
+<sc-if value="{{ is.turmas }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="06 Minhas Turmas" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#1D4ED8;padding:55px 20px 20px;color:#fff;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <dc-import name="Logo" variant="symbol" tone="white" size="32" hint-size="32px,32px"></dc-import>
+          <span style="font-size:18px;font-weight:800;letter-spacing:0.04em">PRÁXIS EDU</span>
+        </div>
+        <button onClick="{{ toPerfil }}" style="width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:#fff;color:#1D4ED8;font-size:16px;font-weight:800;cursor:pointer">ML</button>
+      </div>
+      <div>
+        <div style="font-size:24px;font-weight:800">Prof. Maurício</div>
+        <div style="font-size:15px;font-weight:600;color:#DCE6FF;margin-top:2px">EEMTI Rachel de Queiroz</div>
+      </div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:20px 20px 24px;display:flex;flex-direction:column;gap:16px">
+      <sc-if value="{{ hasTurmas }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">PARA HOJE</div>
+          <button onClick="{{ toDesemp }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;border:2px solid #F5B5B5;background:#FDECEC;cursor:pointer;text-align:left;font-family:inherit" style-active="transform:translateY(2px)">
+            <dc-import name="Icon" n="alert-triangle" size="22" color="#B91C1C" hint-size="22px,22px"></dc-import>
+            <div style="flex:1"><div style="font-size:15px;font-weight:800;color:#1A1A2E">3 alunos precisam de apoio</div><div style="font-size:13px;font-weight:600;color:#475569">Mais erros em Genética · 1º A</div></div>
+            <dc-import name="Icon" n="chevron-right" size="20" color="#B91C1C" hint-size="20px,20px"></dc-import>
+          </button>
+          <button onClick="{{ toAtiv }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;border:2px solid #FFD98A;background:#FFF4D6;cursor:pointer;text-align:left;font-family:inherit" style-active="transform:translateY(2px)">
+            <dc-import name="Icon" n="presentation" size="22" color="#1A1A2E" hint-size="22px,22px"></dc-import>
+            <div style="flex:1"><div style="font-size:15px;font-weight:800;color:#1A1A2E">Quiz 2: Bioquímica pronto para a aula</div><div style="font-size:13px;font-weight:600;color:#475569">Libere no Modo Sala quando começar</div></div>
+            <dc-import name="Icon" n="chevron-right" size="20" color="#1A1A2E" hint-size="20px,20px"></dc-import>
+          </button>
+        </div>
+      </sc-if>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+        <h2 style="margin:0;font-size:20px;font-weight:800">Minhas Turmas</h2>
+        <span style="font-size:13px;font-weight:700;color:#475569">{{ turmaCount }}</span>
+      </div>
+      <sc-if value="{{ hasTurmas }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ turmas }}" as="t" hint-placeholder-count="2">
+          <div onClick="{{ t.open }}" style="background:#fff;border:2px solid #E2E8F0;border-radius:20px;box-shadow:0 4px 0 #E2E8F0;padding:16px;display:flex;flex-direction:column;gap:14px;cursor:pointer" style-active="transform:translateY(2px);box-shadow:0 2px 0 #E2E8F0">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div style="width:48px;height:48px;border-radius:14px;background:#EAF0FF;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="users" size="24" color="#1D4ED8" hint-size="24px,24px"></dc-import></div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:18px;font-weight:800">{{ t.nome }}</div>
+                <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
+                  <span style="font-size:13px;font-weight:800;color:#1D4ED8;background:#EAF0FF;padding:4px 10px;border-radius:999px;letter-spacing:0.06em">{{ t.codigo }}</span>
+                  <sc-if value="{{ t.sala }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:800;color:#1A1A2E;background:#FFC53D;padding:4px 10px;border-radius:999px">Modo Sala: ATIVO</span></sc-if>
+                </div>
+              </div>
+              <button onClick="{{ t.menu }}" aria-label="Ações da turma" style="width:44px;height:44px;margin:-6px -8px 0 0;border:none;background:none;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="background:#F1F5F9"><dc-import name="Icon" n="more-vertical" size="22" color="#475569" hint-size="22px,22px"></dc-import></button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:12px;border-top:2px solid #F1F5F9">
+              <div><div style="font-size:20px;font-weight:800">{{ t.alunos }}</div><div style="font-size:13px;font-weight:600;color:#475569">alunos</div></div>
+              <div><div style="font-size:20px;font-weight:800">{{ t.quizzes }}</div><div style="font-size:13px;font-weight:600;color:#475569">quizzes</div></div>
+              <div><div style="font-size:20px;font-weight:800;color:#087A45">{{ t.acerto }}%</div><div style="font-size:13px;font-weight:600;color:#475569">acertos</div></div>
+            </div>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ noTurmas }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="32a Sem turmas" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:32px 12px">
+          <dc-import name="Mascote" id="baleia" estado="dormindo" size="110" hint-size="176px,110px"></dc-import>
+          <div style="font-size:20px;font-weight:800">Nenhuma turma por aqui</div>
+          <div style="font-size:16px;font-weight:500;color:#475569;line-height:1.5">Crie sua primeira turma e compartilhe o código com os estudantes.</div>
+        </div>
+      </sc-if>
+      <button onClick="{{ toCriar }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#1D4ED8;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #1E3A8A;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #1E3A8A"><dc-import name="Icon" n="plus" size="22" sw="3" color="#fff" hint-size="22px,22px"></dc-import>Criar Nova Turma</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s07 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="07 Criar Turma" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#1D4ED8;padding:51px 20px 18px;color:#fff">
+      <button onClick="{{ back }}" style="min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;border-radius:12px" style-active="background:#1E40AF"><dc-import name="Icon" n="chevron-left" size="22" color="#fff" sw="2.6" hint-size="22px,22px"></dc-import>Turmas</button>
+      <div style="font-size:24px;font-weight:800;margin-top:4px">Criar Turma</div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:20px 20px 42px;display:flex;flex-direction:column;gap:20px">
+      <label style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">NOME DA TURMA</span>
+        <input value="{{ st.nomeTurma }}" onChange="{{ on.nomeTurma }}" placeholder="Ex.: 3º B – Manhã" style="width:100%;height:56px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;padding:0 16px;font-size:16px;font-weight:500;color:#1A1A2E;outline:none" style-focus="border-color:#1D4ED8;box-shadow:0 0 0 4px #EAF0FF">
+      </label>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">SÉRIE / ANO</span>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <sc-for list="{{ series }}" as="o" hint-placeholder-count="3">
+            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.pick }}" style="height:52px;border-radius:14px;border:2px solid #1D4ED8;background:#EAF0FF;color:#1D4ED8;font-size:16px;font-weight:800;box-shadow:0 3px 0 #1D4ED8;cursor:pointer">{{ o.label }}</button></sc-if>
+            <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ o.pick }}" style="height:52px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;color:#1A1A2E;font-size:16px;font-weight:700;box-shadow:0 3px 0 #E2E8F0;cursor:pointer">{{ o.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">TURNO</span>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <sc-for list="{{ turnos }}" as="o" hint-placeholder-count="3">
+            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.pick }}" style="height:52px;border-radius:14px;border:2px solid #1D4ED8;background:#EAF0FF;color:#1D4ED8;font-size:16px;font-weight:800;box-shadow:0 3px 0 #1D4ED8;cursor:pointer">{{ o.label }}</button></sc-if>
+            <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ o.pick }}" style="height:52px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;color:#1A1A2E;font-size:16px;font-weight:700;box-shadow:0 3px 0 #E2E8F0;cursor:pointer">{{ o.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">CÓDIGO DE ENTRADA</span>
+        <div style="border-radius:20px;border:2px dashed #93AEF0;background:#EAF0FF;padding:20px;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="font-size:36px;font-weight:800;letter-spacing:0.18em;color:#1D4ED8">BIO305</div>
+          <div style="font-size:13px;font-weight:600;color:#475569">Gerado automaticamente</div>
+          <div style="display:flex;gap:8px;margin-top:10px;width:100%">
+            <button onClick="{{ copyCode }}" style="flex:1;height:48px;border-radius:14px;border:2px solid #C7D5F8;background:#fff;color:#1D4ED8;font-size:16px;font-weight:800;box-shadow:0 3px 0 #C7D5F8;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-active="transform:translateY(3px);box-shadow:0 0 0 #C7D5F8"><dc-import name="Icon" n="copy" size="20" color="#1D4ED8" hint-size="20px,20px"></dc-import>Copiar</button>
+            <button onClick="{{ shareCode }}" style="flex:1;height:48px;border-radius:14px;border:2px solid #C7D5F8;background:#fff;color:#1D4ED8;font-size:16px;font-weight:800;box-shadow:0 3px 0 #C7D5F8;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-active="transform:translateY(3px);box-shadow:0 0 0 #C7D5F8"><dc-import name="Icon" n="share" size="20" color="#1D4ED8" hint-size="20px,20px"></dc-import>Compartilhar</button>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onClick="{{ saveTurma }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#087A45;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #05592F;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #05592F">Salvar Turma</button>
+        <button onClick="{{ back }}" style="width:100%;height:48px;border:none;border-radius:14px;background:none;color:#475569;font-size:16px;font-weight:800;cursor:pointer" style-active="background:#E2E8F0">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.panel }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="08 Painel da Turma" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#1D4ED8;padding:51px 20px 18px;color:#fff">
+      <button onClick="{{ toTurmas }}" style="min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;border-radius:12px" style-active="background:#1E40AF"><dc-import name="Icon" n="chevron-left" size="22" color="#fff" sw="2.6" hint-size="22px,22px"></dc-import>Turmas</button>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:4px">
+        <div>
+          <div style="font-size:24px;font-weight:800">1º A – Manhã</div>
+          <div style="font-size:15px;font-weight:600;color:#DCE6FF;margin-top:2px">BIO101 · 28 alunos</div>
+        </div>
+        <sc-if value="{{ anySala }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;font-weight:800;color:#1A1A2E;background:#FFC53D;padding:6px 12px;border-radius:999px;white-space:nowrap">Modo Sala: ATIVO</span></sc-if>
+      </div>
+    </div>
+    <div style="display:flex;background:#fff;border-bottom:2px solid #E2E8F0;padding:0 8px">
+      <sc-for list="{{ ptabs }}" as="pt" hint-placeholder-count="3">
+        <sc-if value="{{ pt.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pt.go }}" style="flex:1;height:52px;border:none;background:none;border-bottom:3px solid #1D4ED8;margin-bottom:-2px;color:#1D4ED8;font-size:16px;font-weight:800;cursor:pointer">{{ pt.label }}</button></sc-if>
+        <sc-if value="{{ pt.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ pt.go }}" style="flex:1;height:52px;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px;color:#475569;font-size:16px;font-weight:700;cursor:pointer">{{ pt.label }}</button></sc-if>
+      </sc-for>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:12px">
+
+      <sc-if value="{{ is.s08 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;color:#475569"><span>28 ALUNOS</span><span>ORDENADO POR XP</span></div>
+        <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;overflow:hidden">
+          <sc-for list="{{ alunos }}" as="a" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:2px solid #F1F5F9;background:{{ a.bg }}">
+              <div style="width:44px;height:44px;border-radius:50%;background:{{ a.cor }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">{{ a.ini }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:16px;font-weight:800;color:{{ a.nameColor }}">{{ a.nome }}</span><sc-if value="{{ a.apoio }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:800;color:#B91C1C;background:#FDECEC;border:1.5px solid #F5B5B5;padding:2px 8px;border-radius:999px">Apoio</span></sc-if></div>
+                <div style="font-size:13px;font-weight:600;color:#475569;margin-top:2px">{{ a.licoes }} lições · <span style="color:{{ a.accColor }};font-weight:800">{{ a.acerto }}% acerto</span></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:800;color:#C2410C"><dc-import name="Icon" n="zap" size="18" color="#F97316" fill="#F97316" hint-size="18px,18px"></dc-import>{{ a.xp }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="text-align:center;font-size:13px;font-weight:600;color:#475569;padding:4px 0">Toque no aluno para ver o perfil completo</div>
+      </sc-if>
+
+      <sc-if value="{{ is.s19 }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="19 Desempenho" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;background:#fff;border:2px solid #E2E8F0;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">TAXA DE ACERTO GERAL</div>
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:44px;font-weight:800;line-height:1">78%</span><span style="font-size:13px;font-weight:800;color:#05592F;background:#E7F6EE;padding:4px 10px;border-radius:999px">+4 pts na semana</span></div>
+          <div style="height:12px;border-radius:999px;background:#E2E8F0;overflow:hidden"><div style="width:78%;height:100%;border-radius:999px;background:#087A45"></div></div>
+          <div style="font-size:13px;font-weight:600;color:#475569">47 respostas em 5 quizzes</div>
+        </div>
+        <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;padding:18px">
+          <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">ACERTO POR TEMA</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;height:180px;align-items:end;margin-top:14px;padding-bottom:4px;border-bottom:2px solid #E2E8F0">
+            <sc-for list="{{ temas }}" as="tm" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%">
+                <span style="font-size:16px;font-weight:800">{{ tm.v }}%</span>
+                <div style="width:56px;border-radius:12px 12px 4px 4px;height:{{ tm.h }}px;background:{{ tm.cor }}"></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:8px">
+            <sc-for list="{{ temas }}" as="tm" hint-placeholder-count="3"><div style="text-align:center;font-size:13px;font-weight:700;color:#475569">{{ tm.nome }}</div></sc-for>
+          </div>
+        </div>
+        <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">ALUNOS COM DIFICULDADE</div>
+          <sc-for list="{{ dificuldade }}" as="d" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:40px;height:40px;border-radius:50%;background:#FDECEC;color:#B91C1C;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">{{ d.ini }}</div>
+              <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">{{ d.nome }}</div><div style="font-size:13px;font-weight:600;color:#475569">Mais erros em {{ d.tema }}</div></div>
+              <span style="font-size:16px;font-weight:800;color:#B91C1C">{{ d.acerto }}%</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.ativ }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ hasQuizzes }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ quizzes }}" as="q" hint-placeholder-count="2">
+            <div style="background:#fff;border:2px solid #E2E8F0;border-radius:20px;box-shadow:0 4px 0 #E2E8F0;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="width:44px;height:44px;border-radius:14px;background:#EAF0FF;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="file-text" size="22" color="#1D4ED8" hint-size="22px,22px"></dc-import></div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:800;color:#475569">{{ q.num }}</div>
+                  <div style="font-size:18px;font-weight:800">{{ q.nome }}</div>
+                </div>
+                <button onClick="{{ q.menu }}" aria-label="Ações do quiz" style="width:44px;height:44px;margin:-6px -8px 0 0;border:none;background:none;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-active="background:#F1F5F9"><dc-import name="Icon" n="more-vertical" size="22" color="#475569" hint-size="22px,22px"></dc-import></button>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:24px;font-weight:800;color:#087A45">{{ q.acerto }}%</span><span style="font-size:15px;font-weight:600;color:#475569">acerto · {{ q.resp }} de 28 responderam</span></div>
+              <div style="height:10px;border-radius:999px;background:#E2E8F0;overflow:hidden"><div style="height:100%;border-radius:999px;background:#087A45;width:{{ q.acerto }}%"></div></div>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <sc-if value="{{ q.sala }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ q.toggle }}" style="flex:1;height:48px;border-radius:14px;border:none;background:#FFC53D;color:#1A1A2E;font-size:15px;font-weight:800;box-shadow:0 3px 0 #D99A1E;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px" style-active="transform:translateY(3px);box-shadow:0 0 0 #D99A1E"><dc-import name="Icon" n="radio" size="18" color="#1A1A2E" hint-size="18px,18px"></dc-import>Modo Sala: ATIVO</button>
+                </sc-if>
+                <sc-if value="{{ q.noSala }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ q.toggle }}" style="flex:1;height:48px;border-radius:14px;border:2px solid #1D4ED8;background:#fff;color:#1D4ED8;font-size:15px;font-weight:800;box-shadow:0 3px 0 #1D4ED8;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px" style-active="transform:translateY(3px);box-shadow:0 0 0 #1D4ED8"><dc-import name="Icon" n="presentation" size="18" color="#1D4ED8" hint-size="18px,18px"></dc-import>Liberar p/ Aula</button>
+                </sc-if>
+                <button onClick="{{ toResultados }}" style="flex:1;height:48px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;color:#1A1A2E;font-size:15px;font-weight:800;box-shadow:0 3px 0 #E2E8F0;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px" style-active="transform:translateY(3px);box-shadow:0 0 0 #E2E8F0"><dc-import name="Icon" n="bar-chart" size="18" color="#1A1A2E" hint-size="18px,18px"></dc-import>Resultados</button>
+              </div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ noQuizzes }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="32b Sem quizzes" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:28px 12px">
+            <dc-import name="Mascote" id="abelha" estado="pensativo" size="100" hint-size="160px,100px"></dc-import>
+            <div style="font-size:20px;font-weight:800">Nenhuma atividade ainda</div>
+            <div style="font-size:16px;font-weight:500;color:#475569;line-height:1.5">Crie um quiz manualmente ou deixe a IA Gemini sugerir as questões.</div>
+          </div>
+        </sc-if>
+        <button onClick="{{ toCriarQuiz }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#1D4ED8;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #1E3A8A;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;margin-top:4px;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #1E3A8A"><dc-import name="Icon" n="plus" size="22" sw="3" color="#fff" hint-size="22px,22px"></dc-import>Criar Atividade</button>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.quiz }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="10 Criar Atividade (IA)" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#1D4ED8;padding:59px 20px 18px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div style="font-size:24px;font-weight:800">Criar Atividade</div>
+      <span style="display:flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:#1D4ED8;background:#fff;padding:6px 10px 6px 12px;border-radius:999px">1º A – Manhã<dc-import name="Icon" n="chevron-down" size="16" sw="2.6" color="#1D4ED8" hint-size="16px,16px"></dc-import></span>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:16px">
+
+      <sc-if value="{{ is.s10 }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#7C3AED;border-radius:20px;padding:18px;box-shadow:0 4px 0 #5B21B6;color:#fff;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:40px;height:40px;border-radius:12px;background:#9061F0;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="sparkles" size="22" color="#fff" hint-size="22px,22px"></dc-import></div>
+            <div style="flex:1"><div style="font-size:18px;font-weight:800">IA Gemini</div><div style="font-size:15px;font-weight:600">Gerar 3 questões automáticas</div></div>
+          </div>
+          <input value="{{ st.tema }}" onChange="{{ on.tema }}" placeholder="Tema. Ex.: Organelas celulares" style="width:100%;height:52px;border-radius:14px;border:2px solid #fff;background:#fff;padding:0 16px;font-size:16px;font-weight:600;color:#1A1A2E;outline:none" style-focus="box-shadow:0 0 0 4px #B79AF5">
+          <button onClick="{{ gerar }}" style="height:52px;border:none;border-radius:14px;background:#fff;color:#5B21B6;font-size:17px;font-weight:800;box-shadow:0 4px 0 #5B21B6;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #5B21B6"><dc-import name="Icon" n="sparkles" size="20" color="#5B21B6" hint-size="20px,20px"></dc-import>Gerar questões</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;color:#475569;font-size:13px;font-weight:700"><div style="flex:1;height:2px;background:#E2E8F0"></div>OU CRIE MANUALMENTE<div style="flex:1;height:2px;background:#E2E8F0"></div></div>
+        <label style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">ENUNCIADO</span>
+          <textarea value="{{ st.enun }}" onChange="{{ on.enun }}" rows="3" style="width:100%;border-radius:14px;border:2px solid #E2E8F0;background:#fff;padding:14px 16px;font-size:16px;font-weight:600;color:#1A1A2E;outline:none;resize:none;line-height:1.45" style-focus="border-color:#1D4ED8;box-shadow:0 0 0 4px #EAF0FF"></textarea>
+        </label>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">ALTERNATIVAS</span><span style="font-size:13px;font-weight:600;color:#475569">Toque na letra para marcar o gabarito</span></div>
+          <sc-for list="{{ alts }}" as="al" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;min-height:56px;padding:6px 8px 6px 6px;border-radius:14px;border:2px solid {{ al.border }};background:{{ al.bg }}">
+              <button onClick="{{ al.pick }}" aria-label="Marcar gabarito" style="width:44px;height:44px;border-radius:12px;border:none;cursor:pointer;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:{{ al.badgeBg }};color:{{ al.badgeColor }}">{{ al.letra }}</button>
+              <span style="flex:1;font-size:16px;font-weight:600">{{ al.texto }}</span>
+              <sc-if value="{{ al.ok }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:#05592F;padding-right:4px"><dc-import name="Icon" n="check-circle" size="18" color="#087A45" hint-size="18px,18px"></dc-import>Gabarito</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">EXPLICAÇÃO DA RESPOSTA</span>
+          <textarea value="{{ st.expl }}" onChange="{{ on.expl }}" rows="3" style="width:100%;border-radius:14px;border:2px solid #E2E8F0;background:#fff;padding:14px 16px;font-size:16px;font-weight:500;color:#1A1A2E;outline:none;resize:none;line-height:1.45" style-focus="border-color:#1D4ED8;box-shadow:0 0 0 4px #EAF0FF"></textarea>
+          <span style="font-size:13px;font-weight:600;color:#475569">O estudante vê esta explicação depois de responder.</span>
+        </label>
+        <button onClick="{{ publicar }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#1D4ED8;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #1E3A8A;cursor:pointer;flex-shrink:0;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #1E3A8A">Salvar e Publicar Quiz</button>
+      </sc-if>
+
+      <sc-if value="{{ is.s23a }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="23a Gerando com IA" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;background:#7C3AED;border-radius:20px;padding:20px;box-shadow:0 4px 0 #5B21B6;color:#fff;display:flex;align-items:center;gap:14px">
+          <div style="background:#fff;border-radius:16px;padding:6px 4px;flex-shrink:0"><dc-import name="Mascote" id="abelha" estado="pensativo" size="50" hint-size="80px,50px"></dc-import></div>
+          <div style="flex:1"><div style="font-size:18px;font-weight:800">Gerando 3 questões…</div><div style="font-size:15px;font-weight:600;margin-top:2px">Tema: {{ st.tema }}</div></div>
+          {{ spinner }}
+        </div>
+        <sc-for list="{{ skel }}" as="k" hint-placeholder-count="3">{{ k }}</sc-for>
+      </sc-if>
+
+      <sc-if value="{{ is.s23b }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="23b Revisar questões IA" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;background:#F3EEFF;border:2px solid #DCCBFB;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+          <dc-import name="Icon" n="sparkles" size="22" color="#7C3AED" hint-size="22px,22px"></dc-import>
+          <div><div style="font-size:16px;font-weight:800;color:#5B21B6">3 questões geradas pela IA Gemini</div><div style="font-size:15px;font-weight:500;margin-top:2px;line-height:1.45">Revise antes de publicar. A IA pode cometer erros.</div></div>
+        </div>
+        <sc-for list="{{ geradas }}" as="g" hint-placeholder-count="3">
+          <div style="background:#fff;border:2px solid {{ g.border }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;opacity:{{ g.op }}">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:13px;font-weight:800;color:#475569">QUESTÃO {{ g.n }}</span>
+              <span style="font-size:13px;font-weight:800;padding:3px 10px;border-radius:999px;color:{{ g.chipColor }};background:{{ g.chipBg }}">{{ g.status }}</span>
+            </div>
+            <div style="font-size:16px;font-weight:800;line-height:1.4">{{ g.q }}</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ g.alts }}" as="ga" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;padding:8px 10px;border-radius:10px;background:{{ ga.bg }};color:{{ ga.color }}">
+                  <span style="font-weight:800">{{ ga.l }})</span><span style="flex:1">{{ ga.t }}</span>
+                  <sc-if value="{{ ga.ok }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" n="check" size="18" sw="3" color="#087A45" hint-size="18px,18px"></dc-import></sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:15px;font-weight:500;color:#475569;line-height:1.45"><b style="color:#1A1A2E">Explicação:</b> {{ g.ex }}</div>
+            <div style="display:flex;gap:8px">
+              <sc-if value="{{ g.pend }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ g.accept }}" style="flex:1;height:44px;border:none;border-radius:12px;background:#087A45;color:#fff;font-size:15px;font-weight:800;box-shadow:0 3px 0 #05592F;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px" style-active="transform:translateY(3px);box-shadow:0 0 0 #05592F"><dc-import name="Icon" n="check" size="18" sw="3" color="#fff" hint-size="18px,18px"></dc-import>Aceitar</button>
+                <button style="flex:1;height:44px;border-radius:12px;border:2px solid #E2E8F0;background:#fff;color:#1A1A2E;font-size:15px;font-weight:800;box-shadow:0 3px 0 #E2E8F0;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><dc-import name="Icon" n="pencil" size="16" color="#1A1A2E" hint-size="16px,16px"></dc-import>Editar</button>
+                <button onClick="{{ g.discard }}" aria-label="Descartar" style="width:44px;height:44px;border-radius:12px;border:2px solid #F5B5B5;background:#FDECEC;cursor:pointer;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="trash" size="18" color="#B91C1C" hint-size="18px,18px"></dc-import></button>
+              </sc-if>
+              <sc-if value="{{ g.done }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ g.undo }}" style="height:44px;padding:0 12px;border:none;border-radius:12px;background:none;color:#475569;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px"><dc-import name="Icon" n="refresh-cw" size="16" color="#475569" hint-size="16px,16px"></dc-import>Desfazer</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+        <button onClick="{{ addGeradas }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#1D4ED8;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #1E3A8A;cursor:pointer;flex-shrink:0;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #1E3A8A">Adicionar {{ aceitasCount }} ao quiz</button>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s20 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="20 Resultados por Questão" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#1D4ED8;padding:51px 20px 18px;color:#fff">
+      <button onClick="{{ back }}" style="min-height:44px;margin-left:-8px;padding:0 8px;border:none;background:none;display:flex;align-items:center;gap:2px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;border-radius:12px" style-active="background:#1E40AF"><dc-import name="Icon" n="chevron-left" size="22" color="#fff" sw="2.6" hint-size="22px,22px"></dc-import>Atividades</button>
+      <div style="font-size:24px;font-weight:800;margin-top:4px">Quiz 1: A Célula</div>
+      <div style="font-size:15px;font-weight:600;color:#DCE6FF;margin-top:2px">1º A – Manhã · 22 de 28 responderam</div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:12px"><div style="font-size:22px;font-weight:800;color:#087A45">82%</div><div style="font-size:13px;font-weight:600;color:#475569">acerto médio</div></div>
+        <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:12px"><div style="font-size:22px;font-weight:800">22/28</div><div style="font-size:13px;font-weight:600;color:#475569">respostas</div></div>
+        <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:12px"><div style="font-size:22px;font-weight:800">6 min</div><div style="font-size:13px;font-weight:600;color:#475569">tempo médio</div></div>
+      </div>
+      <sc-for list="{{ resultados }}" as="r" hint-placeholder-count="3">
+        <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:800;color:#475569">QUESTÃO {{ r.n }}</span><span style="font-size:16px;font-weight:800;color:{{ r.cor }}">{{ r.acerto }}% acerto</span></div>
+          <div style="font-size:16px;font-weight:800;line-height:1.4">{{ r.q }}</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ r.dist }}" as="ds" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:118px;flex-shrink:0;font-size:13px;font-weight:{{ ds.w }};color:#1A1A2E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ds.t }}</span>
+                <div style="flex:1;height:10px;border-radius:999px;background:#F1F5F9;overflow:hidden"><div style="height:100%;border-radius:999px;width:{{ ds.p }}%;background:{{ ds.cor }}"></div></div>
+                <span style="width:36px;text-align:right;font-size:13px;font-weight:800">{{ ds.p }}%</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:#475569">Mais marcada: <b style="color:{{ r.maisCor }}">{{ r.mais }}</b></div>
+          <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:2px solid #F1F5F9">
+            <span style="font-size:13px;font-weight:800;color:#475569">ERRARAM:</span>
+            <span style="flex:1;font-size:15px;font-weight:600">{{ r.erraram }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s24 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="24 Perfil do Professor" style="animation:pxIn .32s cubic-bezier(.2,.8,.2,1) both;position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="background:#1D4ED8;padding:59px 20px 24px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="width:88px;height:88px;border-radius:50%;background:#fff;color:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;box-shadow:0 4px 0 #1E3A8A">ML</div>
+      <div style="font-size:22px;font-weight:800;margin-top:4px">Prof. Maurício Linhares</div>
+      <div style="font-size:15px;font-weight:600;color:#DCE6FF">Professor de Biologia</div>
+    </div>
+    <div class="px-scroll" style="flex:1;overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:#1D4ED8">2</div><div style="font-size:13px;font-weight:600;color:#475569">turmas</div></div>
+        <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:#1D4ED8">60</div><div style="font-size:13px;font-weight:600;color:#475569">estudantes</div></div>
+        <div style="background:#fff;border:2px solid #E2E8F0;border-radius:16px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:800;color:#1D4ED8">8</div><div style="font-size:13px;font-weight:600;color:#475569">quizzes</div></div>
+      </div>
+      <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;overflow:hidden">
+        <sc-for list="{{ perfilRows }}" as="pr" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:2px solid #F1F5F9">
+            <div style="width:40px;height:40px;border-radius:12px;background:#EAF0FF;display:flex;align-items:center;justify-content:center;flex-shrink:0"><dc-import name="Icon" n="{{ pr.icon }}" size="20" color="#1D4ED8" hint-size="20px,20px"></dc-import></div>
+            <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#475569">{{ pr.label }}</div><div style="font-size:16px;font-weight:700">{{ pr.value }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569;margin-top:4px">MINHAS TURMAS</div>
+      <div style="flex-shrink:0;background:#fff;border:2px solid #E2E8F0;border-radius:20px;overflow:hidden">
+        <sc-for list="{{ turmas }}" as="t" hint-placeholder-count="2">
+          <button onClick="{{ t.open }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border:none;border-bottom:2px solid #F1F5F9;background:#fff;cursor:pointer;text-align:left;font-family:inherit">
+            <div style="flex:1"><div style="font-size:16px;font-weight:800;color:#1A1A2E">{{ t.nome }}</div><div style="font-size:13px;font-weight:600;color:#475569">{{ t.codigo }} · {{ t.alunos }} alunos</div></div>
+            <dc-import name="Icon" n="chevron-right" size="20" color="#475569" hint-size="20px,20px"></dc-import>
+          </button>
+        </sc-for>
+      </div>
+      <button onClick="{{ logout }}" style="width:100%;height:56px;margin-top:8px;border:2px solid #F5B5B5;border-radius:14px;background:#fff;color:#B91C1C;font-size:17px;font-weight:800;box-shadow:0 4px 0 #F5B5B5;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0" style-active="transform:translateY(4px);box-shadow:0 0 0 #F5B5B5"><dc-import name="Icon" n="log-out" size="20" color="#B91C1C" hint-size="20px,20px"></dc-import>Sair da Conta</button>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;background:#fff;border-top:2px solid #E2E8F0;padding:6px 8px 34px;flex-shrink:0">
+  <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
+    <button onClick="{{ tb.go }}" style="flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0;cursor:pointer;min-height:56px">
+      <sc-if value="{{ tb.on }}" hint-placeholder-val="{{ false }}">
+        <div style="width:60px;height:32px;border-radius:999px;background:#EAF0FF;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ tb.icon }}" size="24" sw="2.4" color="#1D4ED8" hint-size="24px,24px"></dc-import></div>
+        <span style="font-size:13px;font-weight:800;color:#1D4ED8">{{ tb.label }}</span>
+      </sc-if>
+      <sc-if value="{{ tb.off }}" hint-placeholder-val="{{ true }}">
+        <div style="width:60px;height:32px;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ tb.icon }}" size="24" color="#475569" hint-size="24px,24px"></dc-import></div>
+        <span style="font-size:13px;font-weight:600;color:#475569">{{ tb.label }}</span>
+      </sc-if>
+    </button>
+  </sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ is.s18a }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="18a Ações da turma" style="position:absolute;inset:0;z-index:60">
+    <div onClick="{{ toTurmas }}" style="position:absolute;inset:0;background:rgba(26,26,46,.25);animation:pxFade .2s ease both"></div>
+    <div style="position:absolute;top:460px;right:28px;width:220px;animation:pxPop .2s cubic-bezier(.2,.8,.2,1) both;transform-origin:top right;background:#fff;border-radius:16px;border:2px solid #E2E8F0;box-shadow:0 12px 32px rgba(26,26,46,.18);padding:6px;display:flex;flex-direction:column">
+      <button onClick="{{ toEditar }}" style="height:48px;border:none;background:none;border-radius:10px;display:flex;align-items:center;gap:12px;padding:0 12px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer" style-hover="background:#F1F5F9"><dc-import name="Icon" n="pencil" size="20" color="#1A1A2E" hint-size="20px,20px"></dc-import>Editar turma</button>
+      <button onClick="{{ copyCode }}" style="height:48px;border:none;background:none;border-radius:10px;display:flex;align-items:center;gap:12px;padding:0 12px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer" style-hover="background:#F1F5F9"><dc-import name="Icon" n="copy" size="20" color="#1A1A2E" hint-size="20px,20px"></dc-import>Copiar código</button>
+      <div style="height:2px;background:#F1F5F9;margin:4px 0"></div>
+      <button onClick="{{ toExcluirTurma }}" style="height:48px;border:none;background:none;border-radius:10px;display:flex;align-items:center;gap:12px;padding:0 12px;font-size:16px;font-weight:800;color:#B91C1C;cursor:pointer" style-hover="background:#FDECEC"><dc-import name="Icon" n="trash" size="20" color="#B91C1C" hint-size="20px,20px"></dc-import>Excluir turma</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s21a }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="21a Ações do quiz" style="position:absolute;inset:0;z-index:60">
+    <div onClick="{{ toAtiv }}" style="position:absolute;inset:0;background:rgba(26,26,46,.25);animation:pxFade .2s ease both"></div>
+    <div style="position:absolute;top:300px;right:28px;width:220px;animation:pxPop .2s cubic-bezier(.2,.8,.2,1) both;transform-origin:top right;background:#fff;border-radius:16px;border:2px solid #E2E8F0;box-shadow:0 12px 32px rgba(26,26,46,.18);padding:6px;display:flex;flex-direction:column">
+      <button onClick="{{ toCriarQuiz }}" style="height:48px;border:none;background:none;border-radius:10px;display:flex;align-items:center;gap:12px;padding:0 12px;font-size:16px;font-weight:700;color:#1A1A2E;cursor:pointer" style-hover="background:#F1F5F9"><dc-import name="Icon" n="pencil" size="20" color="#1A1A2E" hint-size="20px,20px"></dc-import>Editar quiz</button>
+      <div style="height:2px;background:#F1F5F9;margin:4px 0"></div>
+      <button onClick="{{ toExcluirQuiz }}" style="height:48px;border:none;background:none;border-radius:10px;display:flex;align-items:center;gap:12px;padding:0 12px;font-size:16px;font-weight:800;color:#B91C1C;cursor:pointer" style-hover="background:#FDECEC"><dc-import name="Icon" n="trash" size="20" color="#B91C1C" hint-size="20px,20px"></dc-import>Excluir quiz</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.confirm }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Modal de exclusão" style="position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="position:absolute;inset:0;background:rgba(26,26,46,.55);animation:pxFade .2s ease both"></div>
+    <div style="animation:pxPop .26s cubic-bezier(.2,.8,.2,1) both;position:relative;width:100%;background:#fff;border-radius:24px;padding:24px 20px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;box-shadow:0 20px 50px rgba(26,26,46,.3)">
+      <div style="width:64px;height:64px;border-radius:50%;background:#FDECEC;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="trash" size="30" color="#DC2626" hint-size="30px,30px"></dc-import></div>
+      <div style="font-size:20px;font-weight:800;margin-top:4px">{{ confirmTitle }}</div>
+      <div style="font-size:16px;font-weight:500;color:#475569;line-height:1.5">{{ confirmBody }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;width:100%;margin-top:10px">
+        <button onClick="{{ confirmDelete }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#DC2626;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #991B1B;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #991B1B">{{ confirmCta }}</button>
+        <button onClick="{{ cancelDelete }}" style="width:100%;height:48px;border:none;border-radius:14px;background:none;color:#475569;font-size:16px;font-weight:800;cursor:pointer" style-active="background:#F1F5F9">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ is.s22 }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="22 Ativar Modo Sala" style="position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;justify-content:flex-end">
+    <div onClick="{{ toAtiv }}" style="position:absolute;inset:0;background:rgba(26,26,46,.55);animation:pxFade .2s ease both"></div>
+    <div style="animation:pxUp .34s cubic-bezier(.2,.8,.2,1) both;position:relative;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px 42px;display:flex;flex-direction:column;gap:16px">
+      <div style="width:44px;height:5px;border-radius:3px;background:#CBD5E1;align-self:center"></div>
+      <div>
+        <div style="font-size:22px;font-weight:800">Ativar Modo Sala</div>
+        <div style="font-size:16px;font-weight:600;color:#475569;margin-top:2px">{{ pendNome }} · 1º A – Manhã</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">DURAÇÃO</span>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <sc-for list="{{ durs }}" as="o" hint-placeholder-count="3">
+            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.pick }}" style="height:52px;border-radius:14px;border:2px solid #1D4ED8;background:#EAF0FF;color:#1D4ED8;font-size:16px;font-weight:800;box-shadow:0 3px 0 #1D4ED8;cursor:pointer">{{ o.label }}</button></sc-if>
+            <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ o.pick }}" style="height:52px;border-radius:14px;border:2px solid #E2E8F0;background:#fff;color:#1A1A2E;font-size:16px;font-weight:700;box-shadow:0 3px 0 #E2E8F0;cursor:pointer">{{ o.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#FFEDD5;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+        <dc-import name="Icon" n="shield-check" size="24" color="#C2410C" hint-size="24px,24px"></dc-import>
+        <div><div style="font-size:16px;font-weight:800;color:#9A3412">Lei 15.100/2025</div><div style="font-size:15px;font-weight:500;line-height:1.45;margin-top:2px">O celular em sala só pode ser usado para fins pedagógicos, sob sua orientação. Durante o Modo Sala, os estudantes acessam apenas esta atividade.</div></div>
+      </div>
+      <button onClick="{{ toggleConf }}" style="display:flex;align-items:center;gap:12px;min-height:44px;border:none;background:none;padding:0;cursor:pointer;text-align:left;font-family:inherit">
+        <div style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid {{ confBorder }};background:{{ confBg }}"><sc-if value="{{ st.conf }}" hint-placeholder-val="{{ true }}"><dc-import name="Icon" n="check" size="16" sw="3.2" color="#fff" hint-size="16px,16px"></dc-import></sc-if></div>
+        <span style="font-size:16px;font-weight:600;color:#1A1A2E">Confirmo a finalidade pedagógica desta atividade</span>
+      </button>
+      <sc-if value="{{ st.conf }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ ativarSala }}" style="width:100%;height:56px;border:none;border-radius:14px;background:#1D4ED8;color:#fff;font-size:18px;font-weight:800;box-shadow:0 4px 0 #1E3A8A;cursor:pointer;transition:transform .08s,box-shadow .08s" style-active="transform:translateY(4px);box-shadow:0 0 0 #1E3A8A">Liberar por {{ st.dur }} min</button>
+      </sc-if>
+      <sc-if value="{{ noConf }}" hint-placeholder-val="{{ false }}">
+        <button style="width:100%;height:56px;border:none;border-radius:14px;background:#E2E8F0;color:#475569;font-size:18px;font-weight:800;box-shadow:0 4px 0 #CBD5E1;cursor:default">Liberar por {{ st.dur }} min</button>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:20px;right:20px;bottom:112px;z-index:80;display:flex;justify-content:center;pointer-events:none">
+    <div style="animation:pxToast .3s cubic-bezier(.2,.8,.2,1) both;pointer-events:auto;background:#1A1A2E;color:#fff;border-radius:14px;padding:12px 16px;display:flex;gap:10px;align-items:center;font-size:15px;font-weight:700;box-shadow:0 10px 30px rgba(26,26,46,.3)"><dc-import name="Icon" n="check-circle" size="20" color="#FFC53D" hint-size="20px,20px"></dc-import>{{ st.toast }}<sc-if value="{{ hasUndo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ undo }}" style="pointer-events:auto;margin-left:6px;height:36px;padding:0 12px;border:none;border-radius:10px;background:#34345A;color:#FFC53D;font-size:15px;font-weight:800;cursor:pointer">Desfazer</button></sc-if></div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const COR = ['#1D4ED8', '#7C3AED', '#087A45', '#C2410C', '#B91C1C', '#475569'];
+class Component extends DCLogic {
+  state = { del1A: false, delQ1: false, pendQ: 'q2', dur: 15, conf: true, gab: 1, serie: '1º', turno: 'Manhã', nomeTurma: '3º B – Manhã', tema: 'Organelas celulares', enun: 'Qual organela citoplasmática realiza a respiração celular?', expl: 'A mitocôndria realiza a respiração celular e produz ATP, a energia que a célula usa para funcionar.', gen: {}, toast: null, delTarget: 'turma' };
+  componentWillUnmount() { clearTimeout(this.tt); clearTimeout(this.gt); }
+  toast(msg, undo) { clearTimeout(this.tt); this.undoFn = undo || null; this.setState({ toast: msg }); this.tt = setTimeout(() => { this.undoFn = null; this.setState({ toast: null }); }, undo ? 4500 : 2200); }
+  set = (k) => (e) => this.setState({ [k]: e.target.value });
+  renderVals() {
+    const { screen = '06', go = () => {}, back = () => {} } = this.props;
+    const st = this.state;
+    const sc = screen;
+    const setSala = this.props.setSala || (() => {});
+    const salaMap = { q1: this.props.salaQuiz === 'A Célula', q2: this.props.salaQuiz === 'Bioquímica' };
+    const is = {
+      turmas: ['06', '18a', '18b', '32a'].includes(sc), s07: sc === '07',
+      panel: ['08', '09', '19', '21a', '21b', '22', '32b'].includes(sc), s08: sc === '08', s19: sc === '19', ativ: ['09', '21a', '21b', '22', '32b'].includes(sc),
+      quiz: ['10', '23a', '23b'].includes(sc), s10: sc === '10', s23a: sc === '23a', s23b: sc === '23b',
+      s20: sc === '20', s24: sc === '24', s18a: sc === '18a', s21a: sc === '21a', s22: sc === '22', confirm: sc === '18b' || sc === '21b'
+    };
+    const allT = [
+      { id: '1a', nome: '1º A – Manhã', codigo: 'BIO101', alunos: 28, quizzes: 5, acerto: 78, sala: salaMap.q1 || salaMap.q2 },
+      { id: '2a', nome: '2º A – Tarde', codigo: 'BIO204', alunos: 32, quizzes: 3, acerto: 71, sala: false }
+    ];
+    const turmas = (sc === '32a' ? [] : allT.filter(t => !(t.id === '1a' && st.del1A))).map(t => ({
+      ...t, open: () => go('08'), menu: (e) => { e.stopPropagation(); go('18a'); }
+    }));
+    const alunos = [
+      ['Lucas Ferreira', 'LF', 6, 91, 520], ['Jiara Martins', 'JM', 5, 88, 480], ['Beatriz Vasconcelos', 'BV', 4, 79, 390],
+      ['Ana Clara Sousa', 'AS', 4, 76, 360], ['Pedro Henrique Lima', 'PL', 3, 70, 310], ['Gabriel Menezes', 'GM', 2, 52, 240, true]
+    ].map((a, i) => ({ nome: a[0], ini: a[1], licoes: a[2], acerto: a[3], xp: a[4], apoio: !!a[5], cor: a[5] ? '#DC2626' : COR[i % 4], bg: a[5] ? '#FFF7F7' : '#fff', nameColor: a[5] ? '#B91C1C' : '#1A1A2E', accColor: a[3] < 60 ? '#B91C1C' : '#05592F' }));
+    const temas = [['Citologia', 82], ['Genética', 58], ['Ecologia', 76]].map(([nome, v]) => ({ nome, v, h: Math.round(v * 1.5), cor: v >= 75 ? '#087A45' : v >= 60 ? '#FFC53D' : '#DC2626' }));
+    const dificuldade = [{ nome: 'Gabriel Menezes', ini: 'GM', tema: 'Genética', acerto: 52 }, { nome: 'Rafael Oliveira', ini: 'RO', tema: 'Genética', acerto: 58 }, { nome: 'Larissa Freitas', ini: 'LF', tema: 'Citologia', acerto: 61 }];
+    const allQ = [
+      { k: 'q1', num: 'QUIZ 1', nome: 'A Célula', acerto: 82, resp: 22 },
+      { k: 'q2', num: 'QUIZ 2', nome: 'Bioquímica', acerto: 74, resp: 25 }
+    ];
+    const quizzes = (sc === '32b' ? [] : allQ.filter(q => !(q.k === 'q1' && st.delQ1))).map(q => ({
+      ...q, sala: salaMap[q.k], noSala: !salaMap[q.k],
+      menu: () => go('21a'),
+      toggle: () => {
+        if (salaMap[q.k]) { setSala(null); this.toast('Modo Sala encerrado'); }
+        else { this.setState({ pendQ: q.k }); go('22'); }
+      }
+    }));
+    const ptabs = [['Alunos', '08', ['08']], ['Desemp.', '19', ['19']], ['Atividades', '09', ['09', '21a', '21b', '22', '32b']]].map(([label, id, ids]) => ({ label, go: () => go(id), on: ids.includes(sc), off: !ids.includes(sc) }));
+    const tabsDef = [['Turmas', 'users', '06', ['06', '07', '08', '09', '18a', '18b', '19', '20', '21a', '21b', '22', '32a', '32b']], ['Criar Quiz', 'file-plus', '10', ['10', '23a', '23b']], ['Perfil', 'user', '24', ['24']]];
+    const tabs = tabsDef.map(([label, icon, id, ids]) => ({ label, icon, go: () => go(id), on: ids.includes(sc), off: !ids.includes(sc) }));
+    const mk = (arr, key) => arr.map(v => ({ label: key === 'dur' ? v + ' min' : v, on: st[key] === v, off: st[key] !== v, pick: () => this.setState({ [key]: v }) }));
+    const altsTxt = ['Ribossomo', 'Mitocôndria', 'Complexo de Golgi', 'Lisossomo'];
+    const alts = altsTxt.map((t, i) => {
+      const ok = st.gab === i;
+      return { letra: 'ABCD'[i], texto: t, ok, border: ok ? '#087A45' : '#E2E8F0', bg: ok ? '#E7F6EE' : '#fff', badgeBg: ok ? '#087A45' : '#F1F5F9', badgeColor: ok ? '#fff' : '#1A1A2E', pick: () => this.setState({ gab: i }) };
+    });
+    const GEN = [
+      { q: 'Qual estrutura controla a entrada e a saída de substâncias da célula?', a: ['Parede celular', 'Membrana plasmática', 'Núcleo', 'Citoesqueleto'], c: 1, ex: 'A membrana plasmática é semipermeável e regula o que entra e sai da célula.' },
+      { q: 'Onde ocorre a síntese de proteínas na célula?', a: ['Lisossomo', 'Vacúolo', 'Ribossomo', 'Centríolo'], c: 2, ex: 'Os ribossomos leem o RNA mensageiro e montam as proteínas.' },
+      { q: 'Qual organela armazena e modifica proteínas para exportação?', a: ['Complexo de Golgi', 'Mitocôndria', 'Peroxissomo', 'Cloroplasto'], c: 0, ex: 'O complexo de Golgi modifica, empacota e envia proteínas em vesículas.' }
+    ];
+    const geradas = GEN.map((g, i) => {
+      const s = st.gen[i] || (i === 0 && st.gen[i] === undefined ? 'ok' : 'pend');
+      return {
+        n: i + 1, q: g.q, ex: g.ex, pend: s === 'pend', done: s !== 'pend', op: s === 'del' ? 0.5 : 1,
+        status: s === 'ok' ? 'Aceita' : s === 'del' ? 'Descartada' : 'Para revisar',
+        chipColor: s === 'ok' ? '#05592F' : s === 'del' ? '#B91C1C' : '#5B21B6', chipBg: s === 'ok' ? '#E7F6EE' : s === 'del' ? '#FDECEC' : '#F3EEFF',
+        border: s === 'ok' ? '#087A45' : '#E2E8F0',
+        alts: g.a.map((t, j) => ({ l: 'ABCD'[j], t, ok: j === g.c, bg: j === g.c ? '#E7F6EE' : '#F7F7FA', color: j === g.c ? '#05592F' : '#1A1A2E' })),
+        accept: () => this.setState(x => ({ gen: { ...x.gen, [i]: 'ok' } })), discard: () => this.setState(x => ({ gen: { ...x.gen, [i]: 'del' } })), undo: () => this.setState(x => ({ gen: { ...x.gen, [i]: 'pend' } }))
+      };
+    });
+    const aceitas = geradas.filter(g => g.status === 'Aceita').length;
+    const h = React.createElement;
+    const skel = [0, 1, 2].map(i => h('div', { key: i, style: { background: '#fff', border: '2px solid #E2E8F0', borderRadius: 20, padding: 16, display: 'flex', flexDirection: 'column', gap: 10, animation: `pxShimmer 1.4s ${i * 0.15}s ease-in-out infinite` } },
+      h('div', { style: { width: 90, height: 12, borderRadius: 6, background: '#E2E8F0' } }),
+      h('div', { style: { width: '92%', height: 16, borderRadius: 8, background: '#E2E8F0' } }),
+      h('div', { style: { width: '70%', height: 16, borderRadius: 8, background: '#E2E8F0' } }),
+      ...[0, 1, 2, 3].map(j => h('div', { key: j, style: { width: '100%', height: 34, borderRadius: 10, background: '#F1F5F9' } }))));
+    const spinner = h('div', { style: { width: 28, height: 28, borderRadius: '50%', border: '3.5px solid #B79AF5', borderTopColor: '#fff', animation: 'pxSpin .8s linear infinite', flexShrink: 0 } });
+    const resultados = [
+      { n: 1, q: 'Qual organela citoplasmática realiza a respiração celular?', acerto: 89, d: [['Ribossomo', 8], ['Mitocôndria', 89, 1], ['Complexo de Golgi', 3], ['Lisossomo', 0]], erraram: 'Gabriel M., Rafael O.' },
+      { n: 2, q: 'A membrana celular tem modelo de:', acerto: 86, d: [['Mosaico fluido', 86, 1], ['Bloco rígido', 5], ['Camada única', 9], ['Parede de celulose', 0]], erraram: 'Gabriel M., Larissa F., Pedro L.' },
+      { n: 3, q: 'Em qual fase da mitose os cromossomos se alinham no centro da célula?', acerto: 41, d: [['Prófase', 14], ['Metáfase', 41, 1], ['Anáfase', 45], ['Telófase', 0]], erraram: '13 alunos · Ver todos' }
+    ].map(r => {
+      const top = r.d.reduce((a, b) => (b[1] > a[1] ? b : a));
+      return { ...r, cor: r.acerto >= 75 ? '#087A45' : r.acerto >= 60 ? '#C2410C' : '#B91C1C', mais: `${top[0]} (${top[1]}%)${top[2] ? ' · correta' : ' · incorreta'}`, maisCor: top[2] ? '#05592F' : '#B91C1C', dist: r.d.map(([t, p, c]) => ({ t, p, w: c ? 800 : 600, cor: c ? '#087A45' : p === top[1] ? '#DC2626' : '#CBD5E1' })) };
+    });
+    const isQuizDel = sc === '21b';
+    return {
+      is, st, back, turmas, hasTurmas: turmas.length > 0, noTurmas: turmas.length === 0, turmaCount: turmas.length + (turmas.length === 1 ? ' turma' : ' turmas'),
+      alunos, temas, dificuldade, quizzes, hasQuizzes: quizzes.length > 0, noQuizzes: quizzes.length === 0,
+      anySala: salaMap.q1 || salaMap.q2, ptabs, tabs, series: mk(['1º', '2º', '3º'], 'serie'), turnos: mk(['Manhã', 'Tarde', 'Noite'], 'turno'), durs: mk([10, 15, 20], 'dur'),
+      alts, geradas, aceitasCount: aceitas + (aceitas === 1 ? ' questão' : ' questões'), skel, spinner, resultados,
+      on: { nomeTurma: this.set('nomeTurma'), tema: this.set('tema'), enun: this.set('enun'), expl: this.set('expl') },
+      hasToast: !!st.toast, noConf: !st.conf, confBorder: st.conf ? '#1D4ED8' : '#CBD5E1', confBg: st.conf ? '#1D4ED8' : '#fff',
+      perfilRows: [{ icon: 'mail', label: 'E-mail', value: 'mauricio.linhares@prof.ce.gov.br' }, { icon: 'school', label: 'Escola', value: 'EEMTI Rachel de Queiroz' }, { icon: 'book-open', label: 'Disciplina', value: 'Biologia · Ensino Médio' }],
+      confirmTitle: isQuizDel ? 'Excluir Quiz 1: A Célula?' : 'Excluir turma 1º A?',
+      confirmBody: isQuizDel ? 'As 22 respostas e os resultados deste quiz serão apagados. Essa ação não pode ser desfeita.' : 'Os 28 alunos perdem o acesso às atividades e ao histórico da turma. Essa ação não pode ser desfeita.',
+      confirmCta: isQuizDel ? 'Excluir quiz' : 'Excluir turma',
+      confirmDelete: () => { if (isQuizDel) { this.setState({ delQ1: true }); go('09'); this.toast('Quiz excluído', () => this.setState({ delQ1: false })); } else { this.setState({ del1A: true }); go('06'); this.toast('Turma excluída', () => this.setState({ del1A: false })); } },
+      hasUndo: !!st.toast && !!this.undoFn, undo: () => { const f = this.undoFn; this.undoFn = null; clearTimeout(this.tt); if (f) f(); this.setState({ toast: null }); },
+      toDesemp: () => go('19'), pendNome: st.pendQ === 'q1' ? 'Quiz 1: A Célula' : 'Quiz 2: Bioquímica', showTabs: sc !== '07',
+      cancelDelete: () => go(isQuizDel ? '09' : '06'),
+      toPerfil: () => go('24'), toCriar: () => go('07'), toTurmas: () => go('06'), toAtiv: () => go('09'), toEditar: () => go('07'),
+      toExcluirTurma: () => go('18b'), toExcluirQuiz: () => go('21b'), toCriarQuiz: () => go('10'), toResultados: () => go('20'),
+      copyCode: () => { if (sc === '18a') go('06'); this.toast('Código copiado'); }, shareCode: () => this.toast('Link de convite pronto para enviar'),
+      saveTurma: () => { go('06'); this.toast('Turma 3º B – Manhã criada'); },
+      gerar: () => { go('23a'); clearTimeout(this.gt); this.gt = setTimeout(() => go('23b'), 2400); },
+      addGeradas: () => { go('10'); this.toast(`${aceitas} ${aceitas === 1 ? 'questão adicionada' : 'questões adicionadas'} ao quiz`); },
+      publicar: () => { go('09'); this.toast('Quiz publicado para o 1º A'); },
+      toggleConf: () => this.setState(s => ({ conf: !s.conf })),
+      ativarSala: () => { setSala(st.pendQ === 'q1' ? 'A Célula' : 'Bioquímica'); go('09'); this.toast(`Modo Sala liberado por ${st.dur} min`); },
+      logout: () => go('03')
+    };
+  }
+}
+</script>
+</body>
+</html>

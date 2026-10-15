@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+  <style>body{margin:0;background:#EDEDF3} *{box-sizing:border-box} a{color:#C2410C} a:hover{color:#9A3412}</style>
+</helmet>
+<section data-screen-label="Telas" style="padding:64px 72px 120px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E;display:flex;flex-direction:column;gap:56px;width:max-content">
+  <div style="display:flex;align-items:flex-end;gap:48px">
+    <div>
+      <dc-import name="Logo" variant="horizontal" size="44" hint-size="240px,44px"></dc-import>
+      <h1 style="margin:20px 0 0;font-size:56px;font-weight:800;line-height:1.05">Todas as telas</h1>
+      <p style="margin:12px 0 0;font-size:20px;font-weight:500;color:#475569;max-width:820px;line-height:1.5">40 frames organizados por módulo e por fluxo, na ordem de uso. Cada frame é interativo. Tracejado roxo = frame novo.</p>
+    </div>
+    <div style="display:flex;gap:20px;font-size:16px;font-weight:700;padding-bottom:6px"><a href="Práxis Edu - Protótipo.dc.html">Protótipo →</a><a href="Mapa de Navegação.dc.html">Mapa →</a><a href="Brand & Design System.dc.html">Design System →</a></div>
+  </div>
+
+  <sc-for list="{{ mods }}" as="m" hint-placeholder-count="3">
+    <div style="display:flex;flex-direction:column;gap:28px;padding:40px;border-radius:40px;background:{{ m.bg }}">
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="height:40px;padding:0 18px;border-radius:999px;color:#fff;display:flex;align-items:center;font-size:16px;font-weight:800;background:{{ m.cor }}">{{ m.tag }}</span>
+        <h2 style="margin:0;font-size:40px;font-weight:800">{{ m.nome }}</h2>
+        <span style="font-size:18px;font-weight:600;color:#475569">{{ m.count }}</span>
+      </div>
+      <sc-for list="{{ m.rows }}" as="r" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:15px;font-weight:800;letter-spacing:0.08em;color:{{ m.tc }}">{{ r.titulo }}</span>
+            <div style="width:80px;height:2px;background:{{ m.line }}"></div>
+          </div>
+          <div style="display:flex;gap:32px;align-items:flex-start">
+            <sc-for list="{{ r.items }}" as="it" hint-placeholder-count="5">
+              <div id="{{ it.id }}" style="display:flex;flex-direction:column;gap:12px;flex-shrink:0">
+                <div style="display:flex;align-items:center;gap:10px;height:36px;padding:0 4px">
+                  <span style="height:32px;min-width:44px;padding:0 10px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;background:{{ m.cor }}">{{ it.id }}</span>
+                  <span style="font-size:18px;font-weight:700;white-space:nowrap">{{ it.nome }}</span>
+                  <sc-if value="{{ it.nova }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:800;color:#5B21B6;background:#F3EEFF;border:1.5px dashed #7C3AED;padding:3px 8px;border-radius:999px">NOVA</span></sc-if>
+                </div>
+                <dc-import name="Praxis App" start="{{ it.id }}" hint-size="414px,868px"></dc-import>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-for>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const MODS = [
+  { tag: 'Módulo 1', nome: 'Login / Cadastro', cor: '#DC2626', tc: '#B91C1C', bg: '#FBEFEF', line: '#F5B5B5', rows: [
+    ['ENTRADA E ACESSO', [['01', 'Splash'], ['03', 'Login'], ['03e', 'Login · erro'], ['04', 'Cadastro'], ['05', 'Esqueceu a Senha'], ['05ok', 'Senha · confirmação']]]
+  ] },
+  { tag: 'Módulo 2', nome: 'Professor', cor: '#1D4ED8', tc: '#1D4ED8', bg: '#EEF2FD', line: '#C7D5F8', rows: [
+    ['TURMAS', [['06', 'Minhas Turmas'], ['07', 'Criar Turma'], ['18a', 'Ações da turma', 1], ['18b', 'Excluir turma', 1], ['32a', 'Vazio · sem turmas', 1], ['24', 'Perfil do Professor', 1]]],
+    ['PAINEL DA TURMA', [['08', 'Alunos da Turma'], ['19', 'Desempenho', 1], ['09', 'Atividades & Modo Sala'], ['22', 'Ativar Modo Sala', 1], ['20', 'Resultados por Questão', 1], ['21a', 'Ações do quiz', 1], ['21b', 'Excluir quiz', 1], ['32b', 'Vazio · sem quizzes', 1]]],
+    ['CRIAR ATIVIDADE COM IA', [['10', 'Criar Atividade (IA)'], ['23a', 'Gerador IA · gerando', 1], ['23b', 'Gerador IA · revisar', 1]]]
+  ] },
+  { tag: 'Módulo 3', nome: 'Estudante', cor: '#087A45', tc: '#05592F', bg: '#ECF6F0', line: '#A7DFC1', rows: [
+    ['PRIMEIRO ACESSO E TRILHA', [['25', 'Entrar na turma', 1], ['25ok', 'Entrou na turma', 1], ['11', 'Trilhas'], ['12', 'Lição Interativa'], ['12ok', 'Feedback correto'], ['27', 'Feedback errado', 1], ['26', 'Fim de lição', 1]]],
+    ['DUELOS', [['13', 'Duelos 1x1'], ['28', 'Escolher colega', 1], ['29', 'Partida de Duelo', 1], ['30', 'Resultado do Duelo', 1], ['32c', 'Vazio · sem duelos', 1]]],
+    ['SALA, IA E PERFIL', [['14', 'Modo Sala de Aula'], ['31', 'Modo Sala bloqueado', 1], ['15', 'BioBot IA'], ['16', 'Ranking Semanal'], ['17', 'Perfil & Badges'], ['33', 'Minha Turma', 1]]]
+  ] }
+];
+class Component extends DCLogic {
+  renderVals() {
+    const mods = MODS.map(m => {
+      const rows = m.rows.map(([titulo, items]) => ({ titulo, items: items.map(([id, nome, nova]) => ({ id, nome, nova: !!nova })) }));
+      const n = rows.reduce((a, r) => a + r.items.length, 0);
+      return { ...m, rows, count: n + ' frames' };
+    });
+    return { mods };
+  }
+}
+</script>
+</body>
+</html>

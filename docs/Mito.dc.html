@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+{{ svg }}
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:160,&quot;height&quot;:160},&quot;mood&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;feliz&quot;,&quot;comemorando&quot;,&quot;pensativo&quot;,&quot;triste&quot;,&quot;dormindo&quot;],&quot;default&quot;:&quot;feliz&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:120,&quot;tsType&quot;:&quot;number&quot;}}">
+// Mito v4 — mesma base da referência (feijão laranja, interior creme com cristas) + mais personalidade:
+// contorno branco de adesivo, corpo que inclina/pula por estado, mãos abertas, piscadinha, olhos de estrela, bolha de sono.
+const OL = '#1E1A3A', CHEEK = '#FF8E8E', TICK = '#FFA928', TONGUE = '#FF6F7D', BLUE = '#7CC0FF';
+// Paleta Laboratório: roxo da marca/IA com cristas rosa.
+const ORANGE = '#8B5CF6', RIM = '#6D3FD9', CREAM = '#F3EEFF', FOLD = '#F9A8D4', FOLD_E = '#E879B9', HI = '#C4B0FF';
+const BODY = 'M58 10 C78 8 92 22 94 40 C96 52 104 60 104 76 C104 98 86 112 64 112 C40 112 30 96 28 78 C26 60 30 44 34 32 C38 18 46 11 58 10 Z';
+const INNER = 'M58 21 C73 20 83 30 85 44 C87 56 94 64 94 78 C94 93 81 102 64 102 C47 102 39 92 38 78 C37 63 40 49 43 37 C46 27 51 22 58 21 Z';
+const FOLDS = ['M63 22 C60 28 70 30 67 36', 'M39 45 C46 44 47 51 41 53', 'M39 80 C46 79 48 86 43 90', 'M52 101 C54 95 61 98 63 93 C65 89 72 92 75 89', 'M93 70 C87 69 86 76 81 75'];
+const FONT = 'Plus Jakarta Sans, system-ui, sans-serif';
+const star = (cx, cy, r) => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + (cx + Math.cos(a) * rr).toFixed(2) + ' ' + (cy + Math.sin(a) * rr).toFixed(2); } return d + 'Z'; };
+class Component extends DCLogic {
+  renderVals() {
+    const h = React.createElement;
+    const mood = this.props.mood || 'feliz';
+    const s = Number(this.props.size || 120);
+    const halo = [], art = [], face = [], fx = [];
+    let n = 0; const key = () => 'k' + (n++);
+    const P = (d, o = {}) => h('path', { key: key(), d, fill: 'none', stroke: OL, strokeWidth: 3.2, strokeLinecap: 'round', strokeLinejoin: 'round', ...o });
+    const limb = (d) => { halo.push(P(d, { stroke: '#fff', strokeWidth: 20 })); art.push(P(d, { strokeWidth: 11.5 }), P(d, { stroke: ORANGE, strokeWidth: 6 })); };
+    const shine = (x, y, r) => h('ellipse', { key: key(), cx: x - r * 0.3, cy: y - r * 0.38, rx: r * 0.42, ry: r * 0.26, fill: HI, transform: `rotate(-25 ${x} ${y})` });
+    const fist = (x, y, r = 7) => { halo.push(h('circle', { key: key(), cx: x, cy: y, r: r + 5, fill: '#fff' })); art.push(h('circle', { key: key(), cx: x, cy: y, r, fill: ORANGE, stroke: OL, strokeWidth: 3.2 }), shine(x, y, r)); };
+    const open = (x, y, rot = 0) => {
+      const f = [[-5.5, -6.5], [0, -8.8], [5.5, -6.5]];
+      halo.push(h('g', { key: key(), transform: `rotate(${rot} ${x} ${y})` }, h('circle', { cx: x, cy: y, r: 12, fill: '#fff' }), ...f.map(([dx, dy], i) => h('circle', { key: i, cx: x + dx, cy: y + dy, r: 7.5, fill: '#fff' }))));
+      art.push(h('g', { key: key(), transform: `rotate(${rot} ${x} ${y})` },
+        ...f.map(([dx, dy], i) => h('ellipse', { key: 'f' + i, cx: x + dx, cy: y + dy, rx: 3.3, ry: 4, fill: ORANGE, stroke: OL, strokeWidth: 2.8 })),
+        h('circle', { cx: x - 7.5, cy: y + 1.5, r: 3.4, fill: ORANGE, stroke: OL, strokeWidth: 2.8 }),
+        h('circle', { cx: x, cy: y, r: 7, fill: ORANGE }),
+        h('path', { d: `M${x - 7} ${y - 1} A7 7 0 1 0 ${x + 7} ${y - 1}`, fill: 'none', stroke: OL, strokeWidth: 3 }),
+        shine(x, y + 2, 6)));
+    };
+    const foot = (x, y, rx, ry) => { halo.push(h('ellipse', { key: key(), cx: x, cy: y, rx: rx + 5, ry: ry + 5, fill: '#fff' })); art.push(h('ellipse', { key: key(), cx: x, cy: y, rx, ry, fill: ORANGE, stroke: OL, strokeWidth: 3.2 }), shine(x, y, ry)); };
+    // poses
+    if (mood === 'feliz') { limb('M33 66 Q22 76 24 88'); fist(24, 91); limb('M100 62 Q113 54 113 40'); open(113, 35, 12); }
+    else if (mood === 'comemorando') { limb('M33 58 Q19 52 17 38'); open(16, 33, -14); limb('M100 60 Q112 52 112 38'); open(112, 33, 14); }
+    else if (mood === 'pensativo') { limb('M32 70 Q22 78 23 89'); fist(23, 92); }
+    else { limb('M32 72 Q23 82 25 92'); fist(25, 95); limb('M102 78 Q109 88 105 97'); fist(105, 100); }
+    const jump = mood === 'comemorando';
+    limb(jump ? 'M48 108 Q44 116 40 118' : 'M48 108 Q42 114 36 115'); limb(jump ? 'M72 110 Q76 116 81 117' : 'M72 110 Q75 115 78 117');
+    if (jump) { foot(38, 118, 8.5, 6); foot(83, 117, 8.5, 6); } else { foot(34, 115, 8.5, 6.5); foot(80, 117.5, 8.5, 6); }
+    // body
+    halo.push(h('path', { key: key(), d: BODY, fill: '#fff', stroke: '#fff', strokeWidth: 12, strokeLinejoin: 'round' }));
+    art.push(h('path', { key: key(), d: BODY, fill: ORANGE, stroke: OL, strokeWidth: 3.6, strokeLinejoin: 'round' }));
+    art.push(P('M36 84 C40 100 52 108 66 108 C84 108 98 96 100 80', { stroke: RIM, strokeWidth: 5, opacity: 0.7 }));
+    art.push(h('path', { key: key(), d: INNER, fill: CREAM, stroke: RIM, strokeWidth: 2.6 }));
+    FOLDS.forEach(d => art.push(P(d, { stroke: FOLD_E, strokeWidth: 10 }), P(d, { stroke: FOLD, strokeWidth: 6.4 })));
+    art.push(h('ellipse', { key: key(), cx: 47, cy: 19, rx: 7, ry: 2.6, fill: HI, transform: 'rotate(-30 47 19)' }), h('ellipse', { key: key(), cx: 33.5, cy: 50, rx: 1.9, ry: 5, fill: HI, transform: 'rotate(12 33.5 50)' }));
+    // face
+    const E = [[54, 60], [75, 57]];
+    const eye = ([x, y], o = {}) => {
+      const rx = o.rx || 6.2, ry = o.ry || 7.6, dx = o.dx || 0, dy = o.dy || 0;
+      face.push(h('ellipse', { key: key(), cx: x + dx, cy: y + dy, rx, ry, fill: OL }));
+      if (o.star) face.push(h('path', { key: key(), d: star(x + dx, y + dy - 0.5, 4.6), fill: '#FFD34D' }), h('circle', { key: key(), cx: x + dx - 2.6, cy: y + dy - 3.6, r: 1.3, fill: '#fff' }));
+      else face.push(h('circle', { key: key(), cx: x + dx - 1.7, cy: y + dy - 2.6, r: o.puppy ? 3 : 2.6, fill: '#fff' }), h('circle', { key: key(), cx: x + dx + 2, cy: y + dy + 2.8, r: 1.2, fill: '#fff' }));
+      if (o.puppy) face.push(h('circle', { key: key(), cx: x + dx + 2.4, cy: y + dy - 2.4, r: 1.2, fill: '#fff' }), P(`M${x - rx + 1} ${y + ry - 1.5} q${rx - 1} 3 ${2 * rx - 2} 0`, { stroke: BLUE, strokeWidth: 2.2 }));
+    };
+    const cheek = (x, y) => face.push(h('ellipse', { key: key(), cx: x, cy: y, rx: 5.6, ry: 3.9, fill: CHEEK, opacity: 0.85 }), P(`M${x - 2} ${y + 1.2} l1.3 -2.2 M${x + 0.6} ${y + 1.2} l1.3 -2.2`, { stroke: '#fff', strokeWidth: 1.1, opacity: 0.85 }));
+    if (mood === 'feliz') {
+      face.push(P('M48.5 60.5 q5.5 -6 11 0', { strokeWidth: 3.6 }));
+      eye(E[1]); face.push(P('M70 46.5 q5.5 -5 11 -1'), P('M48 51 q5.5 -3 10 -0.5'));
+      face.push(h('path', { key: key(), d: 'M57.5 66.5 Q65 64.5 72.5 64 Q73 77 65.5 77.5 Q58.5 77.5 57.5 66.5 Z', fill: OL, stroke: OL, strokeWidth: 2.2, strokeLinejoin: 'round' }));
+      face.push(h('path', { key: key(), d: 'M61 72.5 Q65.5 70 70 72 L69.5 79 Q66 82.5 62.5 79.5 Z', fill: TONGUE, stroke: OL, strokeWidth: 2.2, strokeLinejoin: 'round' }), P('M65.6 73 v4.5', { stroke: '#E0475A', strokeWidth: 1.3 }));
+      cheek(47, 69); cheek(83, 65);
+      fx.push(P('M120 26 q4 6 1 13', { stroke: TICK, strokeWidth: 3.4 }), P('M125 22 q5 9 1 19', { stroke: TICK, strokeWidth: 3.4 }));
+    } else if (mood === 'comemorando') {
+      eye(E[0], { star: true }); eye(E[1], { star: true });
+      face.push(P('M47 50 q5.5 -5 11 -1.5'), P('M69 46 q5.5 -5 11 -0.5'));
+      face.push(h('path', { key: key(), d: 'M56 65 Q65.5 62.5 74 62 Q75 80 65.5 80.5 Q57 80.5 56 65 Z', fill: OL, stroke: OL, strokeWidth: 2.2, strokeLinejoin: 'round' }));
+      face.push(h('path', { key: key(), d: 'M58.5 65.6 Q65.5 63.8 72 63.4 L71.6 67.4 Q65 68 58.9 69 Z', fill: '#fff' }));
+      face.push(h('ellipse', { key: key(), cx: 65.5, cy: 76.5, rx: 5, ry: 2.8, fill: TONGUE }));
+      cheek(46, 70); cheek(84, 66);
+      fx.push(P('M10 18 L5 11', { stroke: TICK, strokeWidth: 4 }), P('M4 28 L-3 25', { stroke: TICK, strokeWidth: 4 }), P('M118 18 L123 11', { stroke: TICK, strokeWidth: 4 }), P('M124 28 L131 25', { stroke: TICK, strokeWidth: 4 }));
+      [[28, 6, '#7C3AED', 20], [92, 2, '#087A45', -25], [60, -2, '#1D4ED8', 40], [-2, 56, '#DC2626', 15], [124, 60, '#7C3AED', -30]].forEach(c => fx.push(h('rect', { key: key(), x: c[0], y: c[1], width: 7, height: 4, rx: 2, fill: c[2], transform: `rotate(${c[3]} ${c[0]} ${c[1]})` })));
+      fx.push(h('path', { key: key(), d: star(104, 6, 5), fill: '#FFD34D', stroke: OL, strokeWidth: 1.8, strokeLinejoin: 'round' }), h('path', { key: key(), d: star(18, 66, 3.6), fill: '#FFD34D', stroke: OL, strokeWidth: 1.6, strokeLinejoin: 'round' }));
+    } else if (mood === 'pensativo') {
+      eye(E[0], { dx: 1.6, dy: -2, ry: 6.6 }); eye(E[1], { dx: 1.6, dy: -2 });
+      face.push(P('M48 54.5 L58.5 54', { strokeWidth: 3.4 }), P('M70 45 q5.5 -6 12 -2.5'));
+      face.push(P('M61 72 q4 -1.8 8.5 -0.4 q2 0.8 3.4 -0.6'));
+      cheek(47, 69); cheek(83, 65);
+      limb('M101 72 Q102 89 86 83'); fist(84, 81);
+      fx.push(h('path', { key: key(), d: 'M90 34 q-4 6 0 8.5 q4 -2.5 0 -8.5z', fill: BLUE, stroke: OL, strokeWidth: 1.8 }));
+      fx.push(h('circle', { key: key(), cx: 100, cy: 24, r: 2.8, fill: '#fff', stroke: OL, strokeWidth: 2.2 }), h('circle', { key: key(), cx: 106, cy: 15, r: 4, fill: '#fff', stroke: OL, strokeWidth: 2.2 }));
+      fx.push(h('circle', { key: key(), cx: 114, cy: 2, r: 9.5, fill: '#7C3AED', stroke: OL, strokeWidth: 2.4 }), h('text', { key: key(), x: 114, y: 7.3, textAnchor: 'middle', fontSize: 14, fontWeight: 800, fill: '#fff', fontFamily: FONT }, '?'));
+    } else if (mood === 'triste') {
+      eye(E[0], { puppy: true, rx: 6.8, ry: 8.2, dy: 1 }); eye(E[1], { puppy: true, rx: 6.8, ry: 8.2, dy: 1 });
+      face.push(P('M46.5 50.5 L58 47.5'), P('M83 46.5 L71.5 45'));
+      face.push(P('M58.5 76.5 q2.3 -4.2 4.8 -1.2 q2.4 3 4.8 0 q2.3 -3 4.6 1.2'));
+      face.push(h('path', { key: key(), d: 'M48.5 69 q-1 7 1.5 12 q2.5 -5 -1.5 -12z', fill: BLUE, stroke: OL, strokeWidth: 1.6 }), h('path', { key: key(), d: 'M81 66 q1 6 -1.2 10 q-2.2 -4 1.2 -10z', fill: BLUE, stroke: OL, strokeWidth: 1.6 }));
+      cheek(46, 72); cheek(84, 68);
+    } else {
+      face.push(P('M48.5 61 q5.5 5 11 0', { strokeWidth: 3.6 }), P('M69.5 58 q5.5 5 11 0', { strokeWidth: 3.6 }));
+      face.push(P('M60.5 72 q4.5 2.6 9 0'));
+      face.push(h('circle', { key: key(), cx: 74.5, cy: 71, r: 6.5, fill: BLUE, opacity: 0.45, stroke: '#3B82F6', strokeWidth: 1.4 }), h('circle', { key: key(), cx: 72.4, cy: 68.6, r: 1.8, fill: '#fff' }));
+      cheek(47, 68); cheek(83, 64);
+      fx.push(h('text', { key: key(), x: 92, y: 30, fontSize: 14, fontWeight: 800, fill: '#7C3AED', stroke: '#fff', strokeWidth: 3, paintOrder: 'stroke', fontFamily: FONT }, 'z'), h('text', { key: key(), x: 102, y: 14, fontSize: 21, fontWeight: 800, fill: '#7C3AED', stroke: '#fff', strokeWidth: 3, paintOrder: 'stroke', fontFamily: FONT }, 'Z'));
+    }
+    const T = { feliz: 'rotate(-5 64 112)', comemorando: 'translate(0 -5)', pensativo: 'rotate(4 64 112)', triste: 'translate(64 114) scale(1.03 0.95) translate(-64 -114)', dormindo: 'rotate(8 64 112)' }[mood];
+    const shadow = h('ellipse', { key: 'sh', cx: 60, cy: 122, rx: jump ? 24 : 32, ry: jump ? 3 : 4, fill: OL, opacity: 0.13 });
+    return { svg: h('svg', { width: s, height: s, viewBox: '0 4 120 120', role: 'img', 'aria-label': `Mito ${mood}`, style: { display: 'block', overflow: 'visible', flexShrink: 0 } }, shadow, h('g', { key: 'char', transform: T }, ...halo, ...art, ...face), ...fx) };
+  }
+}
+</script>
+</body>
+</html>
