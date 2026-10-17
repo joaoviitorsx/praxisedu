@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+  <style>body{margin:0;background:#1A1A2E} *{box-sizing:border-box} a{color:#C2410C} a:hover{color:#9A3412}</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+  <section data-label="Capa" data-screen-label="01 Capa" data-speaker-notes="Práxis Edu: protótipo de alta fidelidade. Três módulos: Login e Cadastro, Professor e Estudante." style="width:1920px;height:1080px;background:#F7F7FA;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 120px;gap:80px">
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <dc-import name="Logo" variant="horizontal" size="72" hint-size="400px,72px"></dc-import>
+      <h1 style="margin:0;font-size:88px;font-weight:800;line-height:1.02">Telas do app</h1>
+      <p style="margin:0;font-size:32px;font-weight:500;color:#475569;line-height:1.4">Protótipo de alta fidelidade · Biologia no Ensino Médio · UNIFOR T197</p>
+      <div style="display:flex;gap:28px;margin-top:12px;font-size:26px;font-weight:700">
+        <span style="display:flex;align-items:center;gap:12px"><span style="width:22px;height:22px;border-radius:6px;background:#DC2626"></span>Login / Cadastro</span>
+        <span style="display:flex;align-items:center;gap:12px"><span style="width:22px;height:22px;border-radius:6px;background:#1D4ED8"></span>Professor</span>
+        <span style="display:flex;align-items:center;gap:12px"><span style="width:22px;height:22px;border-radius:6px;background:#087A45"></span>Estudante</span>
+      </div>
+    </div>
+    <img src="assets/mascotes/turma.png" alt="Mascotes do Práxis Edu" style="width:100%;display:block">
+  </section>
+  <sc-for list="{{ slides }}" as="sl" hint-placeholder-count="3">
+    <section data-label="{{ sl.label }}" data-screen-label="{{ sl.screenLabel }}" data-speaker-notes="{{ sl.notes }}" style="width:1920px;height:1080px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E;position:relative;overflow:hidden;background:{{ sl.bg }}">
+      <sc-if value="{{ sl.divider }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;padding:120px;display:flex;flex-direction:column;justify-content:center;gap:28px;color:#fff">
+          <span style="align-self:flex-start;height:56px;padding:0 24px;border-radius:999px;background:#fff;display:flex;align-items:center;font-size:26px;font-weight:800;color:{{ sl.cor }}">{{ sl.tag }}</span>
+          <h2 style="margin:0;font-size:120px;font-weight:800;line-height:1">{{ sl.nome }}</h2>
+          <div style="font-size:34px;font-weight:600">{{ sl.count }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;max-width:1500px">
+            <sc-for list="{{ sl.fluxos }}" as="f" hint-placeholder-count="4"><span style="height:56px;padding:0 24px;border-radius:999px;border:3px solid #fff;display:flex;align-items:center;font-size:24px;font-weight:800">{{ f }}</span></sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sl.telas }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;left:72px;right:72px;top:44px;display:flex;align-items:center;gap:20px">
+          <span style="height:48px;padding:0 20px;border-radius:999px;color:#fff;display:flex;align-items:center;font-size:24px;font-weight:800;background:{{ sl.cor }}">{{ sl.nome }}</span>
+          <span style="font-size:30px;font-weight:800;letter-spacing:0.06em;color:{{ sl.tc }}">{{ sl.fluxo }}</span>
+          <span style="margin-left:auto;font-size:24px;font-weight:700;color:#475569">{{ sl.parte }}</span>
+        </div>
+        <div style="position:absolute;left:0;right:0;top:124px;display:flex;justify-content:center;align-items:flex-start;gap:24px">
+          <sc-for list="{{ sl.items }}" as="it" hint-placeholder-count="4">
+            <div style="display:flex;align-items:flex-start;gap:24px">
+              <div style="display:flex;flex-direction:column;gap:14px;width:381px">
+                <div style="display:flex;align-items:center;gap:12px;height:40px">
+                  <span style="height:40px;min-width:56px;padding:0 12px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;background:{{ sl.cor }}">{{ it.id }}</span>
+                  <span style="font-size:24px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.nome }}</span>
+                </div>
+                <div data-om-raster="" style="width:381px;height:799px;pointer-events:none;user-select:none">
+                  <div style="width:414px;height:868px;transform:scale(0.92);transform-origin:top left">
+                    <dc-import name="Praxis App" start="{{ it.id }}" sala="{{ it.sala }}" hint-size="414px,868px"></dc-import>
+                  </div>
+                </div>
+              </div>
+              <sc-if value="{{ it.seta }}" hint-placeholder-val="{{ false }}">
+                <div style="height:853px;display:flex;align-items:center;color:{{ sl.cor }}"><svg width="40" height="28" viewBox="0 0 36 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h30"></path><path d="m24 4 8 8-8 8"></path></svg></div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </section>
+  </sc-for>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const MODS = [
+  { tag: 'Módulo 1', nome: 'Login / Cadastro', cor: '#DC2626', tc: '#B91C1C', bg: '#FBEFEF', rows: [
+    ['ENTRADA', [['01', 'Splash'], ['03', 'Login', 'O perfil vem da conta: professor vai para Minhas Turmas, estudante para a Trilha.'], ['03e', 'Login · erro']]],
+    ['CONTA', [['04', 'Cadastro', 'O perfil é escolhido no cadastro. Estudante novo segue para Entrar na turma.'], ['05', 'Esqueceu a Senha'], ['05ok', 'Senha · confirmação']]]
+  ] },
+  { tag: 'Módulo 2', nome: 'Professor', cor: '#1D4ED8', tc: '#1D4ED8', bg: '#EEF2FD', rows: [
+    ['TURMAS', [['06', 'Minhas Turmas'], ['07', 'Criar Turma'], ['18a', 'Ações da turma'], ['18b', 'Excluir turma'], ['32a', 'Vazio · sem turmas']]],
+    ['PAINEL DA TURMA', [['08', 'Alunos da Turma'], ['19', 'Desempenho'], ['09', 'Atividades & Modo Sala'], ['20', 'Resultados por Questão'], ['21a', 'Ações do quiz'], ['21b', 'Excluir quiz'], ['32b', 'Vazio · sem quizzes']]],
+    ['MODO SALA E IA', [['22', 'Ativar Modo Sala', 'Duração e confirmação da finalidade pedagógica (Lei 15.100/2025).'], ['10', 'Criar Atividade (IA)'], ['23a', 'Gerador IA · gerando'], ['23b', 'Gerador IA · revisar']]],
+    ['CONTA', [['24', 'Perfil do Professor']]]
+  ] },
+  { tag: 'Módulo 3', nome: 'Estudante', cor: '#087A45', tc: '#05592F', bg: '#ECF6F0', rows: [
+    ['PRIMEIRO ACESSO E MODO SALA', [['25', 'Entrar na turma'], ['25ok', 'Entrou na turma'], ['31', 'Sala · aguardando', 'Estado padrão da aba Sala, sem atividade liberada.'], ['14', 'Modo Sala de Aula', 'Exibido quando o professor libera a atividade.', 1]]],
+    ['TRILHA E LIÇÃO', [['11', 'Trilhas', 'Temas do ano com seus mascotes.'], ['12', 'Lição Interativa'], ['12ok', 'Feedback correto'], ['27', 'Feedback errado'], ['26', 'Fim de lição']]],
+    ['DUELOS', [['13', 'Duelos 1x1'], ['28', 'Escolher colega'], ['29', 'Partida de Duelo'], ['30', 'Resultado do Duelo'], ['32c', 'Vazio · sem duelos']]],
+    ['BIOBOT, RANKING E PERFIL', [['15', 'BioBot IA'], ['16', 'Ranking Semanal'], ['17', 'Perfil & Badges'], ['33', 'Minha Turma']]]
+  ] }
+];
+const FLOW = new Set(['01>03', '03>03e', '04>05', '05>05ok', '06>07', '07>18a', '18a>18b', '08>19', '19>09', '09>20', '21a>21b', '10>23a', '23a>23b', '22>10', '25>25ok', '31>14', '11>12', '12>12ok', '12ok>27', '27>26', '13>28', '28>29', '29>30', '17>33']);
+const chunk = (a) => { const n = Math.ceil(a.length / 4); const size = Math.ceil(a.length / n); const out = []; for (let i = 0; i < a.length; i += size) out.push(a.slice(i, i + size)); return out; };
+class Component extends DCLogic {
+  renderVals() {
+    const slides = [];
+    let num = 2;
+    MODS.forEach(m => {
+      const total = m.rows.reduce((a, r) => a + r[1].length, 0);
+      slides.push({ divider: true, telas: false, label: m.nome, screenLabel: String(num++).padStart(2, '0') + ' ' + m.nome, notes: `${m.nome}: ${total} telas, em ${m.rows.length} fluxos.`, bg: m.cor, cor: m.cor, tag: m.tag, nome: m.nome, count: total + ' telas', fluxos: m.rows.map(r => r[0].charAt(0) + r[0].slice(1).toLowerCase()), items: [] });
+      m.rows.forEach(([fluxo, items]) => {
+        const parts = chunk(items);
+        parts.forEach((p, pi) => {
+          const notes = p.map(([id, nome, nota]) => `${id} ${nome}${nota ? ': ' + nota : '.'}`).join(' ');
+          slides.push({
+            divider: false, telas: true, label: `${m.nome} · ${fluxo}`, screenLabel: String(num++).padStart(2, '0') + ' ' + fluxo, notes,
+            bg: m.bg, cor: m.cor, tc: m.tc, nome: m.nome, fluxo, parte: parts.length > 1 ? `${pi + 1} de ${parts.length}` : '',
+            items: p.map(([id, nome, nota, sala], i) => ({ id, nome, sala: !!sala, seta: !!p[i + 1] && FLOW.has(id + '>' + p[i + 1][0]) }))
+          });
+        });
+      });
+    });
+    return { slides };
+  }
+}
+</script>
+</body>
+</html>

@@ -78,16 +78,16 @@ class Component extends DCLogic {
   componentDidMount() { this.props.onScreen && this.props.onScreen(this.state.screen); }
   componentDidUpdate(pp) {
     if (pp.sala !== this.props.sala) this.setState(st => ({ salaQuiz: this.props.sala ? (st.salaQuiz || 'A Célula') : null }));
-    if (pp.jump !== this.props.jump && this.props.start) {
+    if ((pp.jump !== this.props.jump || pp.start !== this.props.start) && this.props.start) {
       const s = this.props.start;
-      this.setState({ ...(s === '14' ? { salaQuiz: this.state.salaQuiz || 'A Célula' } : {}), screen: s, hist: [], role: PROF.includes(s) ? 'professor' : (AUTH.includes(s) ? this.state.role : 'estudante') }, () => this.save());
+      this.setState({ ...(s === '14' ? { salaQuiz: this.state.salaQuiz || 'A Célula' } : {}), moved: false, screen: s, hist: [], role: PROF.includes(s) ? 'professor' : (AUTH.includes(s) ? this.state.role : 'estudante') }, () => this.save());
     }
   }
   save() {
     if (this.props.persist) { try { localStorage.setItem('praxis-screen', this.state.screen); } catch (e) {} }
     this.props.onScreen && this.props.onScreen(this.state.screen);
   }
-  go = (id) => this.setState(s => ({ screen: id, hist: [...s.hist, s.screen].slice(-30) }), () => this.save());
+  go = (id) => this.setState(s => ({ moved: true, screen: id, hist: [...s.hist, (!s.moved && this.props.start && !this.props.persist) ? this.props.start : s.screen].slice(-30) }), () => this.save());
   back = () => this.setState(s => {
     const hist = s.hist.slice(); const prev = hist.pop();
     return { screen: prev || '01', hist };
@@ -96,9 +96,10 @@ class Component extends DCLogic {
   setSala = (q) => { this.setState({ salaQuiz: q }); this.props.onSala && this.props.onSala(!!q); };
   setJoined = (j) => this.setState({ joined: j });
   renderVals() {
-    const sc = this.state.screen;
+    // Frames estáticos: enquanto ninguém navegou, a tela vem sempre da prop start (evita ficar preso no Splash se a prop chegar depois da montagem).
+    const sc = (!this.state.moved && this.props.start && !this.props.persist) ? this.props.start : this.state.screen;
     const mAuth = AUTH.includes(sc), mProf = PROF.includes(sc);
-    return { salaQuiz: this.state.salaQuiz, setSala: this.setSala, joined: this.state.joined, setJoined: this.setJoined, screen: sc, go: this.go, back: this.back, role: this.state.role, setRole: this.setRole, mAuth, mProf, mStud: !mAuth && !mProf, sbColor: LIGHT.includes(sc) ? '#FFFFFF' : '#1A1A2E', hiColor: ['26', '30'].includes(sc) ? '#FFFFFF' : '#1A1A2E' };
+    return { salaQuiz: this.state.salaQuiz || (sc === '14' ? 'A Célula' : null), setSala: this.setSala, joined: this.state.joined, setJoined: this.setJoined, screen: sc, go: this.go, back: this.back, role: this.state.role, setRole: this.setRole, mAuth, mProf, mStud: !mAuth && !mProf, sbColor: LIGHT.includes(sc) ? '#FFFFFF' : '#1A1A2E', hiColor: ['26', '30'].includes(sc) ? '#FFFFFF' : '#1A1A2E' };
   }
 }
 </script>
