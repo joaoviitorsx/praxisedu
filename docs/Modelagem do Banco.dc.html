@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+  <style>body{margin:0;background:#EDEDF3} *{box-sizing:border-box} a{color:#1D4ED8} a:hover{color:#1E3A8A}</style>
+</helmet>
+<div style="padding:64px 72px 120px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0F172A;display:flex;flex-direction:column;gap:40px;width:max-content">
+
+  <div style="display:flex;align-items:flex-end;gap:48px;max-width:2560px">
+    <div style="flex:1">
+      <dc-import name="Logo" variant="horizontal" size="44" hint-size="240px,44px"></dc-import>
+      <h1 style="margin:20px 0 0;font-size:56px;font-weight:800;line-height:1.05">Modelagem do banco</h1>
+      <p style="margin:12px 0 0;font-size:20px;font-weight:500;color:#475569;max-width:980px;line-height:1.5">Firebase Realtime Database · guia para os devs da equipe. Stack: React Native (Expo) + Firebase JS SDK (modular) + Firebase Authentication. Versão 1.0 · outubro/2026.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:4px">
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">RESPONSÁVEIS</span>
+      <div style="display:flex;gap:10px">
+        <sc-for list="{{ owners }}" as="o" hint-placeholder-count="4">
+          <span style="display:flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 8px;border-radius:999px;background:#fff;border:1px solid #E2E8F0;font-size:15px;font-weight:700"><span style="width:26px;height:26px;border-radius:999px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:{{ o.cor }}">{{ o.ini }}</span>{{ o.nome }}</span>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 1 -->
+  <div style="display:flex;gap:32px;align-items:stretch">
+    <div id="01" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">01</span><h2 style="margin:0;font-size:28px;font-weight:800">Resumo</h2></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ resumo }}" as="r" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:start;padding:16px;border-radius:16px;background:#F8FAFC">
+            <span style="width:44px;height:44px;border-radius:12px;background:#E7F6EE;color:#05592F;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800">{{ r.n }}</span>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:18px;font-weight:800">{{ r.t }}</span><span style="font-size:15px;font-weight:500;color:#475569;line-height:1.5;text-wrap:pretty">{{ r.d }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div id="02" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">02</span><h2 style="margin:0;font-size:28px;font-weight:800">SQL × Realtime Database</h2></div>
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden">
+        <div style="padding:12px 16px;background:#F1F5F9;font-size:13px;font-weight:800;letter-spacing:0.06em;color:#475569">EM SQL VOCÊ FARIA</div>
+        <div style="padding:12px 16px;background:#E7F6EE;font-size:13px;font-weight:800;letter-spacing:0.06em;color:#05592F">NO RTDB FAZEMOS</div>
+        <sc-for list="{{ sql }}" as="s" hint-placeholder-count="6">
+          <div style="padding:14px 16px;border-top:1px solid #E2E8F0;font-size:15px;font-weight:600;color:#475569;line-height:1.45">{{ s.a }}</div>
+          <div style="padding:14px 16px;border-top:1px solid #E2E8F0;font-size:15px;font-weight:600;line-height:1.45">{{ s.b }}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">REGRAS DE OURO</span>
+        <sc-for list="{{ ouro }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;gap:12px;align-items:baseline;font-size:16px;font-weight:500;line-height:1.5"><span style="font-weight:800;color:#087A45">{{ g.n }}</span><span><b style="font-weight:800">{{ g.t }}</b> {{ g.d }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div id="03" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">03</span><h2 style="margin:0;font-size:28px;font-weight:800">Convenções</h2></div>
+      <div style="display:flex;flex-direction:column;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden">
+        <sc-for list="{{ conv }}" as="c" hint-placeholder-count="11">
+          <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:16px;padding:12px 16px;border-bottom:1px solid #E2E8F0;align-items:center">
+            <span style="font-size:15px;font-weight:700">{{ c.a }}</span>
+            <span style="font-size:14px;font-weight:500;color:#475569;line-height:1.45">{{ c.b }}</span>
+            <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:#1D4ED8;background:#EAF0FF;padding:4px 8px;border-radius:8px;justify-self:start;word-break:break-all">{{ c.c }}</code>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:12px;padding:16px;border-radius:16px;background:#FDECEC;font-size:15px;font-weight:600;color:#7F1D1D;line-height:1.5"><dc-import name="Icon" name-icon="alert-triangle" hint-size="20px,20px"></dc-import><span><b style="font-weight:800">Atenção:</b> nunca use chaves numéricas como "1", "2", "3". O RTDB converte essas chaves em array e pode devolver null nas posições vazias. Use sempre grade1, q1, etc.</span></div>
+    </div>
+  </div>
+
+  <!-- ROW 2: árvore + relacionamentos -->
+  <div style="display:flex;gap:32px;align-items:stretch">
+    <div id="04" style="width:1672px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">04</span><h2 style="margin:0;font-size:28px;font-weight:800">Mapa da árvore</h2><span style="font-size:16px;font-weight:600;color:#475569">16 nós na raiz, agrupados pelo assunto. A cor indica o responsável.</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+        <sc-for list="{{ tree }}" as="g" hint-placeholder-count="6">
+          <div style="border:2px solid #E2E8F0;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#94A3B8">/</span><span style="font-size:20px;font-weight:800">{{ g.nome }}</span></div>
+            <sc-for list="{{ g.nodes }}" as="n" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:6px 1fr;gap:14px;padding:12px 14px;border-radius:14px;background:{{ n.soft }}">
+                <span style="border-radius:3px;background:{{ n.cor }}"></span>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <code style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#0F172A;word-break:break-all">{{ n.path }}</code>
+                  <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;font-weight:600;color:#475569"><span>{{ n.desc }}</span><span style="font-weight:800;white-space:nowrap;color:{{ n.tc }}">{{ n.dono }}</span></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div id="05" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">05</span><h2 style="margin:0;font-size:28px;font-weight:800">Relacionamentos</h2></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <sc-for list="{{ card }}" as="c" hint-placeholder-count="3">
+          <div style="padding:16px;border-radius:16px;background:#0F172A;color:#fff;display:flex;flex-direction:column;gap:6px"><span style="font-size:26px;font-weight:800;color:#FFC53D">{{ c.n }}</span><span style="font-size:14px;font-weight:600;line-height:1.4">{{ c.t }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ rels }}" as="r" hint-placeholder-count="15">
+          <div style="display:grid;grid-template-columns:200px 1fr 200px;align-items:center;gap:10px">
+            <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:8px 10px;border-radius:10px;background:#F1F5F9;text-align:center">{{ r.a }}</code>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+              <span style="font-size:13px;font-weight:700;color:#475569">{{ r.l }}</span>
+              <div style="display:flex;align-items:center;width:100%;gap:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#1D4ED8">{{ r.ca }}</span><span style="flex:1;height:2px;background:#CBD5E1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#1D4ED8">{{ r.cb }}</span></div>
+            </div>
+            <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:8px 10px;border-radius:10px;background:#F1F5F9;text-align:center">{{ r.b }}</code>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: nós em detalhe -->
+  <div id="06" style="width:2524px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">06</span><h2 style="margin:0;font-size:28px;font-weight:800">Os nós em detalhe</h2><span style="font-size:16px;font-weight:600;color:#475569">Campos, tipos e quem pode ler ou escrever cada nó.</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-items:start">
+      <sc-for list="{{ nodes }}" as="n" hint-placeholder-count="8">
+        <div style="border:2px solid #E2E8F0;border-radius:24px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:18px 20px;display:flex;flex-direction:column;gap:6px;background:{{ n.soft }}">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:{{ n.tc }}">{{ n.sec }}</span><span style="height:26px;padding:0 10px;border-radius:999px;color:#fff;display:flex;align-items:center;font-size:12px;font-weight:800;background:{{ n.cor }}">{{ n.dono }}</span></div>
+            <code style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;word-break:break-all">{{ n.path }}</code>
+            <span style="font-size:14px;font-weight:600;color:#334155;line-height:1.45">{{ n.desc }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;padding:6px 20px">
+            <sc-for list="{{ n.fields }}" as="f" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);gap:4px 12px;padding:9px 0;border-bottom:1px solid #F1F5F9">
+                <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;word-break:break-word">{{ f.k }}</code>
+                <code style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#6D28D9;word-break:break-word">{{ f.t }}</code>
+                <span style="grid-column:1 / -1;font-size:13px;font-weight:500;color:#475569;line-height:1.4">{{ f.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 20px">
+            <div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:#F8FAFC"><span style="font-size:11px;font-weight:800;letter-spacing:0.08em;color:#475569">LÊ</span><span style="font-size:13px;font-weight:600;line-height:1.4">{{ n.le }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:#F8FAFC"><span style="font-size:11px;font-weight:800;letter-spacing:0.08em;color:#475569">ESCREVE</span><span style="font-size:13px;font-weight:600;line-height:1.4">{{ n.esc }}</span></div>
+          </div>
+          <sc-if value="{{ n.nota }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:0 20px 18px;padding:10px 12px;border-radius:12px;background:#FFF7E0;font-size:13px;font-weight:600;color:#713F12;line-height:1.45">{{ n.nota }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ROW 4: escritas + fluxos -->
+  <div style="display:flex;gap:32px;align-items:stretch">
+    <div id="07" style="width:1672px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">07</span><h2 style="margin:0;font-size:28px;font-weight:800">Operações: o que cada ação grava</h2><span style="font-size:16px;font-weight:600;color:#475569">Tudo que aparece no mesmo bloco é gravado junto, tudo ou nada.</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start">
+        <sc-for list="{{ ops }}" as="op" hint-placeholder-count="12">
+          <div style="border:2px solid #E2E8F0;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:8px;height:28px;border-radius:4px;background:{{ op.cor }}"></span>
+              <span style="font-size:19px;font-weight:800;flex:1">{{ op.nome }}</span>
+              <span style="font-size:13px;font-weight:700;color:#475569;white-space:nowrap">Tela {{ op.tela }}</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#0F172A;background:#F1F5F9;padding:4px 8px;border-radius:8px">{{ op.fn }}</code>
+              <code style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#fff;background:#7C3AED;padding:4px 8px;border-radius:999px">{{ op.tipo }}</code>
+              <span style="font-size:13px;font-weight:800;color:{{ op.tc }}">{{ op.dono }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:14px;background:#0F172A">
+              <sc-for list="{{ op.paths }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;gap:12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="color:#E2E8F0;font-weight:500;word-break:break-all">{{ p.k }}</span><span style="color:#FFC53D;font-weight:700;white-space:nowrap">{{ p.v }}</span></div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ op.nota }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;font-weight:500;color:#475569;line-height:1.5">{{ op.nota }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div id="08" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">08</span><h2 style="margin:0;font-size:28px;font-weight:800">Fluxos de estado</h2></div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:18px;font-weight:800">Depois do login</span>
+        <div style="display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:center">
+          <div style="padding:16px;border-radius:16px;background:#FDECEC;text-align:center;display:flex;flex-direction:column;gap:4px"><code style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700">users/{uid}</code><span style="font-size:13px;font-weight:600;color:#7F1D1D">get após o Auth</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ rotas }}" as="r" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:1fr 24px 1fr;align-items:center;gap:8px">
+                <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:10px 12px;border-radius:12px;background:#F1F5F9">{{ r.cond }}</code>
+                <span style="color:#94A3B8;font-weight:800;text-align:center">→</span>
+                <span style="padding:10px 12px;border-radius:12px;font-size:14px;font-weight:800;color:#fff;background:{{ r.cor }}">{{ r.tela }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:18px;font-weight:800">Duelo assíncrono · <code style="font-family:'JetBrains Mono',monospace;font-size:15px">duels/*/status</code></span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <sc-for list="{{ duelo }}" as="d" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="padding:12px;border-radius:14px;border:2px solid #087A45;background:#E7F6EE;display:flex;flex-direction:column;gap:4px;width:180px"><code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">{{ d.s }}</code><span style="font-size:13px;font-weight:600;color:#475569;line-height:1.35">{{ d.d }}</span></div>
+              <sc-if value="{{ d.seta }}" hint-placeholder-val="{{ true }}"><span style="color:#087A45;font-weight:800;font-size:20px">→</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding-left:40px"><span style="color:#DC2626;font-weight:800;font-size:20px">↘</span><div style="padding:10px 12px;border-radius:14px;border:2px solid #DC2626;background:#FDECEC;display:flex;gap:10px;align-items:center"><code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">declined</code><span style="font-size:13px;font-weight:600;color:#7F1D1D">oponente recusou</span></div></div>
+        <span style="font-size:14px;font-weight:500;color:#475569;line-height:1.5">As 5 questões são copiadas de lessonQuestions e são iguais para os dois. Vitória +30, empate +15, derrota +5 pontos no ranking da semana.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:18px;font-weight:800">Modo Sala com relógio do servidor</span>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ sala }}" as="s" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start"><span style="width:36px;height:36px;border-radius:999px;background:#F3EEFF;color:#5B21B6;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800">{{ s.n }}</span><div style="display:flex;flex-direction:column;gap:4px;padding-top:6px"><span style="font-size:15px;font-weight:700">{{ s.t }}</span><code style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;color:#475569">{{ s.c }}</code></div></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 5: telas + permissões -->
+  <div style="display:flex;gap:32px;align-items:stretch">
+    <div id="09" style="width:1246px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">09</span><h2 style="margin:0;font-size:28px;font-weight:800">O que cada tela lê</h2></div>
+      <div style="display:flex;gap:12px;font-size:14px;font-weight:600;color:#475569">
+        <span style="display:flex;align-items:center;gap:6px"><code style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:#F1F5F9;color:#0F172A">get</code>leitura única</span>
+        <span style="display:flex;align-items:center;gap:6px"><code style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:#FFC53D;color:#1A1A2E">onValue</code>tempo real, cancelar no cleanup do useEffect</span>
+      </div>
+      <div style="display:flex;flex-direction:column;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden">
+        <sc-for list="{{ telas }}" as="t" hint-placeholder-count="20">
+          <div style="display:grid;grid-template-columns:64px 220px 1fr 92px;gap:14px;align-items:center;padding:10px 16px;border-bottom:1px solid #E2E8F0">
+            <span style="height:30px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:{{ t.cor }}">{{ t.id }}</span>
+            <div style="display:flex;flex-direction:column"><span style="font-size:15px;font-weight:700">{{ t.nome }}</span><span style="font-size:12px;font-weight:700;color:{{ t.tc }}">{{ t.dono }}</span></div>
+            <code style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;color:#334155;line-height:1.5">{{ t.le }}</code>
+            <code style="justify-self:end;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;color:#1A1A2E;background:{{ t.bg }}">{{ t.tipo }}</code>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div id="10" style="width:1246px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">10</span><h2 style="margin:0;font-size:28px;font-weight:800">Quem pode o quê</h2><span style="font-size:16px;font-weight:600;color:#475569">Resumo de database.rules.json. O que não é liberado é negado.</span></div>
+      <div style="display:grid;grid-template-columns:200px repeat(4,minmax(0,1fr));border:1px solid #E2E8F0;border-radius:16px;overflow:hidden">
+        <div style="padding:12px 14px;background:#F1F5F9;font-size:12px;font-weight:800;letter-spacing:0.06em;color:#475569">NÓ</div>
+        <sc-for list="{{ permCols }}" as="pc" hint-placeholder-count="4"><div style="padding:12px 14px;font-size:12px;font-weight:800;letter-spacing:0.06em;color:#0F172A;background:{{ pc.bg }}">{{ pc.t }}</div></sc-for>
+        <sc-for list="{{ perm }}" as="p" hint-placeholder-count="16">
+          <code style="padding:10px 14px;border-top:1px solid #E2E8F0;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;display:flex;align-items:center">{{ p.no }}</code>
+          <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="4">
+            <div style="padding:10px 14px;border-top:1px solid #E2E8F0;border-left:1px solid #F1F5F9;display:flex;align-items:center;gap:8px">
+              <sc-if value="{{ c.on }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;height:24px;min-width:28px;padding:0 6px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;background:{{ c.cor }}">{{ c.tag }}</span></sc-if>
+              <span style="font-size:13px;font-weight:600;color:#334155;line-height:1.35">{{ c.d }}</span>
+            </div>
+          </sc-for>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <sc-for list="{{ regrasLer }}" as="r" hint-placeholder-count="4">
+          <div style="padding:14px 16px;border-radius:14px;background:#F8FAFC;display:flex;flex-direction:column;gap:4px"><code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#1D4ED8">{{ r.k }}</code><span style="font-size:14px;font-weight:500;color:#475569;line-height:1.45">{{ r.d }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:#EAF0FF">
+        <span style="font-size:15px;font-weight:800;color:#1E3A8A">Testar no Simulador de regras (Console → Realtime Database → Regras)</span>
+        <sc-for list="{{ testes }}" as="t" hint-placeholder-count="3"><span style="display:flex;justify-content:space-between;font-size:14px;font-weight:600"><span>{{ t }}</span><span style="font-weight:800;color:#B91C1C">negado</span></span></sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 6 -->
+  <div style="display:flex;gap:32px;align-items:stretch">
+    <div id="11" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">11</span><h2 style="margin:0;font-size:28px;font-weight:800">Calculado no app, nunca salvo</h2></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ metricas }}" as="m" hint-placeholder-count="7">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:14px 16px;border-radius:14px;background:#F8FAFC">
+            <code style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700">{{ m.fn }}</code>
+            <span style="font-size:13px;font-weight:800;color:#475569">{{ m.tela }}</span>
+            <span style="grid-column:1 / -1;font-size:14px;font-weight:500;color:#475569;line-height:1.45">{{ m.d }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">CONSTANTES · src/constants/gamification.js</span>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <sc-for list="{{ consts }}" as="c" hint-placeholder-count="6">
+          <div style="padding:14px;border-radius:14px;background:#F3EEFF;display:flex;flex-direction:column;gap:4px"><span style="font-size:22px;font-weight:800;color:#5B21B6">{{ c.v }}</span><code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#334155;word-break:break-all">{{ c.k }}</code></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div id="12" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">12</span><h2 style="margin:0;font-size:28px;font-weight:800">Temas, insígnias e índices</h2></div>
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">ENUM topic · src/constants/topics.js</span>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <sc-for list="{{ topics }}" as="t" hint-placeholder-count="11">
+          <div style="padding:10px 12px;border-radius:12px;display:flex;flex-direction:column;gap:2px;background:{{ t.bg }}"><code style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700">{{ t.k }}</code><span style="font-size:13px;font-weight:600;color:#334155">{{ t.l }} · {{ t.s }}º · {{ t.m }}</span></div>
+        </sc-for>
+      </div>
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">INSÍGNIAS · src/constants/badges.js</span>
+      <div style="display:flex;flex-direction:column;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden">
+        <sc-for list="{{ badges }}" as="b" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:160px 170px 1fr;gap:12px;padding:10px 14px;border-bottom:1px solid #E2E8F0;align-items:center"><code style="font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#5B21B6">{{ b.k }}</code><span style="font-size:14px;font-weight:700">{{ b.n }}</span><span style="font-size:13px;font-weight:500;color:#475569">{{ b.r }}</span></div>
+        </sc-for>
+      </div>
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">ÍNDICES · .indexOn</span>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ indices }}" as="i" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:1fr 110px 140px;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:#F8FAFC"><code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">{{ i.p }}</code><code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#1D4ED8">{{ i.k }}</code><span style="font-size:13px;font-weight:600;color:#475569">{{ i.u }}</span></div>
+        </sc-for>
+        <span style="font-size:13px;font-weight:500;color:#475569;line-height:1.5">Se aparecer "Using an unspecified index" no console do app, falta um .indexOn nas regras.</span>
+      </div>
+    </div>
+
+    <div id="13" style="width:820px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="height:32px;padding:0 12px;border-radius:10px;background:#0F172A;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800">13</span><h2 style="margin:0;font-size:28px;font-weight:800">Arguição e checklist</h2></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ arg }}" as="a" hint-placeholder-count="10">
+          <div style="display:flex;flex-direction:column;gap:4px;padding:12px 16px;border-radius:14px;background:{{ a.bg }}"><span style="font-size:15px;font-weight:800">{{ a.q }}</span><span style="font-size:14px;font-weight:500;color:#334155;line-height:1.45">{{ a.r }}</span></div>
+        </sc-for>
+      </div>
+      <span style="font-size:13px;font-weight:800;letter-spacing:0.08em;color:#475569">ANTES DE ABRIR PR</span>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ checklist }}" as="c" hint-placeholder-count="7">
+          <div style="display:flex;gap:12px;align-items:flex-start;font-size:15px;font-weight:600;line-height:1.45"><span style="flex-shrink:0;width:22px;height:22px;margin-top:1px;border-radius:6px;border:2px solid #087A45"></span><span>{{ c }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const OW = {
+  ma: { nome: 'Maria Alice', ini: 'MA', cor: '#DC2626', soft: '#FDECEC', tc: '#B91C1C' },
+  jo: { nome: 'João', ini: 'JO', cor: '#1D4ED8', soft: '#EAF0FF', tc: '#1D4ED8' },
+  mau: { nome: 'Maurício', ini: 'MU', cor: '#087A45', soft: '#E7F6EE', tc: '#05592F' },
+  ana: { nome: 'Ana Luiza', ini: 'AL', cor: '#7C3AED', soft: '#F3EEFF', tc: '#6D28D9' }
+};
+const own = (o) => ({ dono: OW[o].nome, cor: OW[o].cor, soft: OW[o].soft, tc: OW[o].tc });
+const F = (rows) => rows.map(([k, t, d]) => ({ k, t, d }));
+
+const TREE = [
+  ['Usuários', [['users/{uid}', 'Perfil + estatísticas do aluno', 'ma'], ['userBadges/{uid}/{badgeId}', 'Insígnias desbloqueadas', 'mau']]],
+  ['Turmas', [['classes/{classId}', 'Dados da turma', 'jo'], ['classCodes/{code}', 'Índice código → classId', 'jo'], ['teacherClasses/{teacherId}/{classId}', 'Índice turmas do professor', 'jo'], ['classMembers/{classId}/{uid}', 'Alunos da turma (resumo)', 'jo']]],
+  ['Trilhas', [['trails/{gradeKey}', 'Mapa da trilha', 'mau'], ['lessonQuestions/{lessonId}/{questionId}', 'Perguntas de cada lição', 'mau'], ['progress/{uid}/{lessonId}', 'Progresso nas lições', 'mau']]],
+  ['Atividades e Modo Sala', [['quizzes/{classId}/{quizId}', 'Quizzes do professor', 'ana'], ['classroomMode/{classId}', 'Modo Sala ativo (tempo real)', 'ana'], ['answers/{classId}/{quizId}/{uid}', 'Respostas aos quizzes', 'ana']]],
+  ['Duelos e ranking', [['duels/{classId}/{duelId}', 'Duelos 1x1 assíncronos', 'mau'], ['weeklyRanking/{classId}/{weekId}/{uid}', 'Pontos da semana', 'mau']]],
+  ['IA', [['botChats/{uid}/{messageId}', 'Histórico do BioBot', 'jo'], ['aiUsage/{uid}/{dateKey}', 'Limite diário de uso da IA', 'jo']]]
+];
+
+const NODES = [
+  { sec: '5.1', path: 'users/{uid}', o: 'ma', desc: 'Perfil de qualquer usuário. Os campos de aluno ficam em stats. Criado no cadastro.', fields: F([['name', 'string 2–60', 'Nome completo'], ['email', 'string', 'Igual ao do Auth'], ['role', "'teacher' | 'student'", 'Imutável depois de criado'], ['school', 'string?', 'Ex.: EEMTI Rachel de Queiroz'], ['classId', 'string?', 'Só aluno. null = ainda não entrou'], ['createdAt', 'timestamp', 'serverTimestamp()'], ['stats.xp · streak · bestStreak', 'number', 'XP total, dias seguidos, recorde'], ['stats.lastStudyDate', 'YYYY-MM-DD', 'Último dia com lição concluída'], ['stats.lessonsCompleted · answersTotal · answersCorrect', 'number', 'Contadores do aluno'], ['stats.lives · livesUpdatedAt', '0–5 · timestamp', 'Vidas e base para recarregar']]), le: 'Próprio usuário', esc: 'Próprio usuário', nota: 'O professor não lê users dos alunos. Ele vê o resumo de cada aluno em classMembers.' },
+  { sec: '5.2', path: 'classes/{classId}', o: 'jo', desc: 'Dados da turma.', fields: F([['name', 'string 2–40', '"1º A – Manhã"'], ['grade', '1 | 2 | 3', 'Série'], ['shift', "'morning' | 'afternoon' | 'evening'", 'Turno'], ['code', 'string AAA000', 'Código de entrada, imutável'], ['teacherId', 'uid', 'Dono da turma'], ['teacherName · school', 'string', 'Duplicados para exibir ao aluno'], ['createdAt · updatedAt', 'timestamp', '']]), le: 'Professor dono e alunos da turma', esc: 'Cria: só role = teacher. Edita e exclui: só o dono', nota: 'Os contadores do card (alunos, quizzes, % acerto) não são salvos. São calculados (bloco 11).' },
+  { sec: '5.3', path: 'classCodes/{code}', o: 'jo', desc: 'Índice: o aluno digita BIO101 e descobre o classId com uma leitura direta.', fields: F([['{code}', 'string → classId', '"BIO101": "-OaClass1A"'], ['formato', '/^[A-Z]{3}[0-9]{3}$/', '3 letras maiúsculas + 3 dígitos']]), le: 'Qualquer logado, um código por vez', esc: 'Professor, só ao criar ou excluir a turma dele', nota: 'Não dá para listar todos os códigos.' },
+  { sec: '5.4', path: 'teacherClasses/{teacherId}/{classId}', o: 'jo', desc: 'Índice das turmas do professor. Alimenta a tela 06 Minhas Turmas.', fields: F([['{classId}', 'true', '"-OaClass1A": true']]), le: 'Próprio professor', esc: 'Próprio professor', nota: '' },
+  { sec: '5.5', path: 'classMembers/{classId}/{uid}', o: 'jo', desc: 'Resumo do aluno dentro da turma. O professor lê este nó, e nunca users.', fields: F([['name', 'string', 'Nome do aluno (duplicado)'], ['joinCode', 'string', 'A regra confere se bate com classes/{classId}/code'], ['joinedAt · lastActiveAt', 'timestamp', ''], ['xp · streak · lessonsCompleted', 'number', 'Espelho de users/{uid}/stats'], ['answersTotal · answersCorrect', 'number', 'Espelho. A % de acerto é calculada no app']]), le: 'Professor dono. Alunos da turma (ranking, duelo, Minha Turma)', esc: 'Próprio aluno (entrar, atualizar, sair). Professor: só remover', nota: '"Precisa de apoio" = answersTotal ≥ 10 e acerto < 60%, calculado no app.' },
+  { sec: '5.6', path: 'trails/{gradeKey}', o: 'mau', desc: 'Mapa da trilha (conteúdo fixo). Só o necessário para desenhar a trilha.', fields: F([['title', 'string', '"1º Ano"'], ['units/{unitId}', 'order · title · topic · mascot', 'Ex.: u1_cytology, mascote mito'], ['units/*/lessons/{lessonId}', 'order · title · questionsCount', 'ID g{série}_{tema}_{nº}, ex.: g1_cyto_01']]), le: 'Qualquer logado', esc: 'Ninguém pelo app. Maurício importa JSON pelo Console', nota: 'A lição N fica liberada quando a N−1 está em progress. Calculado no app.' },
+  { sec: '5.7', path: 'lessonQuestions/{lessonId}/{questionId}', o: 'mau', desc: 'Formato padrão de questão. O mesmo em quizzes, Modo Sala, duelos e gerador de IA.', fields: F([['order', 'number', 'Ordem na lição'], ['text', 'string', 'Enunciado'], ['options', 'string[4]', 'Alternativas A–D'], ['answer', '0–3', 'Índice da correta'], ['explanation', 'string', 'Mostrada no feedback']]), le: 'Qualquer logado', esc: 'Ninguém pelo app (importado pelo Console)', nota: '' },
+  { sec: '5.8', path: 'progress/{uid}/{lessonId}', o: 'mau', desc: 'Progresso do aluno em cada lição.', fields: F([['stars', '0–3', 'Melhor resultado'], ['bestCorrect', 'number', 'Melhor nº de acertos'], ['attempts', 'number', 'Quantas vezes jogou'], ['xpEarned', 'number', 'XP total ganho nesta lição'], ['completedAt · lastPlayedAt', 'timestamp', 'Primeira conclusão · última jogada']]), le: 'Próprio aluno', esc: 'Próprio aluno', nota: '' },
+  { sec: '5.9', path: 'userBadges/{uid}/{badgeId}', o: 'mau', desc: 'Só o que o aluno já desbloqueou. O catálogo fica no código.', fields: F([['unlockedAt', 'timestamp', 'Quando desbloqueou']]), le: 'Próprio aluno (tela: Maria Alice)', esc: 'Próprio aluno (regra de desbloqueio: Maurício)', nota: 'Catálogo em src/constants/badges.js (bloco 12).' },
+  { sec: '5.10', path: 'quizzes/{classId}/{quizId}', o: 'ana', desc: 'Quizzes e atividades do professor.', fields: F([['title', 'string 2–80', '"Quiz 1: A Célula"'], ['topic', 'enum topic', 'Usado no Desempenho por tema'], ['status', "'draft' | 'published'", 'O aluno só vê published'], ['source', "'manual' | 'ai'", 'Se foi gerado pelo Gemini'], ['questionsCount', 'number', 'Duplicado para o card'], ['questions/{questionId}', 'formato padrão', 'Chave push()'], ['createdBy · createdAt · updatedAt', 'uid · timestamp', '']]), le: 'Professor dono e alunos da turma', esc: 'Só o professor dono', nota: 'Quiz com respostas: só o título pode mudar. Para mudar as questões, duplique o quiz.' },
+  { sec: '5.11', path: 'classroomMode/{classId}', o: 'ana', desc: 'No máximo 1 por turma. Ao terminar, é removido ou fica com active: false.', fields: F([['active', 'boolean', ''], ['quizId', 'string', 'Precisa existir em quizzes/{classId}'], ['quizTitle', 'string', 'Duplicado para o banner'], ['durationMin', '10 | 15 | 20', ''], ['startedAt', 'timestamp', 'serverTimestamp()'], ['endsAt', 'timestamp', 'startedAt + duração, relógio do servidor'], ['startedBy', 'uid', '']]), le: 'Professor e alunos da turma, com onValue', esc: 'Só o professor dono', nota: '' },
+  { sec: '5.12', path: 'answers/{classId}/{quizId}/{uid}', o: 'ana', desc: 'Respostas dos alunos aos quizzes.', fields: F([['studentName', 'string', 'Duplicado para a tela de resultados'], ['picks', 'number[]', 'Alternativa de cada questão, na ordem de order'], ['correctCount · total', 'number', 'Acertos · nº de questões'], ['mode', "'classroom' | 'homework'", 'classroom só com Modo Sala ativo e no tempo'], ['startedAt · finishedAt', 'timestamp', '']]), le: 'Professor (todas). Aluno (só a dele)', esc: 'Aluno, uma única vez', nota: 'Segunda tentativa → PERMISSION_DENIED. Mostre "Você já respondeu esta atividade".' },
+  { sec: '5.13', path: 'duels/{classId}/{duelId}', o: 'mau', desc: 'Duelo assíncrono. O desafiante cria e já joga; depois é a vez do oponente.', fields: F([['challengerId · opponentId', 'uid', 'Os dois precisam ser da turma'], ['topic · status', 'enum', 'Ver fluxo no bloco 08'], ['questions/{qId}', 'formato padrão', '5 questões copiadas, iguais para os dois'], ['players/{uid}/name · score · picks', 'string · 0–5 · number[]', 'score ausente = ainda não jogou'], ['players/{uid}/playedAt · rewardClaimed', 'timestamp · boolean', 'Se já somou os pontos no ranking'], ['winnerId', "uid | 'draw'", 'Definido ao finalizar'], ['createdAt · updatedAt', 'timestamp', 'updatedAt ordena a lista']]), le: 'Alunos da turma. A tela 13 filtra os meus', esc: 'Desafiante cria. Cada jogador só players/{uid}. status, winnerId e updatedAt: os dois', nota: 'Cada jogador soma os próprios pontos ao abrir o resultado. Ninguém escreve no ranking de outra pessoa.' },
+  { sec: '5.14', path: 'weeklyRanking/{classId}/{weekId}/{uid}', o: 'mau', desc: 'Pontos da semana. weekId no formato 2026-W42.', fields: F([['name', 'string', 'Duplicado'], ['points', 'number', 'XP da semana + bônus de duelo'], ['duelsWon', 'number', '']]), le: "Professor e alunos da turma. orderByChild('points') + limitToLast(50)", esc: 'Cada aluno só na própria linha', nota: 'Semana nova = weekId novo. Nada é apagado; "Reinicia em 2 dias" é calculado no app.' },
+  { sec: '5.15', path: 'botChats/{uid}/{messageId}', o: 'jo', desc: 'Histórico do BioBot. role usa os valores do Gemini.', fields: F([['role', "'user' | 'model'", 'O histórico vai direto na chamada'], ['text', 'string ≤ 4000', ''], ['createdAt', 'timestamp', '']]), le: 'Próprio usuário', esc: 'Próprio usuário', nota: 'Envie ao Gemini só as últimas 20 mensagens (limitToLast(20)).' },
+  { sec: '5.15', path: 'aiUsage/{uid}/{dateKey}', o: 'jo', desc: 'Limite diário de uso da IA, controlado com runTransaction.', fields: F([['chatCount', 'number', 'Aluno: até 30 mensagens por dia'], ['generateCount', 'number', 'Professor: até 10 gerações por dia']]), le: 'Próprio usuário', esc: 'Próprio usuário', nota: 'Passou do limite → AI_DAILY_LIMIT.' }
+];
+
+const OPS = [
+  ['Cadastro', 'ma', 'createUserProfile', 'set()', '04', [['users/{uid}', 'perfil'], ['users/{uid}/stats', 'só aluno · lives 5']], 'O perfil do professor não tem stats.'],
+  ['Criar turma', 'jo', 'createClass', 'update() multi-path', '07', [['classes/{classId}', 'dados'], ['classCodes/{code}', 'classId'], ['teacherClasses/{uid}/{classId}', 'true']], 'Até 5 tentativas de código. Se outro professor pegar o mesmo código, a regra recusa e tenta outro. Depois: CLASS_CODE_UNAVAILABLE.'],
+  ['Excluir turma', 'jo', 'deleteClass', 'update() multi-path', '18b', [['classes · classCodes · teacherClasses', 'null'], ['classMembers · quizzes · classroomMode', 'null'], ['answers · duels · weeklyRanking', 'null']], 'users/{aluno}/classId fica apontando para a turma apagada. Ao abrir o app, se a turma não existir, grave classId = null e mande para a tela 25.'],
+  ['Entrar na turma', 'ma', 'joinClass', 'get + update()', '25', [['get classCodes/{code}', 'classId'], ['classMembers/{classId}/{uid}', 'resumo'], ['users/{uid}/classId', 'classId']], 'Código inexistente → CLASS_NOT_FOUND. Sair (leaveClass): os dois caminhos → null.'],
+  ['Criar quiz', 'ana', 'createQuiz', 'set()', '10 · 23', [['quizzes/{classId}/{quizId}', 'quiz + questions']], 'O Gemini deve devolver [{ text, options[4], answer, explanation }]. Valide antes da 23b: 4 opções, answer 0–3, textos não vazios.'],
+  ['Excluir quiz', 'ana', 'deleteQuiz', 'update() multi-path', '21b', [['quizzes/{classId}/{quizId}', 'null'], ['answers/{classId}/{quizId}', 'null'], ['classroomMode/{classId}', 'null se ativo']], ''],
+  ['Ativar Modo Sala', 'ana', 'startClassroomMode', 'set() · remove()', '22', [['classroomMode/{classId}', 'active · quizId · endsAt'], ['stop: classroomMode/{classId}', 'remove()']], 'endsAt = serverNow() + duração. Nunca Date.now() puro.'],
+  ['Responder quiz', 'ana', 'submitQuizAnswers', 'set()', '14', [['answers/{classId}/{quizId}/{uid}', 'uma única vez']], 'mode classroom só é aceito com o Modo Sala ativo e até endsAt + 30 s.'],
+  ['Concluir lição', 'mau', 'completeLesson', 'update() multi-path', '26', [['progress/{uid}/{lessonId}', 'stars · attempts'], ['users/{uid}/stats/*', 'increment()'], ['classMembers/{classId}/{uid}/*', 'espelho'], ['weeklyRanking/{classId}/{weekId}/{uid}/points', 'increment(xp)']], 'Errar uma questão: lives − 1 e livesUpdatedAt = serverTimestamp().'],
+  ['Duelo: terminar turno', 'mau', 'finishMyTurn', 'update() multi-path', '29', [['players/{uid}/score · picks · playedAt', 'meu turno'], ['status', 'opponent_turn | finished'], ['winnerId · updatedAt', 'ao finalizar']], ''],
+  ['Duelo: resultado', 'mau', 'claimDuelReward', 'update() multi-path', '30', [['players/{uid}/rewardClaimed', 'true'], ['weeklyRanking/.../{uid}/points', '+30 · +15 · +5'], ['weeklyRanking/.../{uid}/duelsWon', '+1 se vitória']], ''],
+  ['BioBot', 'jo', 'consumeAiQuota · saveChatMessage', 'runTransaction() · push()', '15', [['aiUsage/{uid}/{dateKey}/chatCount', '+1 até 30'], ['botChats/{uid}/{messageId}', 'role · text']], 'Limite atingido → AI_DAILY_LIMIT. A mesma cota vale para generateCount do professor (tela 23).']
+];
+
+const TELAS = [
+  ['03', 'Login · Cadastro', 'ma', 'users/{uid} após o Auth', 'get'],
+  ['25', 'Entrar na turma', 'ma', 'classCodes/{code}', 'get'],
+  ['17', 'Perfil & Badges', 'ma', 'users/{uid} · userBadges/{uid} · classes/{classId}', 'onValue'],
+  ['24', 'Perfil Professor', 'ma', 'users/{uid} · teacherClasses/{uid}', 'get'],
+  ['06', 'Minhas Turmas', 'jo', 'teacherClasses/{uid} → por turma: classes · classMembers · quizzes · answers', 'onValue'],
+  ['07', 'Criar/Editar Turma', 'jo', 'classes/{id} (edição)', 'get'],
+  ['08', 'Alunos', 'jo', 'classMembers/{classId}', 'onValue'],
+  ['19', 'Desempenho', 'jo', 'quizzes/{classId} · answers/{classId} · classMembers/{classId}', 'get'],
+  ['33', 'Minha Turma', 'jo', 'classes/{classId} · classMembers/{classId}', 'onValue'],
+  ['15', 'BioBot', 'jo', 'botChats/{uid} · limitToLast(50)', 'onValue'],
+  ['09', 'Atividades', 'ana', 'quizzes/{classId} · classroomMode/{classId} · answers/{classId}', 'onValue'],
+  ['10', 'Criar Quiz / IA', 'ana', 'quizzes/{classId}/{quizId} (edição)', 'get'],
+  ['20', 'Resultados', 'ana', 'quizzes/{classId}/{quizId} · answers/{classId}/{quizId}', 'onValue'],
+  ['14', 'Modo Sala (aluno)', 'ana', 'classroomMode/{classId} · quizzes/{classId}/{quizId}', 'onValue'],
+  ['11', 'Trilhas', 'mau', 'trails/grade{n} · progress/{uid} · users/{uid}/stats', 'onValue'],
+  ['12', 'Lição', 'mau', 'lessonQuestions/{lessonId}', 'get'],
+  ['13', 'Duelos', 'mau', "duels/{classId} · orderByChild('updatedAt')", 'onValue'],
+  ['28', 'Escolher colega', 'mau', 'classMembers/{classId}', 'get'],
+  ['29', 'Partida · Resultado', 'mau', 'duels/{classId}/{duelId}', 'onValue'],
+  ['16', 'Ranking', 'mau', "weeklyRanking/{classId}/{weekId} · orderByChild('points') · limitToLast(50)", 'onValue']
+];
+
+// cells: [self, professor dono, aluno da turma, qualquer logado] → [tag, desc]
+const P = (no, cells) => ({ no, cells });
+const PERM = [
+  P('users', [['LE', ''], null, null, null]),
+  P('userBadges', [['LE', ''], null, null, null]),
+  P('classes', [null, ['LE', 'cria se role = teacher'], ['L', ''], null]),
+  P('classCodes', [null, ['E', 'ao criar/excluir'], null, ['L', 'um código por vez']]),
+  P('teacherClasses', [['LE', 'o professor'], null, null, null]),
+  P('classMembers', [['E', 'própria linha'], ['L', 'e remover'], ['L', ''], null]),
+  P('trails', [null, null, null, ['L', 'escrita só no Console']]),
+  P('lessonQuestions', [null, null, null, ['L', 'escrita só no Console']]),
+  P('progress', [['LE', ''], null, null, null]),
+  P('quizzes', [null, ['LE', ''], ['L', ''], null]),
+  P('classroomMode', [null, ['LE', ''], ['L', 'tempo real'], null]),
+  P('answers', [['LE', 'a dele, uma vez'], ['L', 'todas, e apagar'], null, null]),
+  P('duels', [['E', 'players/{uid}'], ['apagar', ''], ['L', 'cria como desafiante'], null]),
+  P('weeklyRanking', [['E', 'própria linha'], ['L', 'e apagar'], ['L', ''], null]),
+  P('botChats', [['LE', ''], null, null, null]),
+  P('aiUsage', [['LE', ''], null, null, null])
+];
+const TAGC = { LE: '#087A45', L: '#1D4ED8', E: '#7C3AED', apagar: '#DC2626' };
+
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      owners: Object.values(OW),
+      resumo: [
+        { n: '1', t: 'Uma árvore JSON', d: 'Não existem tabelas, joins ou chaves estrangeiras. A estrutura segue o que cada tela precisa ler.' },
+        { n: '2', t: 'Plano e duplicado de propósito', d: 'No máximo 2 ou 3 níveis por nó. O nome do aluno aparece em classMembers, answers e weeklyRanking para evitar leituras extras.' },
+        { n: '3', t: 'update() multi-path', d: 'Toda escrita que mexe em vários nós grava tudo ou nada.' },
+        { n: '4', t: 'increment() e serverTimestamp()', d: 'Somas como XP, pontos e contadores usam increment(). Horários usam serverTimestamp(), nunca Date.now() puro.' },
+        { n: '5', t: 'Segurança em database.rules.json', d: 'O aluno só vê os próprios dados, e o professor só vê as turmas dele (RNF04).' },
+        { n: '6', t: 'Percentuais não são salvos', d: 'Médias e % de acerto são calculadas no app a partir das respostas.' }
+      ],
+      sql: [
+        { a: 'Tabela turmas com FK professor_id', b: 'classes/{classId} e o índice teacherClasses/{teacherId}/{classId}: true' },
+        { a: 'JOIN aluno ↔ turma', b: 'Duplicar o resumo do aluno em classMembers/{classId}/{uid}' },
+        { a: "WHERE codigo = 'BIO101'", b: 'Índice classCodes/BIO101: classId (leitura direta, sem query)' },
+        { a: 'SELECT AVG(nota)', b: 'Ler answers/{classId} e calcular no app' },
+        { a: 'Transação SQL', b: 'update() multi-path (atômico) ou runTransaction() para um único nó' },
+        { a: 'Permissão no backend', b: 'database.rules.json, que depende do caminho do dado' }
+      ],
+      ouro: [
+        { n: '1', t: 'Leia só o que a tela mostra.', d: 'Ler um nó traz tudo que está embaixo dele. Por isso as perguntas ficam separadas do mapa da trilha.' },
+        { n: '2', t: 'O classId entra no caminho', d: 'de tudo que pertence à turma. Sem isso, a regra não consegue checar quem é o professor.' },
+        { n: '3', t: 'Um nó, um dono.', d: 'Cada nó tem um responsável na equipe (bloco 04).' }
+      ],
+      conv: [
+        { a: 'Nós e campos', b: 'inglês, camelCase', c: 'classMembers, joinedAt' },
+        { a: 'IDs gerados', b: 'push(ref(...)).key', c: '-OaB3kZ9xQ...' },
+        { a: 'ID de usuário', b: 'uid do Firebase Auth', c: 'aZ81kd...' },
+        { a: 'Datas com hora', b: 'número em ms, gravado com serverTimestamp()', c: '1760530000000' },
+        { a: 'Dia (ofensiva)', b: 'string YYYY-MM-DD no fuso local', c: '2026-10-15' },
+        { a: 'Semana (ranking)', b: 'string ISO YYYY-Www', c: '2026-W42' },
+        { a: 'Séries', b: 'valor 1, 2, 3; como chave grade1, grade2, grade3', c: 'trails/grade1' },
+        { a: 'Enums', b: 'strings em inglês minúsculo', c: "'teacher', 'published'" },
+        { a: 'Arrays', b: 'só listas de tamanho fixo: options (4) e picks', c: '["Ribossomo", ...]' },
+        { a: 'Listas que crescem', b: 'objeto com chave push()', c: 'questions: { "-Oa1": {...} }' },
+        { a: 'Booleanos de índice', b: 'valor true', c: 'teacherClasses/{t}/{c}: true' }
+      ],
+      tree: TREE.map(([nome, ns]) => ({ nome, nodes: ns.map(([path, desc, o]) => ({ path, desc, ...own(o) })) })),
+      card: [{ n: '1 → N', t: 'Um professor tem N turmas' }, { n: '≤ 1', t: 'Um aluno está em no máximo 1 turma (users/{uid}/classId)' }, { n: '0 ou 1', t: 'Uma turma tem 1 código, N alunos, N quizzes e 0 ou 1 Modo Sala ativo' }],
+      rels: [
+        ['users', '1', 'professor tem', 'N', 'teacherClasses'], ['teacherClasses', 'N', 'aponta', '1', 'classes'], ['classes', '1', 'código único', '1', 'classCodes'],
+        ['classes', '1', 'alunos', 'N', 'classMembers'], ['users', '1', 'aluno está em 1 turma', '0..1', 'classMembers'], ['classes', '1', 'atividades', 'N', 'quizzes'],
+        ['classes', '1', 'Modo Sala', '0..1', 'classroomMode'], ['quizzes', '1', 'respostas', 'N', 'answers'], ['users', '1', 'responde', 'N', 'answers'],
+        ['classes', '1', 'duelos da turma', 'N', 'duels'], ['classes', '1', 'ranking semanal', 'N', 'weeklyRanking'], ['trails', '1', 'lições têm perguntas', 'N', 'lessonQuestions'],
+        ['users', '1', 'progresso', 'N', 'progress'], ['users', '1', 'insígnias', 'N', 'userBadges'], ['users', '1', 'conversa', 'N', 'botChats']
+      ].map(([a, ca, l, cb, b]) => ({ a, ca, l, cb, b })),
+      nodes: NODES.map(n => ({ ...n, ...own(n.o) })),
+      ops: OPS.map(([nome, o, fn, tipo, tela, paths, nota]) => ({ nome, fn, tipo, tela, nota, paths: paths.map(([k, v]) => ({ k, v })), ...own(o) })),
+      rotas: [
+        { cond: "role === 'teacher'", tela: '06 Minhas Turmas', cor: '#1D4ED8' },
+        { cond: "student, sem classId", tela: '25 Entrar na turma', cor: '#087A45' },
+        { cond: "student, com classId", tela: '11 Trilhas', cor: '#087A45' }
+      ],
+      duelo: [
+        { s: 'challenger_turn', d: 'Desafiante cria o duelo e já joga', seta: true },
+        { s: 'opponent_turn', d: '"Seu turno!" para o oponente', seta: true },
+        { s: 'finished', d: 'App calcula winnerId', seta: false }
+      ],
+      sala: [
+        { n: '1', t: 'Hook compartilhado lê o offset do servidor', c: "onValue(ref(db, '.info/serverTimeOffset'))" },
+        { n: '2', t: 'Professor ativa com duração 10, 15 ou 20 min', c: 'endsAt: serverNow() + durationMin * 60_000' },
+        { n: '3', t: 'Aluno escuta em tempo real (telas 14 e 31)', c: 'mode.active && serverNow() < mode.endsAt' },
+        { n: '4', t: 'A regra recusa resposta depois do fim', c: 'now <= endsAt + 30000' }
+      ],
+      telas: TELAS.map(([id, nome, o, le, tipo]) => ({ id, nome, le, tipo, bg: tipo === 'onValue' ? '#FFC53D' : '#F1F5F9', ...own(o) })),
+      permCols: [{ t: 'PRÓPRIO UID', bg: '#E7F6EE' }, { t: 'PROFESSOR DONO', bg: '#EAF0FF' }, { t: 'ALUNO DA TURMA', bg: '#F3EEFF' }, { t: 'QUALQUER LOGADO', bg: '#F1F5F9' }],
+      perm: PERM.map(p => ({ no: p.no, cells: p.cells.map(c => c ? { on: true, tag: c[0], d: c[1], cor: TAGC[c[0]] } : { on: false, tag: '', d: '—', cor: '' }) })),
+      regrasLer: [
+        { k: '.read / .write', d: 'Descem na árvore. Se o pai libera, os filhos ficam liberados. Por isso o professor só pode apagar tudo nos nós pai.' },
+        { k: '.validate', d: 'Não desce e não roda em exclusões. Só confere o formato do dado novo.' },
+        { k: 'root · newData', d: 'root é o banco antes da escrita; newData é depois. newData.parent() enxerga outros caminhos da mesma update().' },
+        { k: 'now', d: 'Relógio do servidor. Por isso o Modo Sala não aceita resposta depois do fim.' }
+      ],
+      testes: ['Aluno lendo answers de outro aluno', 'Professor lendo turma de outro professor', 'Aluno entrando com código errado'],
+      metricas: [
+        { fn: 'accuracy(correct, total)', tela: 'todas', d: 'Math.round(correct / total × 100), ou 0 se total = 0.' },
+        { fn: 'needsSupport(member)', tela: '08', d: 'answersTotal ≥ 10 e acerto < 60%.' },
+        { fn: 'classAccuracy(answersByQuiz)', tela: '06', d: 'Soma correctCount e total de todas as respostas da turma.' },
+        { fn: 'accuracyByTopic(quizzes, answers)', tela: '19', d: 'Agrupa as respostas pelo topic de cada quiz.' },
+        { fn: 'resultsByQuestion(quiz, answers)', tela: '20', d: '% de acerto, alternativa mais marcada e quem errou, por questão.' },
+        { fn: 'currentLives(stats)', tela: '11 · 12', d: 'lives + 1 a cada 30 min desde livesUpdatedAt, até 5.' },
+        { fn: 'stars · streak', tela: '26', d: '100% = 3 estrelas, ≥ 70% = 2, senão 1. Ofensiva: mesmo dia mantém, ontem +1, senão volta a 1.' }
+      ],
+      consts: [{ v: '15', k: 'XP_PER_CORRECT' }, { v: '5', k: 'XP_PER_CORRECT_REPLAY' }, { v: '5', k: 'MAX_LIVES' }, { v: '30 min', k: 'LIFE_REFILL_MS' }, { v: '30·15·5', k: 'DUEL_POINTS win·draw·loss' }, { v: '30 · 10', k: 'IA por dia: aluno · professor' }],
+      topics: [
+        ['cytology', 'Citologia', 1, 'mito'], ['biochemistry', 'Bioquímica', 1, 'mito'], ['microbiology', 'Microbiologia', 1, 'medusa'], ['anatomy', 'Anatomia e Fisiologia', 1, 'teco'],
+        ['zoology', 'Zoologia', 2, 'mandu'], ['botany', 'Botânica', 2, 'sapo'], ['marine_biology', 'Biologia Marinha', 2, 'baleia'],
+        ['genetics', 'Genética', 3, 'borbo'], ['ecology', 'Ecologia', 3, 'dinho'], ['biomes', 'Biomas do Brasil', 3, 'guara'], ['biotechnology', 'Biotecnologia', 3, 'abelha']
+      ].map(([k, l, s, m]) => ({ k, l, s, m, bg: ['#E7F6EE', '#EAF0FF', '#F3EEFF'][s - 1] })),
+      badges: [
+        { k: 'first_lesson', n: 'Primeiro Passo', r: '1ª lição concluída' },
+        { k: 'cytology_master', n: 'Mestre da Citologia', r: 'Todas as lições de Citologia com 3 estrelas' },
+        { k: 'dna_guardian', n: 'Guardião do DNA', r: 'Todas as lições de Genética concluídas' },
+        { k: 'born_duelist', n: 'Duelista Nato', r: '3 duelos vencidos' },
+        { k: 'streak_7', n: 'Semana de Fogo', r: 'Ofensiva de 7 dias' },
+        { k: 'classroom_hero', n: 'Destaque da Sala', r: '100% em um quiz do Modo Sala' }
+      ],
+      indices: [
+        { p: 'classMembers/{classId}', k: 'xp', u: 'Telas 08, 28' },
+        { p: 'duels/{classId}', k: 'updatedAt', u: 'Tela 13' },
+        { p: 'weeklyRanking/{classId}/{weekId}', k: 'points', u: 'Tela 16' },
+        { p: 'botChats/{uid}', k: 'createdAt', u: 'Tela 15' }
+      ],
+      arg: [
+        ['Por que Realtime Database e não Firestore?', 'É o exigido na Etapa 3. O Modo Sala e os duelos precisam de sincronização em tempo real com baixa latência.', 0],
+        ['Por que tem dado duplicado?', 'O RTDB não tem join. A duplicação controlada evita várias leituras por tela, e update() multi-path garante a consistência.', 0],
+        ['Como garante que o aluno não vê a nota dos outros?', 'answers/{classId}/{quizId}/{uid} só é lido pelo próprio uid ou pelo professor dono da turma.', 0],
+        ['E se o aluno tentar entrar sem o código?', 'A regra de classMembers exige joinCode igual a classes/{classId}/code.', 0],
+        ['Dá para responder depois do tempo do Modo Sala?', 'Não. A regra compara now (relógio do servidor) com endsAt.', 0],
+        ['Por que não salvar a % de acerto?', 'Ela deriva de outros dados. Calcular no app evita inconsistência.', 0],
+        ['Como apaga uma turma sem deixar lixo?', 'Exclusão em cascata com um único update(), gravando null em 9 caminhos.', 0],
+        ['O aluno consegue ver o gabarito?', 'Sim, limitação conhecida: a correção acontece no celular. Melhoria: Cloud Function (plano Blaze).', 1],
+        ['O aluno consegue inflar o próprio XP?', 'É possível, porque ele escreve no próprio stats. As regras limitam tipos e faixas; a mitigação seria uma Cloud Function.', 1],
+        ['Onde fica a chave do Gemini?', 'O ideal é uma Cloud Function como proxy. Sem o plano Blaze, fica em .env fora do Git.', 1]
+      ].map(([q, r, lim]) => ({ q, r, bg: lim ? '#FFF7E0' : '#F8FAFC' })),
+      checklist: [
+        'Só usei caminhos e campos deste documento. Campo novo: avise o grupo e atualize o .md.',
+        'Escritas em mais de um nó usam update() multi-path.',
+        'Somas usam increment() e horários usam serverTimestamp().',
+        'Todo onValue é cancelado no cleanup do useEffect.',
+        'Trato PERMISSION_DENIED, CLASS_NOT_FOUND, AI_DAILY_LIMIT e "sem internet" com mensagem amigável.',
+        'Testei no celular físico, logado como professor e como aluno.',
+        'Nada de chave de API ou .env no Git. Nomes e comentários em inglês.'
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

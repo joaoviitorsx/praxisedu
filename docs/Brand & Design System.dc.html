@@ -174,7 +174,55 @@
   </div>
 
   <div style="background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:20px">
-    <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:14px;font-weight:800;letter-spacing:0.1em;color:#7C3AED">06 · MASCOTE · MITO, A MITOCÔNDRIA</div><div style="font-size:15px;font-weight:600;color:#475569">Estados vazios, comemorações e avatar do BioBot. O átomo continua sendo o logo.</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap"><div style="font-size:14px;font-weight:800;letter-spacing:0.1em;color:#7C3AED">06 · MASCOTES · UM POR TEMA</div><div style="font-size:15px;font-weight:600;color:#475569">10 mascotes. Cada ano agrupa os seus temas. O átomo continua sendo o logo.</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:center;padding:24px;border-radius:24px;background:#F7F7FA">
+      <img src="assets/mascotes/turma.png" alt="Turma de mascotes" style="width:100%;height:auto;align-self:center;display:block">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:24px;font-weight:800;line-height:1.2">Cada trilha tem um mascote que acompanha o estudante</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ regrasMasc }}" as="rg" hint-placeholder-count="4"><div style="display:flex;gap:10px;font-size:15px;font-weight:500;line-height:1.5;color:#1A1A2E"><span style="width:6px;height:6px;border-radius:50%;background:#7C3AED;margin-top:9px;flex-shrink:0"></span><span>{{ rg }}</span></div></sc-for>
+        </div>
+      </div>
+    </div>
+    <sc-for list="{{ elenco }}" as="ano" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px"><span style="height:30px;padding:0 12px;border-radius:999px;background:#087A45;color:#fff;display:flex;align-items:center;font-size:13px;font-weight:800">{{ ano.ano }}</span><div style="flex:1;height:2px;background:#E2E8F0"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px">
+          <sc-for list="{{ ano.itens }}" as="mx" hint-placeholder-count="3">
+            <div style="border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;background:{{ mx.bg }}">
+              <div style="display:flex;align-items:center;gap:14px">
+                <dc-import name="Mascote" id="{{ mx.id }}" estado="feliz" size="72" selo="{{ false }}" hint-size="115px,72px"></dc-import>
+                <div style="flex:1;min-width:0;text-wrap:pretty"><div style="font-size:20px;font-weight:800">{{ mx.nome }}</div><div style="font-size:14px;font-weight:700;color:#475569">{{ mx.tema }}</div></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;gap:4px;padding:10px 8px;border-radius:16px;background:#fff">
+                <sc-for list="{{ mx.estados }}" as="es" hint-placeholder-count="5">
+                  <div style="width:58px;display:flex;flex-direction:column;align-items:center;gap:4px">
+                    <div style="height:40px;width:58px;display:flex;align-items:center;justify-content:center"><dc-import name="Mascote" id="{{ mx.id }}" estado="{{ es.k }}" size="34" hint-size="54px,34px"></dc-import></div>
+                    <span style="font-size:11px;font-weight:700;color:#475569">{{ es.label }}</span>
+                    <span style="width:6px;height:6px;border-radius:50%;background:{{ es.dot }}"></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:14px;font-weight:600;color:#475569">
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#087A45"></span>Arte dedicada da prancha</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#FFC53D"></span>Arte base + selo de estado (arte própria pendente)</span>
+    </div>
+    <div style="font-size:18px;font-weight:800;margin-top:8px">Paleta do Mito · Laboratório</div>
+    <div style="display:flex;align-items:center;gap:24px;padding:20px 24px;border-radius:24px;background:#F3EEFF;flex-wrap:wrap">
+      <dc-import name="Mito" mood="feliz" size="120" hint-size="120px,120px"></dc-import>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <sc-for list="{{ mitoCores }}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:48px;height:48px;border-radius:14px;border:2px solid #1E1A3A;background:{{ c.hex }}"></span><span style="font-size:12px;font-weight:800">{{ c.nome }}</span><span style="font-size:12px;font-weight:600;color:#475569">{{ c.hex }}</span></div>
+        </sc-for>
+      </div>
+      <div style="flex:1;min-width:220px;font-size:15px;font-weight:500;color:#475569;line-height:1.5">Roxo da marca e da IA na membrana, cristas rosa no interior. Contorno #1E1A3A e borda branca de adesivo em todos os estados.</div>
+    </div>
+    <div style="font-size:18px;font-weight:800;margin-top:8px">Padrão de estados (referência: Mito)</div>
     <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px">
       <sc-for list="{{ moods }}" as="m" hint-placeholder-count="5">
         <div style="border-radius:24px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;background:{{ m.bg }}">
@@ -379,11 +427,25 @@ class Component extends DCLogic {
     const emojis = [['🔥', 'flame', '#F97316', '#FFEDD5'], ['⚡', 'zap', '#7C3AED', '#F3EEFF'], ['❤', 'heart', '#DC2626', '#FDECEC'], ['🏆', 'trophy', '#C2410C', '#FFF4D6']].map(([e, n, c, bg]) => ({ e, n, c: n === 'trophy' ? '#C2410C' : c, bg }));
     const icons = ['book-open', 'swords', 'presentation', 'message-circle', 'users', 'file-plus', 'user', 'star', 'lock', 'check', 'x', 'clock', 'sparkles', 'radio', 'bar-chart', 'shield-check', 'copy', 'share', 'pencil', 'trash', 'search', 'send', 'dna', 'leaf'];
     const moods = [
-      { k: 'feliz', nome: 'Feliz', uso: 'Splash, boas-vindas, avatar do BioBot', bg: '#FFF4D6' },
-      { k: 'comemorando', nome: 'Comemorando', uso: 'Fim de lição, vitória, entrou na turma', bg: '#E7F6EE' },
-      { k: 'pensativo', nome: 'Pensativo', uso: 'IA gerando, BioBot digitando, sem quizzes', bg: '#F3EEFF' },
-      { k: 'triste', nome: 'Triste', uso: 'Perdeu vida, derrota no duelo', bg: '#FDECEC' },
-      { k: 'dormindo', nome: 'Dormindo', uso: 'Ofensiva quebrada, Modo Sala bloqueado, sem turmas', bg: '#F1F5F9' }
+      { k: 'feliz', nome: 'Feliz', uso: 'Trilha e nós de Citologia. Acena com a mão.', bg: '#FFF4D6' },
+      { k: 'comemorando', nome: 'Comemorando', uso: 'Acerto, fim de lição, insígnia. Braços para cima.', bg: '#E7F6EE' },
+      { k: 'pensativo', nome: 'Pensativo', uso: 'Dúvida e carregamento. Mão no queixo.', bg: '#F3EEFF' },
+      { k: 'triste', nome: 'Triste', uso: 'Erro e vida perdida. Lágrima e braços caídos.', bg: '#FDECEC' },
+      { k: 'dormindo', nome: 'Dormindo', uso: 'Ofensiva quebrada, espera.', bg: '#F1F5F9' }
+    ];
+    const DED = { mito: 'feliz comemorando pensativo triste dormindo', dinho: 'feliz comemorando pensativo', mandu: 'feliz pensativo dormindo', guara: 'feliz pensativo', sapo: 'feliz comemorando dormindo', baleia: 'feliz comemorando dormindo', medusa: 'feliz comemorando pensativo', borbo: 'feliz comemorando', teco: 'feliz dormindo', abelha: 'feliz comemorando pensativo' };
+    const EST = [['feliz', 'Feliz'], ['comemorando', 'Comemora'], ['pensativo', 'Pensa'], ['triste', 'Triste'], ['dormindo', 'Dorme']];
+    const mk = (id, nome, tema, bg) => ({ id, nome, tema, bg, estados: EST.map(([k, label]) => ({ k, label, dot: DED[id].split(' ').includes(k) ? '#087A45' : '#FFC53D' })) });
+    const elenco = [
+      { ano: '1º ANO', itens: [mk('mito', 'Mito', 'Citologia', '#F3EEFF'), mk('medusa', 'Medusa', 'Microbiologia', '#FDECEC'), mk('teco', 'Teco', 'Anatomia e Fisiologia', '#EAF0FF')] },
+      { ano: '2º ANO', itens: [mk('mandu', 'Mandu', 'Zoologia', '#F1F5F9'), mk('sapo', 'Sapo', 'Botânica', '#E7F6EE'), mk('baleia', 'Baleia', 'Biologia Marinha', '#EAF0FF')] },
+      { ano: '3º ANO', itens: [mk('borbo', 'Borbo', 'Genética', '#FFF4D6'), mk('dinho', 'Dinho', 'Ecologia', '#FDECEC'), mk('guara', 'Guará', 'Biomas do Brasil', '#FFEDD5'), mk('abelha', 'Abelha', 'Biotecnologia', '#FFF4D6')] }
+    ];
+    const regrasMasc = [
+      'O mascote do tema aparece na trilha, no feedback, no fim de lição e nas insígnias.',
+      'Cinco estados para todos: feliz, comemorando, pensativo, triste e dormindo.',
+      'Sem arte dedicada, usamos a arte base com um selo de estado (estrela, interrogação, coração partido, lua).',
+      'O BioBot ganhou visual próprio (folha com brilho de IA) e não usa mascote: a IA é uma ferramenta, não um personagem.'
     ];
     const N = { border: '#E2E8F0', bg: '#fff', badgeBg: '#F1F5F9', badgeColor: '#1A1A2E' };
     const altStates = [
@@ -410,7 +472,8 @@ class Component extends DCLogic {
       { d: '340 ms', t: 'Bottom sheet', s: 'sobe da base' }
     ];
     return {
-      palette, neutros, tipos, spaces: [4, 8, 16, 24, 32, 48], emojis, icons, moods, altStates, principios, motion,
+      mitoCores: [{ nome: 'Membrana', hex: '#8B5CF6' }, { nome: 'Borda', hex: '#6D3FD9' }, { nome: 'Interior', hex: '#F3EEFF' }, { nome: 'Cristas', hex: '#F9A8D4' }, { nome: 'Cristas sombra', hex: '#E879B9' }, { nome: 'Brilho', hex: '#C4B0FF' }],
+      elenco, regrasMasc, palette, neutros, tipos, spaces: [4, 8, 16, 24, 32, 48], emojis, icons, moods, altStates, principios, motion,
       tabsProf: tab([['Turmas', 'users'], ['Criar Quiz', 'file-plus'], ['Perfil', 'user']], '#1D4ED8', '#EAF0FF'),
       tabsEst: tab([['Trilhas', 'book-open'], ['Duelos', 'swords'], ['Sala', 'presentation'], ['BioBot', 'message-circle'], ['Ranking', 'trophy']], '#087A45', '#E7F6EE'),
       spinner: h('span', { style: { width: 22, height: 22, borderRadius: '50%', border: '3px solid rgba(26,26,46,.25)', borderTopColor: '#1A1A2E', animation: 'pxSpin .7s linear infinite', display: 'inline-block' } })

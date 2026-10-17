@@ -10,77 +10,98 @@
 <helmet>
   <meta name="design_doc_mode" content="canvas">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
-  <style>body{margin:0;background:#EDEDF3} a{color:#C2410C} a:hover{color:#9A3412}</style>
+  <style>body{margin:0;background:#EDEDF3} *{box-sizing:border-box} a{color:#C2410C} a:hover{color:#9A3412}</style>
 </helmet>
-<section data-screen-label="Protótipo navegável" style="padding:64px 72px 40px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E;display:flex;gap:56px;align-items:flex-start">
-  <dc-import name="Praxis App" persist="{{ true }}" start="{{ jumpTo }}" jump="{{ jumpN }}" on-screen="{{ onScreen }}" sala="{{ salaOn }}" on-sala="{{ onSala }}" hint-size="414px,868px"></dc-import>
-  <div style="width:560px;display:flex;flex-direction:column;gap:28px">
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <dc-import name="Logo" variant="horizontal" size="48" hint-size="260px,48px"></dc-import>
-      <h1 style="margin:12px 0 0;font-size:40px;font-weight:800;line-height:1.1">Protótipo navegável</h1>
-      <p style="margin:0;font-size:18px;font-weight:500;color:#475569;line-height:1.5">Clique no celular para seguir o fluxo, ou pule para qualquer frame abaixo. Use as contas de teste no login para entrar como estudante ou professor.</p>
+<section data-screen-label="Práxis Edu · Telas" style="padding:64px 72px 120px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E;display:flex;flex-direction:column;gap:48px;width:max-content">
+  <div style="display:flex;align-items:flex-end;gap:48px">
+    <div>
+      <dc-import name="Logo" variant="horizontal" size="44" hint-size="240px,44px"></dc-import>
+      <h1 style="margin:20px 0 0;font-size:56px;font-weight:800;line-height:1.05">Telas do app</h1>
+      <p style="margin:12px 0 0;font-size:20px;font-weight:500;color:#475569;max-width:900px;line-height:1.5">{{ total }} telas em ordem de uso, agrupadas por módulo e por fluxo. Leia da esquerda para a direita, linha por linha. A seta indica o próximo passo do fluxo.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:20px;background:#fff;border:2px solid #E2E8F0">
-      <div style="font-size:14px;font-weight:800;letter-spacing:0.08em;color:#475569">FLUXO REAL DO PRODUTO</div>
-      <div style="font-size:15px;font-weight:500;color:#1A1A2E;line-height:1.55">Jiara já está no 1º A, então o login leva direto à Trilha. O código da turma só aparece no primeiro acesso (Cadastro → Estudante). A aba Sala fica em espera até o professor liberar uma atividade.</div>
-      <button onClick="{{ toggleSala }}" style="margin-top:6px;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;border:2px solid {{ salaBorder }};background:{{ salaBg }}">
-        <div style="width:52px;height:30px;border-radius:999px;padding:3px;display:flex;flex-shrink:0;justify-content:{{ knob }};background:{{ track }}"><div style="width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25)"></div></div>
-        <div style="flex:1"><div style="font-size:16px;font-weight:800;color:#1A1A2E">Simular: professor liberou o Modo Sala</div><div style="font-size:14px;font-weight:500;color:#475569;margin-top:2px">{{ salaHint }}</div></div>
-      </button>
+    <div style="display:flex;gap:24px;padding-bottom:6px;font-size:15px;font-weight:700">
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;background:#DC2626"></span>Login / Cadastro</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;background:#1D4ED8"></span>Professor</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:4px;background:#087A45"></span>Estudante</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:800;color:#5B21B6;background:#F3EEFF;border:1.5px dashed #7C3AED;padding:2px 7px;border-radius:999px">NOVA</span>Não existia no baixo nível</span>
     </div>
-    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:12px;height:12px;border-radius:50%;background:{{ g.cor }}"></span><span style="font-size:14px;font-weight:800;letter-spacing:0.08em">{{ g.titulo }}</span></div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px">
-          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="6">
-            <button onClick="{{ it.go }}" style="height:40px;padding:0 14px;border-radius:999px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;border:2px solid {{ it.border }};background:{{ it.bg }};color:{{ it.color }}"><b>{{ it.id }}</b>{{ it.nome }}</button>
-          </sc-for>
-        </div>
-      </div>
-    </sc-for>
-    <div style="display:flex;gap:16px;font-size:15px;font-weight:700"><a href="Telas.dc.html">Todas as telas →</a><a href="Brand & Design System.dc.html">Brand &amp; Design System →</a><a href="Mapa de Navegação.dc.html">Mapa de Navegação →</a></div>
   </div>
-</section>
-<sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
-  <section style="padding:40px 72px 56px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1A2E">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px">
-      <span style="height:36px;padding:0 16px;border-radius:999px;color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800;background:{{ g.cor }}">{{ g.tag }}</span>
-      <h2 style="margin:0;font-size:32px;font-weight:800">{{ g.nomeModulo }}</h2>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:40px 36px">
-      <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="6">
-        <div id="{{ it.id }}" style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:22px;font-weight:800;color:{{ g.corTexto }}">{{ it.id }}</span><span style="font-size:18px;font-weight:700">{{ it.nome }}</span><sc-if value="{{ it.nova }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:800;color:#5B21B6;background:#F3EEFF;padding:3px 8px;border-radius:999px">NOVA</span></sc-if></div>
-          <dc-import name="Praxis App" start="{{ it.id }}" hint-size="414px,868px"></dc-import>
+
+  <sc-for list="{{ mods }}" as="m" hint-placeholder-count="3">
+    <div style="display:flex;flex-direction:column;gap:32px;padding:40px;border-radius:40px;background:{{ m.bg }}">
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="height:40px;padding:0 18px;border-radius:999px;color:#fff;display:flex;align-items:center;font-size:16px;font-weight:800;background:{{ m.cor }}">{{ m.tag }}</span>
+        <h2 style="margin:0;font-size:40px;font-weight:800">{{ m.nome }}</h2>
+        <span style="font-size:18px;font-weight:600;color:#475569">{{ m.count }}</span>
+      </div>
+      <sc-for list="{{ m.rows }}" as="r" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:15px;font-weight:800;letter-spacing:0.08em;color:{{ m.tc }}">{{ r.titulo }}</span>
+            <div style="width:80px;height:2px;background:{{ m.line }}"></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <sc-for list="{{ r.items }}" as="it" hint-placeholder-count="5">
+              <div style="display:flex;align-items:flex-start;gap:12px;flex-shrink:0">
+                <div id="{{ it.id }}" style="display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;align-items:center;gap:10px;height:36px;padding:0 4px">
+                    <span style="height:32px;min-width:44px;padding:0 10px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;background:{{ m.cor }}">{{ it.id }}</span>
+                    <span style="font-size:18px;font-weight:700;white-space:nowrap">{{ it.nome }}</span>
+                    <sc-if value="{{ it.nova }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:800;color:#5B21B6;background:#F3EEFF;border:1.5px dashed #7C3AED;padding:3px 8px;border-radius:999px">NOVA</span></sc-if>
+                  </div>
+                  <div style="pointer-events:none;user-select:none">
+                    <dc-import name="Praxis App" start="{{ it.id }}" sala="{{ it.sala }}" hint-size="414px,868px"></dc-import>
+                  </div>
+                  <sc-if value="{{ it.nota }}" hint-placeholder-val="{{ false }}"><div style="width:414px;font-size:14px;font-weight:600;color:#475569;line-height:1.45;padding:0 4px">{{ it.nota }}</div></sc-if>
+                </div>
+                <sc-if value="{{ it.seta }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:40px;height:868px;margin-top:48px;display:flex;align-items:center;justify-content:center;color:{{ m.cor }}">
+                    <svg width="36" height="24" viewBox="0 0 36 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h30"></path><path d="m24 4 8 8-8 8"></path></svg>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
         </div>
       </sc-for>
     </div>
-  </section>
-</sc-for>
+  </sc-for>
+</section>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
-const G = [
-  { tag: 'Módulo 1', nomeModulo: 'Login / Cadastro', titulo: 'MÓDULO 1 · LOGIN / CADASTRO', cor: '#DC2626', corTexto: '#B91C1C', soft: '#FDECEC', items: [['01', 'Splash'], ['03', 'Login'], ['03e', 'Login · erro'], ['04', 'Cadastro'], ['05', 'Esqueceu a Senha'], ['05ok', 'Senha · confirmação']] },
-  { tag: 'Módulo 2', nomeModulo: 'Professor', titulo: 'MÓDULO 2 · PROFESSOR', cor: '#1D4ED8', corTexto: '#1D4ED8', soft: '#EAF0FF', items: [['06', 'Minhas Turmas'], ['07', 'Criar Turma'], ['08', 'Alunos da Turma'], ['09', 'Atividades & Modo Sala'], ['10', 'Criar Atividade (IA)'], ['18a', 'Ações da turma', 1], ['18b', 'Excluir turma', 1], ['19', 'Desempenho', 1], ['20', 'Resultados por Questão', 1], ['21a', 'Ações do quiz', 1], ['21b', 'Excluir quiz', 1], ['22', 'Ativar Modo Sala', 1], ['23a', 'Gerador IA · gerando', 1], ['23b', 'Gerador IA · revisar', 1], ['24', 'Perfil do Professor', 1], ['32a', 'Vazio · sem turmas', 1], ['32b', 'Vazio · sem quizzes', 1]] },
-  { tag: 'Módulo 3', nomeModulo: 'Estudante', titulo: 'MÓDULO 3 · ESTUDANTE', cor: '#087A45', corTexto: '#087A45', soft: '#E7F6EE', items: [['25', 'Entrar na turma', 1], ['25ok', 'Entrou na turma', 1], ['11', 'Trilhas'], ['12', 'Lição Interativa'], ['12ok', 'Feedback correto'], ['27', 'Feedback errado', 1], ['26', 'Fim de lição', 1], ['13', 'Duelos 1x1'], ['28', 'Escolher colega', 1], ['29', 'Partida de Duelo', 1], ['30', 'Resultado do Duelo', 1], ['14', 'Modo Sala de Aula'], ['31', 'Modo Sala bloqueado', 1], ['15', 'BioBot IA'], ['16', 'Ranking Semanal'], ['17', 'Perfil & Badges'], ['33', 'Minha Turma', 1], ['32c', 'Vazio · sem duelos', 1]] }
+const MODS = [
+  { tag: 'Módulo 1', nome: 'Login / Cadastro', cor: '#DC2626', tc: '#B91C1C', bg: '#FBEFEF', line: '#F5B5B5', rows: [
+    ['ENTRADA', [['01', 'Splash'], ['03', 'Login', 0, 'O perfil vem da conta: professor vai para Minhas Turmas, estudante para a Trilha.'], ['03e', 'Login · erro']]],
+    ['CONTA', [['04', 'Cadastro', 0, 'O perfil é escolhido aqui. Estudante novo segue para Entrar na turma (25).'], ['05', 'Esqueceu a Senha'], ['05ok', 'Senha · confirmação']]]
+  ] },
+  { tag: 'Módulo 2', nome: 'Professor', cor: '#1D4ED8', tc: '#1D4ED8', bg: '#EEF2FD', line: '#C7D5F8', rows: [
+    ['TURMAS', [['06', 'Minhas Turmas'], ['07', 'Criar Turma'], ['18a', 'Ações da turma', 1], ['18b', 'Excluir turma', 1], ['32a', 'Vazio · sem turmas', 1]]],
+    ['PAINEL DA TURMA', [['08', 'Alunos da Turma'], ['19', 'Desempenho', 1], ['09', 'Atividades & Modo Sala'], ['20', 'Resultados por Questão', 1], ['21a', 'Ações do quiz', 1], ['21b', 'Excluir quiz', 1], ['32b', 'Vazio · sem quizzes', 1]]],
+    ['MODO SALA', [['22', 'Ativar Modo Sala', 1, 'Duração e confirmação da finalidade pedagógica (Lei 15.100/2025).']]],
+    ['CRIAR ATIVIDADE COM IA', [['10', 'Criar Atividade (IA)'], ['23a', 'Gerador IA · gerando', 1], ['23b', 'Gerador IA · revisar', 1]]],
+    ['CONTA', [['24', 'Perfil do Professor', 1]]]
+  ] },
+  { tag: 'Módulo 3', nome: 'Estudante', cor: '#087A45', tc: '#05592F', bg: '#ECF6F0', line: '#A7DFC1', rows: [
+    ['PRIMEIRO ACESSO', [['25', 'Entrar na turma', 1], ['25ok', 'Entrou na turma', 1]]],
+    ['TRILHA E LIÇÃO', [['11', 'Trilhas', 0, 'Temas do ano com seus mascotes. Aviso do Modo Sala só aparece com atividade liberada.'], ['12', 'Lição Interativa'], ['12ok', 'Feedback correto'], ['27', 'Feedback errado', 1], ['26', 'Fim de lição', 1]]],
+    ['MODO SALA', [['31', 'Sala · aguardando', 1, 'Estado padrão da aba Sala, sem atividade liberada.'], ['14', 'Modo Sala de Aula', 0, 'Exibido quando o professor libera a atividade.', 1]]],
+    ['DUELOS', [['13', 'Duelos 1x1'], ['28', 'Escolher colega', 1], ['29', 'Partida de Duelo', 1], ['30', 'Resultado do Duelo', 1], ['32c', 'Vazio · sem duelos', 1]]],
+    ['BIOBOT, RANKING E PERFIL', [['15', 'BioBot IA'], ['16', 'Ranking Semanal'], ['17', 'Perfil & Badges'], ['33', 'Minha Turma', 1]]]
+  ] }
 ];
+const FLOW = new Set(['01>03', '04>05', '05>05ok', '06>07', '07>18a', '18a>18b', '08>19', '19>09', '09>20', '20>21a', '21a>21b', '10>23a', '23a>23b', '25>25ok', '11>12', '12>12ok', '12ok>27', '27>26', '31>14', '13>28', '28>29', '29>30', '17>33', '03>03e']);
 class Component extends DCLogic {
-  state = { cur: null, jumpTo: null, jumpN: 0, salaOn: false };
-  onScreen = (id) => { if (id !== this.state.cur) this.setState({ cur: id }); };
-  onSala = (on) => { if (on !== this.state.salaOn) this.setState({ salaOn: on }); };
   renderVals() {
-    const cur = this.state.cur;
-    const groups = G.map(g => ({ ...g, items: g.items.map(([id, nome, nova]) => {
-      const on = id === cur;
-      return { id, nome, nova: !!nova, border: on ? g.cor : '#D5D9E2', bg: on ? g.cor : '#fff', color: on ? '#fff' : '#1A1A2E', go: () => this.setState(s => ({ jumpTo: id, jumpN: s.jumpN + 1 })) };
-    }) }));
-    const on = this.state.salaOn;
-    return {
-      groups, jumpTo: this.state.jumpTo, jumpN: this.state.jumpN, onScreen: this.onScreen, salaOn: on, onSala: this.onSala,
-      toggleSala: () => this.setState(s => ({ salaOn: !s.salaOn })),
-      salaBorder: on ? '#D99A1E' : '#E2E8F0', salaBg: on ? '#FFF4D6' : '#F7F7FA', knob: on ? 'flex-end' : 'flex-start', track: on ? '#087A45' : '#CBD5E1',
-      salaHint: on ? 'Ativo: aparece o aviso na Trilha e o quiz na aba Sala.' : 'Desligado: a aba Sala mostra “Aguardando o professor”.'
-    };
+    let total = 0;
+    const mods = MODS.map(m => {
+      const rows = m.rows.map(([titulo, items]) => ({ titulo, items: items.map(([id, nome, nova, nota, sala], i) => {
+        const next = items[i + 1];
+        return { id, nome, nova: !!nova, nota: nota || '', sala: !!sala, seta: !!next && FLOW.has(id + '>' + next[0]) };
+      }) }));
+      const n = rows.reduce((a, r) => a + r.items.length, 0); total += n;
+      return { ...m, rows, count: n + ' telas' };
+    });
+    return { mods, total };
   }
 }
 </script>

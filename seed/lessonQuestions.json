@@ -1,0 +1,54 @@
+{
+  "g1_cyto_01": {
+    "q1": {
+      "order": 1,
+      "text": "Qual é a unidade básica da vida?",
+      "options": [
+        "Átomo",
+        "Célula",
+        "Tecido",
+        "Órgão"
+      ],
+      "answer": 1,
+      "explanation": "Todos os seres vivos são formados por células."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Células sem núcleo definido são chamadas de:",
+      "options": [
+        "Eucariontes",
+        "Procariontes",
+        "Gametas",
+        "Neurônios"
+      ],
+      "answer": 1,
+      "explanation": "Procariontes, como as bactérias, não têm carioteca."
+    }
+  },
+  "g1_cyto_02": {
+    "q1": {
+      "order": 1,
+      "text": "Qual organela realiza a respiração celular?",
+      "options": [
+        "Ribossomo",
+        "Mitocôndria",
+        "Complexo de Golgi",
+        "Lisossomo"
+      ],
+      "answer": 1,
+      "explanation": "A mitocôndria produz ATP."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Onde ocorre a síntese de proteínas?",
+      "options": [
+        "Ribossomo",
+        "Vacúolo",
+        "Centríolo",
+        "Lisossomo"
+      ],
+      "answer": 0,
+      "explanation": "Os ribossomos traduzem o RNA mensageiro em proteínas."
+    }
+  }
+}
