@@ -1,0 +1,104 @@
+{
+  "grade1": {
+    "title": "1º Ano",
+    "units": {
+      "u1_cytology": {
+        "order": 1,
+        "title": "A Célula como Unidade da Vida",
+        "topic": "cytology",
+        "mascot": "mito",
+        "lessons": {
+          "g1_cyto_01": {
+            "order": 1,
+            "title": "O que é a célula?",
+            "questionsCount": 2
+          },
+          "g1_cyto_02": {
+            "order": 2,
+            "title": "Organelas",
+            "questionsCount": 2
+          },
+          "g1_cyto_03": {
+            "order": 3,
+            "title": "Membrana plasmática",
+            "questionsCount": 2
+          },
+          "g1_cyto_04": {
+            "order": 4,
+            "title": "Respiração celular",
+            "questionsCount": 2
+          },
+          "g1_cyto_05": {
+            "order": 5,
+            "title": "Revisão da unidade",
+            "questionsCount": 2
+          }
+        }
+      },
+      "u2_microbiology": {
+        "order": 2,
+        "title": "Vírus, Bactérias e Fungos",
+        "topic": "microbiology",
+        "mascot": "medusa",
+        "lessons": {
+          "g1_micro_01": {
+            "order": 1,
+            "title": "O que são micróbios",
+            "questionsCount": 2
+          },
+          "g1_micro_02": {
+            "order": 2,
+            "title": "Bactérias",
+            "questionsCount": 2
+          },
+          "g1_micro_03": {
+            "order": 3,
+            "title": "Vírus",
+            "questionsCount": 2
+          }
+        }
+      },
+      "u3_anatomy": {
+        "order": 3,
+        "title": "Sistemas do Corpo Humano",
+        "topic": "anatomy",
+        "mascot": "teco",
+        "lessons": {
+          "g1_anat_01": {
+            "order": 1,
+            "title": "Sistema digestório",
+            "questionsCount": 2
+          },
+          "g1_anat_02": {
+            "order": 2,
+            "title": "Sistema respiratório",
+            "questionsCount": 2
+          }
+        }
+      }
+    }
+  },
+  "grade2": {
+    "title": "2º Ano",
+    "units": {
+      "u1_botany": {
+        "order": 1,
+        "title": "Plantas: Estrutura e Ciclos",
+        "topic": "botany",
+        "mascot": "sapo",
+        "lessons": {
+          "g2_bota_01": {
+            "order": 1,
+            "title": "Grupos de plantas",
+            "questionsCount": 2
+          },
+          "g2_bota_02": {
+            "order": 2,
+            "title": "Fotossíntese",
+            "questionsCount": 2
+          }
+        }
+      }
+    }
+  }
+}
