@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Share, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { View, Text, Share, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { Screen, Header, Input, OptionPicker, Button, LoadingView, EmptyState, Toast } from '../../components';
+import { Input, OptionPicker, Button, LoadingView, EmptyState, Toast } from '../../components';
+import TeacherHero, { teacherSheetStyle } from '../../components/TeacherHero';
 import { useAuth } from '../../contexts/AuthContext';
 import { generateClassCode, createClass, getClass, updateClass } from '../../services/classService';
 import { GRADES, SHIFTS } from '../../constants/classes';
@@ -47,7 +48,7 @@ export default function ClassFormScreen({ navigation, route }) {
     }
     init();
     return () => { active = false; };
-  }, [classId]);
+  }, [classId, isEdit]);
 
   async function copyCode() {
     await Clipboard.setStringAsync(code);
@@ -87,19 +88,17 @@ export default function ClassFormScreen({ navigation, route }) {
   }
 
   return (
-    <Screen padded={false} lightStatusBar>
-      <Header
-        title={isEdit ? 'Editar Turma' : 'Criar Turma'}
-        backLabel="Turmas"
-        onBack={() => navigation.goBack()}
-      />
+    <View style={styles.root}>
+      <TeacherHero eyebrow="MINHAS TURMAS" title={isEdit ? 'Editar turma' : 'Criar turma'} subtitle={isEdit ? 'Atualize os dados usados pela sua turma.' : 'Organize sua próxima turma em poucos passos.'} onBack={() => navigation.goBack()} backLabel="Turmas" />
+      <View style={styles.sheet}>
       {loading ? (
         <LoadingView />
       ) : loadError ? (
         <EmptyState isError title="Não foi possível carregar" message={loadError} actionLabel="Voltar" onAction={() => navigation.goBack()} />
       ) : (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <Screen scroll contentStyle={styles.content}>
+        <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <ScrollView style={styles.fill} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <View style={styles.intro}><Text style={styles.introTitle}>Dados da turma</Text><Text style={text.caption}>Essas informações ajudam os estudantes a reconhecer a turma.</Text></View>
             <Input
               label="Nome da turma"
               value={name}
@@ -128,19 +127,25 @@ export default function ClassFormScreen({ navigation, route }) {
 
             {saveError ? <Text style={styles.error}>{saveError}</Text> : null}
             <View style={{ gap: 8 }}>
-              <Button title="Salvar Turma" variant="success" onPress={save} loading={saving} />
+              <Button title={isEdit ? 'Salvar alterações' : 'Criar turma'} variant="teacher" onPress={save} loading={saving} />
               <Button title="Cancelar" variant="ghost" size="md" onPress={() => navigation.goBack()} />
             </View>
-          </Screen>
+          </ScrollView>
         </KeyboardAvoidingView>
       )}
+      </View>
       <Toast message={toast} onHide={() => setToast('')} />
-    </Screen>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: 20, paddingBottom: 32, gap: 20 },
+  root: { flex: 1, backgroundColor: colors.background },
+  sheet: teacherSheetStyle,
+  fill: { flex: 1 },
+  content: { flexGrow: 1, paddingHorizontal: 20, paddingBottom: 32, gap: 20 },
+  intro: { gap: 4 },
+  introTitle: { ...text.h2 },
   codeBox: {
     borderRadius: 20, borderWidth: 2, borderStyle: 'dashed', borderColor: '#93AEF0', backgroundColor: colors.blueSoft,
     padding: 20, alignItems: 'center', gap: 6,

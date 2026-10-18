@@ -50,5 +50,45 @@
       "answer": 0,
       "explanation": "Os ribossomos traduzem o RNA mensageiro em proteínas."
     }
+  },
+  "g1_cyto_03": {
+    "q1": { "order": 1, "text": "Qual é a principal função da membrana plasmática?", "options": ["Produzir energia", "Controlar a entrada e saída de substâncias", "Armazenar DNA", "Fabricar ribossomos"], "answer": 1, "explanation": "A membrana delimita a célula e regula as trocas com o ambiente." },
+    "q2": { "order": 2, "text": "Como se chama a passagem de água por uma membrana sem gasto de energia?", "options": ["Fotossíntese", "Osmose", "Digestão", "Respiração"], "answer": 1, "explanation": "Osmose é o movimento de água através de uma membrana semipermeável." }
+  },
+  "g1_cyto_04": {
+    "q1": { "order": 1, "text": "Qual molécula é a principal fonte imediata de energia da célula?", "options": ["ATP", "DNA", "Amido", "Celulose"], "answer": 0, "explanation": "O ATP armazena energia utilizável nos processos celulares." },
+    "q2": { "order": 2, "text": "Na respiração celular aeróbica, qual gás é consumido?", "options": ["Nitrogênio", "Oxigênio", "Hélio", "Gás carbônico"], "answer": 1, "explanation": "O oxigênio participa das etapas finais da respiração aeróbica." }
+  },
+  "g1_cyto_05": {
+    "q1": { "order": 1, "text": "Qual estrutura contém o material genético nas células eucariontes?", "options": ["Núcleo", "Ribossomo", "Membrana", "Citoplasma"], "answer": 0, "explanation": "Nas células eucariontes, o DNA fica principalmente no núcleo." },
+    "q2": { "order": 2, "text": "Qual organela produz grande parte do ATP da célula?", "options": ["Lisossomo", "Mitocôndria", "Vacúolo", "Centríolo"], "answer": 1, "explanation": "A mitocôndria realiza etapas da respiração celular." }
+  },
+  "g1_micro_01": {
+    "q1": { "order": 1, "text": "Microrganismos são seres ou agentes que geralmente...", "options": ["Só vivem no mar", "Precisam de microscópio para ser vistos", "São sempre perigosos", "Não têm material genético"], "answer": 1, "explanation": "Muitos microrganismos são pequenos demais para serem vistos a olho nu." },
+    "q2": { "order": 2, "text": "Qual destes é um microrganismo celular?", "options": ["Bactéria", "Pedra", "Água", "Luz"], "answer": 0, "explanation": "Bactérias são seres unicelulares." }
+  },
+  "g1_micro_02": {
+    "q1": { "order": 1, "text": "As bactérias são classificadas como...", "options": ["Eucariontes", "Procariontes", "Plantas", "Animais"], "answer": 1, "explanation": "Bactérias não têm núcleo delimitado por membrana." },
+    "q2": { "order": 2, "text": "Qual afirmação sobre bactérias está correta?", "options": ["Todas causam doenças", "Nenhuma vive no solo", "Algumas ajudam na decomposição", "Todas são vírus"], "answer": 2, "explanation": "Muitas bactérias participam da decomposição da matéria orgânica." }
+  },
+  "g1_micro_03": {
+    "q1": { "order": 1, "text": "O que os vírus precisam para se multiplicar?", "options": ["Uma célula hospedeira", "Apenas água", "Luz solar", "Solo fértil"], "answer": 0, "explanation": "Vírus dependem da maquinaria de uma célula hospedeira para se replicar." },
+    "q2": { "order": 2, "text": "Qual medida ajuda a prevenir algumas doenças virais?", "options": ["Compartilhar copos", "Vacinação", "Evitar lavar as mãos", "Usar antibiótico sempre"], "answer": 1, "explanation": "Vacinas preparam o sistema imunológico contra vírus específicos." }
+  },
+  "g1_anat_01": {
+    "q1": { "order": 1, "text": "Onde começa a digestão dos alimentos?", "options": ["Estômago", "Boca", "Intestino grosso", "Fígado"], "answer": 1, "explanation": "A mastigação e a saliva iniciam a digestão na boca." },
+    "q2": { "order": 2, "text": "Em qual órgão ocorre a maior parte da absorção de nutrientes?", "options": ["Intestino delgado", "Esôfago", "Pulmão", "Coração"], "answer": 0, "explanation": "O intestino delgado absorve a maior parte dos nutrientes." }
+  },
+  "g1_anat_02": {
+    "q1": { "order": 1, "text": "Qual é a principal função dos pulmões?", "options": ["Bombear sangue", "Realizar trocas gasosas", "Produzir bile", "Filtrar urina"], "answer": 1, "explanation": "Nos pulmões, o oxigênio entra no sangue e o gás carbônico é eliminado." },
+    "q2": { "order": 2, "text": "Qual estrutura leva o ar da laringe até os brônquios?", "options": ["Esôfago", "Traqueia", "Diafragma", "Alvéolo"], "answer": 1, "explanation": "A traqueia conduz o ar aos brônquios." }
+  },
+  "g2_bota_01": {
+    "q1": { "order": 1, "text": "Qual grupo de plantas produz sementes, mas não frutos?", "options": ["Briófitas", "Pteridófitas", "Gimnospermas", "Algas"], "answer": 2, "explanation": "Gimnospermas têm sementes sem a proteção de frutos." },
+    "q2": { "order": 2, "text": "Qual grupo inclui as plantas com flores e frutos?", "options": ["Angiospermas", "Briófitas", "Fungos", "Bactérias"], "answer": 0, "explanation": "Angiospermas formam flores e frutos." }
+  },
+  "g2_bota_02": {
+    "q1": { "order": 1, "text": "O que as plantas absorvem do ar para a fotossíntese?", "options": ["Oxigênio", "Gás carbônico", "Nitrogênio líquido", "Hélio"], "answer": 1, "explanation": "O gás carbônico é usado para produzir matéria orgânica na fotossíntese." },
+    "q2": { "order": 2, "text": "Qual estrutura capta principalmente a luz para a fotossíntese?", "options": ["Raiz", "Clorofila nos cloroplastos", "Xilema", "Semente"], "answer": 1, "explanation": "A clorofila, presente nos cloroplastos, absorve luz." }
   }
 }
