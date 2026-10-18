@@ -70,11 +70,15 @@ Regras de ouro:
 │
 ├── trails/{gradeKey}                        mapa da trilha (unidades e lições)
 ├── lessonQuestions/{lessonId}/{questionId}  perguntas de cada lição
+├── classTrails/{classId}                    trilha publicada e personalizada da turma
+├── classTrailDrafts/{classId}/{unitId}      tópicos em edição do professor
+├── classTrailQuestions/{classId}/{lessonId}/{questionId}  questões publicadas da turma
 ├── progress/{uid}/{lessonId}                progresso do aluno nas lições
 │
 ├── quizzes/{classId}/{quizId}               quizzes/atividades do professor
 ├── classroomMode/{classId}                  Modo Sala ativo (tempo real)
 ├── answers/{classId}/{quizId}/{uid}         respostas dos alunos aos quizzes
+├── attendance/{classId}/{dateKey}            chamada diária da turma
 │
 ├── duels/{classId}/{duelId}                 duelos 1x1 assíncronos
 ├── weeklyRanking/{classId}/{weekId}/{uid}   pontos da semana
@@ -92,6 +96,7 @@ Regras de ouro:
 | `trails`, `lessonQuestions`, `progress`, `users/*/stats`, `userBadges` (escrita) | **Maurício** | RF07, RF09 | 11, 12, 26, 27 |
 | `duels`, `weeklyRanking` | **Maurício** | RF08, RF09 | 13, 16, 28, 29, 30 |
 | `quizzes`, `classroomMode`, `answers` | **Ana Luiza** | RF04, RF05, RF11 | 09, 10, 14, 20, 21, 22, 23, 31 |
+| `attendance` | **João** | chamada | aba principal Chamadas e painel da turma → Chamadas |
 | `botChats`, `aiUsage` | **João** | RF10, RF11 | 15, 23 |
 | `database.rules.json` | **João** (cada um revisa a parte do seu nó) | RNF04 | n/a |
 
@@ -307,6 +312,12 @@ Guarda só o necessário para desenhar a trilha. As perguntas ficam em `lessonQu
 - **ID da lição:** `g{série}_{tema}_{nº}`, por exemplo `g1_cyto_01`.
 - **Desbloqueio:** a lição N fica liberada quando a N−1 está em `progress`. Calculado no app.
 
+#### Trilhas personalizadas por turma
+
+O professor edita tópicos, etapas e questões na aba **Trilhas** do painel da turma. Até a primeira publicação, o aluno vê `trails/grade{ano}` (ou o conteúdo local de exemplo). A primeira publicação copia esse mapa para `classTrails/{classId}`, substituindo apenas o tópico editado; os demais tópicos mantêm seus IDs e progresso. `classTrails` tem os mesmos campos do mapa global e também `grade`, para não mostrar conteúdo do ano antigo se o ano da turma mudar.
+
+`classTrailDrafts/{classId}/{unitId}` guarda o formulário completo, inclusive questões, e só pode ser lido/escrito pelo professor da turma. A publicação valida todas as etapas, salva o mapa sem enunciados em `classTrails`, as questões em `classTrailQuestions` e remove o rascunho em uma atualização atômica. Alunos membros podem ler apenas o mapa e as questões publicadas. Ao modificar questões de uma etapa publicada, a nova versão recebe outro `lessonId`; o progresso anterior permanece em `progress/{uid}/{lessonId}` e não é atribuído às novas perguntas. Quizzes de `quizzes/{classId}` continuam independentes para o Modo Sala.
+
 ---
 
 ### 5.7 `lessonQuestions/{lessonId}/{questionId}`
@@ -469,6 +480,25 @@ Existe **no máximo 1 por turma**. Quando o Modo Sala termina, o nó é **removi
 
 ---
 
+### 5.12a `attendance/{classId}/{dateKey}`: chamada diária
+
+`dateKey` usa `AAAA-MM-DD` no fuso local do professor. Cada registro contém `date`, `teacherId`, `updatedAt` e `entries/{uid}`, com `name` e `status` (`present` ou `absent`). A aba principal **Chamadas** permite escolher uma turma, consultar dias anteriores, corrigir a chamada e salvar novamente. O mesmo registro pode ser acessado pelo painel da turma. Todos os alunos atuais precisam estar marcados antes do salvamento; o resumo de presentes, ausentes e pendentes é calculado no app.
+
+```json
+"attendance": { "-OaClass1A": { "2026-10-17": {
+  "date": "2026-10-17", "teacherId": "uidProfessor", "updatedAt": 1760720400000,
+  "entries": {
+    "uidJiara": { "name": "Jiara Martins", "status": "present" },
+    "uidLucas": { "name": "Lucas Ferreira", "status": "absent" }
+  }
+} } }
+```
+
+- **Lê e escreve:** somente o professor dono da turma, conforme `database.rules.json`.
+- **Exclusão da turma:** apaga também seu histórico de chamadas.
+
+---
+
 ### 5.13 `duels/{classId}/{duelId}`: duelo assíncrono
 
 Fluxo de status:
@@ -511,6 +541,7 @@ O desafiante cria o duelo e já joga. Depois é a vez do oponente ("Seu turno!")
 - **Cria:** o desafiante.
 - **Altera:** cada jogador mexe só no próprio `players/{uid}`. `status`, `winnerId` e `updatedAt` podem ser alterados pelos dois participantes.
 - **Pontos no ranking:** cada jogador soma **os próprios** pontos ao abrir o resultado, e então `rewardClaimed` vira `true`. Assim ninguém escreve no ranking de outra pessoa.
+- **Recompensa da implementação:** ao resgatar, cada acerto rende `XP_PER_CORRECT` em `users.stats.xp` e no espelho de `classMembers`; o ranking semanal recebe esse XP mais o bônus de resultado (`DUEL_POINTS`). A mesma atualização grava `rewardClaimed: true`; a regra do banco rejeita uma segunda gravação desse campo.
 
 ---
 

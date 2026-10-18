@@ -1,6 +1,8 @@
-import { Pressable, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Pressable, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors, fonts, radius } from '../theme';
 import Icon from './Icon';
+import useReducedMotion from '../hooks/useReducedMotion';
 
 const DEPTH = 4; // height of the solid bottom "shadow"
 
@@ -21,17 +23,28 @@ const VARIANTS = {
 // Duolingo-style button: solid bottom shadow that "sinks" when pressed.
 // size: "lg" (56) | "md" (48)
 export default function Button({ title, onPress, variant = 'primary', size = 'lg', icon, loading, disabled, style }) {
+  const reduceMotion = useReducedMotion();
+  const scale = useRef(new Animated.Value(1)).current;
   const isDisabled = disabled || loading;
   const v = VARIANTS[disabled ? 'disabled' : variant];
   const height = size === 'lg' ? 56 : 48;
   const depth = v.flat ? 0 : DEPTH;
   const textColor = v.text;
 
+  useEffect(() => {
+    if (reduceMotion) scale.setValue(1);
+  }, [reduceMotion, scale]);
+
+  const animatePress = (toValue) => {
+    if (reduceMotion) return;
+    Animated.timing(scale, { toValue, duration: toValue === 1 ? 140 : 100, useNativeDriver: true }).start();
+  };
+
   return (
-    <Pressable onPress={onPress} disabled={isDisabled} accessibilityRole="button"
+    <Pressable onPress={onPress} onPressIn={() => animatePress(0.98)} onPressOut={() => animatePress(1)} disabled={isDisabled} accessibilityRole="button" accessibilityState={{ disabled: !!isDisabled, busy: !!loading }}
       style={[{ height: height + depth }, style]}>
       {({ pressed }) => (
-        <View style={{ height: height + depth }}>
+        <Animated.View style={{ height: height + depth, transform: [{ scale }] }}>
           {!v.flat && (
             <View style={[styles.shadow, { height, backgroundColor: v.shadow }]} />
           )}
@@ -50,7 +63,7 @@ export default function Button({ title, onPress, variant = 'primary', size = 'lg
               </>
             )}
           </View>
-        </View>
+        </Animated.View>
       )}
     </Pressable>
   );

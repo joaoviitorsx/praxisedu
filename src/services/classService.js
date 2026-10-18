@@ -36,7 +36,7 @@ export async function createClass(teacher, { name, grade, shift, code }) {
       [`classCodes/${code}`]: classId,
       [`teacherClasses/${teacher.uid}/${classId}`]: true,
     });
-  } catch (e) {
+  } catch {
     // the rule refuses if another teacher took the same code in the meantime
     throw new Error('CLASS_CODE_UNAVAILABLE');
   }
@@ -59,8 +59,12 @@ export async function deleteClass(teacherId, classId, code) {
     [`teacherClasses/${teacherId}/${classId}`]: null,
     [`classMembers/${classId}`]: null,
     [`quizzes/${classId}`]: null,
+    [`classTrails/${classId}`]: null,
+    [`classTrailDrafts/${classId}`]: null,
+    [`classTrailQuestions/${classId}`]: null,
     [`classroomMode/${classId}`]: null,
     [`answers/${classId}`]: null,
+    [`attendance/${classId}`]: null,
     [`duels/${classId}`]: null,
     [`weeklyRanking/${classId}`]: null,
   });

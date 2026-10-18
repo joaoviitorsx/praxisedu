@@ -26,7 +26,7 @@ Open the Expo Go app on your phone and scan the QR code (phone and computer on t
 1. Create a Firebase project with **Authentication (Email/Password)** and **Realtime Database**.
 2. Copy the web app config into `.env` (see `.env.example`).
 3. Paste `database.rules.json` into Console → Realtime Database → Rules.
-4. (Optional) Import sample content: Realtime Database → ⋮ on the `trails` node → *Import JSON* with
+4. (Optional) Import sample content: the student trails and lesson questions are bundled as an offline content fallback when their Firebase nodes are empty. To manage them in Realtime Database, use ⋮ on the `trails` node → *Import JSON* with
    `seed/trails.json` (same for `lessonQuestions` with `seed/lessonQuestions.json`). To import a node that
    does not exist yet, import the file at the root and move it, or create an empty node first.
    Sample users and classes are in section 11 of `docs/MODELAGEM_BANCO.md`.

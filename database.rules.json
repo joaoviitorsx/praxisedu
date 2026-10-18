@@ -68,6 +68,31 @@
 
     "trails": { ".read": "auth != null" },
     "lessonQuestions": { ".read": "auth != null" },
+    "classTrails": {
+      "$classId": {
+        ".read": "auth != null && (root.child('classes/' + $classId + '/teacherId').val() === auth.uid || root.child('classMembers/' + $classId + '/' + auth.uid).exists())",
+        ".write": "auth != null && root.child('classes/' + $classId + '/teacherId').val() === auth.uid",
+        ".validate": "newData.hasChildren(['title', 'units', 'grade']) && newData.child('grade').val() === root.child('classes/' + $classId + '/grade').val()"
+      }
+    },
+    "classTrailDrafts": {
+      "$classId": {
+        ".read": "auth != null && root.child('classes/' + $classId + '/teacherId').val() === auth.uid",
+        ".write": "auth != null && root.child('classes/' + $classId + '/teacherId').val() === auth.uid"
+      }
+    },
+    "classTrailQuestions": {
+      "$classId": {
+        ".read": "auth != null && (root.child('classes/' + $classId + '/teacherId').val() === auth.uid || root.child('classMembers/' + $classId + '/' + auth.uid).exists())",
+        ".write": "auth != null && root.child('classes/' + $classId + '/teacherId').val() === auth.uid",
+        "$lessonId": {
+          "$questionId": {
+            ".validate": "newData.hasChildren(['order', 'text', 'options', 'answer', 'explanation'])",
+            "answer": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3" }
+          }
+        }
+      }
+    },
 
     "progress": {
       "$uid": {
@@ -123,6 +148,21 @@
       }
     },
 
+    "attendance": {
+      "$classId": {
+        ".read": "auth != null && root.child('classes/' + $classId + '/teacherId').val() === auth.uid",
+        ".write": "auth != null && root.child('classes/' + $classId + '/teacherId').val() === auth.uid",
+        "$dateKey": {
+          ".validate": "$dateKey.matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) && newData.hasChildren(['date', 'teacherId', 'entries', 'updatedAt']) && newData.child('date').val() === $dateKey && newData.child('teacherId').val() === auth.uid",
+          "entries": {
+            "$uid": {
+              ".validate": "root.child('classMembers/' + $classId + '/' + $uid).exists() && newData.hasChildren(['name', 'status']) && (newData.child('status').val() === 'present' || newData.child('status').val() === 'absent')"
+            }
+          }
+        }
+      }
+    },
+
     "duels": {
       "$classId": {
         ".read": "auth != null && root.child('classMembers/' + $classId + '/' + auth.uid).exists()",
@@ -133,10 +173,11 @@
           ".validate": "newData.hasChildren(['challengerId', 'opponentId', 'topic', 'status', 'questions', 'players', 'createdAt', 'updatedAt']) && newData.child('challengerId').val() !== newData.child('opponentId').val() && root.child('classMembers/' + $classId + '/' + newData.child('opponentId').val()).exists()",
           "status": {
             ".write": "auth != null && (root.child('duels/' + $classId + '/' + $duelId + '/challengerId').val() === auth.uid || root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() === auth.uid)",
-            ".validate": "newData.val() === 'challenger_turn' || newData.val() === 'opponent_turn' || newData.val() === 'finished' || newData.val() === 'declined'"
+            ".validate": "(!data.exists() && newData.val() === 'challenger_turn' && newData.parent().child('challengerId').val() === auth.uid) || (data.val() === 'challenger_turn' && newData.val() === 'opponent_turn' && root.child('duels/' + $classId + '/' + $duelId + '/challengerId').val() === auth.uid) || (data.val() === 'opponent_turn' && newData.val() === 'declined' && root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() === auth.uid) || (data.val() === 'opponent_turn' && newData.val() === 'finished' && newData.parent().hasChild('winnerId') && root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() === auth.uid)"
           },
           "winnerId": {
-            ".write": "auth != null && (root.child('duels/' + $classId + '/' + $duelId + '/challengerId').val() === auth.uid || root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() === auth.uid)"
+            ".write": "auth != null && root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() === auth.uid",
+            ".validate": "!data.exists() && newData.parent().child('status').val() === 'finished' && ((newData.val() === 'draw' && newData.parent().child('players/' + newData.parent().child('challengerId').val() + '/score').val() === newData.parent().child('players/' + newData.parent().child('opponentId').val() + '/score').val()) || (newData.val() === newData.parent().child('challengerId').val() && newData.parent().child('players/' + newData.parent().child('challengerId').val() + '/score').val() > newData.parent().child('players/' + newData.parent().child('opponentId').val() + '/score').val()) || (newData.val() === newData.parent().child('opponentId').val() && newData.parent().child('players/' + newData.parent().child('opponentId').val() + '/score').val() > newData.parent().child('players/' + newData.parent().child('challengerId').val() + '/score').val()))"
           },
           "updatedAt": {
             ".write": "auth != null && (root.child('duels/' + $classId + '/' + $duelId + '/challengerId').val() === auth.uid || root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() === auth.uid)"
@@ -144,7 +185,8 @@
           "players": {
             "$playerId": {
               ".write": "auth != null && auth.uid === $playerId && root.child('duels/' + $classId + '/' + $duelId).exists()",
-              "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5" }
+              "score": { ".validate": "!data.exists() && newData.isNumber() && newData.val() >= 0 && newData.val() <= 5 && ((auth.uid === root.child('duels/' + $classId + '/' + $duelId + '/challengerId').val() && root.child('duels/' + $classId + '/' + $duelId + '/status').val() === 'challenger_turn') || (auth.uid === root.child('duels/' + $classId + '/' + $duelId + '/opponentId').val() && root.child('duels/' + $classId + '/' + $duelId + '/status').val() === 'opponent_turn'))" },
+              "rewardClaimed": { ".validate": "newData.val() === true && (!data.exists() || data.val() === false) && root.child('duels/' + $classId + '/' + $duelId + '/status').val() === 'finished'" }
             }
           }
         }

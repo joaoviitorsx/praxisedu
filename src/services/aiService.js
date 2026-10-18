@@ -1,6 +1,6 @@
 // Gemini through the REST API (generateContent). No extra SDK.
 const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-const MODEL = process.env.EXPO_PUBLIC_GEMINI_MODEL || 'gemini-2.5-flash';
+const MODEL = process.env.EXPO_PUBLIC_GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 const BIOBOT_PROMPT =
@@ -17,7 +17,11 @@ async function callGemini(body) {
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    throw new Error(response.status === 429 || response.status === 503 ? 'AI_BUSY' : `AI_HTTP_${response.status}`);
+    if (response.status === 404) throw new Error('AI_MODEL_UNAVAILABLE');
+    if (response.status === 429 || response.status === 503) throw new Error('AI_BUSY');
+    if (response.status === 400) throw new Error('AI_INVALID_REQUEST');
+    if (response.status === 401 || response.status === 403) throw new Error('AI_ACCESS_DENIED');
+    throw new Error(`AI_HTTP_${response.status}`);
   }
   const data = await response.json();
   const reply = data.candidates?.[0]?.content?.parts?.map((p) => p.text).join('') ?? '';
@@ -65,7 +69,7 @@ export async function generateQuestions(topic, count = 3) {
   let questions;
   try {
     questions = JSON.parse(raw.replace(/^```(?:json)?\s*|\s*```$/g, ''));
-  } catch (e) {
+  } catch {
     throw new Error('AI_INVALID_RESPONSE');
   }
   if (!Array.isArray(questions) || questions.length === 0 || !questions.every(isValidQuestion)) {

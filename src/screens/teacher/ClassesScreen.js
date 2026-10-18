@@ -1,21 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, RefreshControl, StyleSheet } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, FlatList, Pressable, RefreshControl, StyleSheet } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  Screen, Card, Chip, Button, Icon, Logo, LoadingView, EmptyState, ConfirmModal, PopoverMenu, Toast, FadeIn,
+  Card, Chip, Button, Icon, LoadingView, EmptyState, ConfirmModal, PopoverMenu, Toast,
 } from '../../components';
+import TeacherHero, { teacherSheetStyle } from '../../components/TeacherHero';
 import { useAuth } from '../../contexts/AuthContext';
 import { loadTeacherClasses, deleteClass } from '../../services/classService';
 import { friendlyError } from '../../utils/errors';
-import { initials, teacherShortName, plural } from '../../utils/format';
-import { colors, fonts, text, spacing } from '../../theme';
+import { teacherShortName } from '../../utils/format';
+import { colors, fonts, text } from '../../theme';
 
 // Screens 06 (Minhas Turmas), 32a (empty), 18a (menu) and 18b (delete confirmation)
 export default function ClassesScreen({ navigation, route }) {
   const { user, profile } = useAuth();
-  const insets = useSafeAreaInsets();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -24,6 +23,7 @@ export default function ClassesScreen({ navigation, route }) {
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState('');
+  const handledToast = useRef('');
 
   const load = useCallback(async () => {
     try {
@@ -42,11 +42,14 @@ export default function ClassesScreen({ navigation, route }) {
 
   // toast sent by other screens (e.g. "Turma criada")
   useEffect(() => {
-    if (route.params?.toast) {
-      setToast(route.params.toast);
+    const incoming = route.params?.toast;
+    if (incoming && handledToast.current !== incoming) {
+      handledToast.current = incoming;
+      setToast(incoming);
       navigation.setParams({ toast: undefined });
     }
-  }, [route.params?.toast]);
+    if (!incoming) handledToast.current = '';
+  }, [route.params?.toast, navigation]);
 
   const supportTotal = classes.reduce((sum, c) => sum + c.supportCount, 0);
   const supportClass = classes.find((c) => c.supportCount > 0);
@@ -71,42 +74,35 @@ export default function ClassesScreen({ navigation, route }) {
     }
   }
 
-  return (
-    <Screen padded={false} lightStatusBar>
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <View style={styles.headerTop}>
-          <View style={styles.brand}>
-            <Logo variant="symbol" tone="white" size={32} />
-            <Text style={styles.brandName}>PRÁXIS EDU</Text>
-          </View>
-          <Pressable onPress={() => navigation.navigate('Profile')} style={styles.avatar} accessibilityLabel="Perfil">
-            <Text style={styles.avatarText}>{initials(profile.name)}</Text>
-          </Pressable>
-        </View>
-        <View>
-          <Text style={styles.teacherName}>{teacherShortName(profile.name)}</Text>
-          {profile.school ? <Text style={styles.school}>{profile.school}</Text> : null}
-        </View>
-      </View>
+  const renderClass = useCallback(({ item }) => <ClassCard
+    cls={item}
+    onOpen={() => navigation.navigate('ClassPanel', { classId: item.id })}
+    onMenu={(top) => setMenu({ cls: item, top })}
+  />, [navigation]);
 
+  return (
+    <View style={styles.root}>
+      <TeacherHero eyebrow="ÁREA DO PROFESSOR" title="Turmas" subtitle={`Olá, ${teacherShortName(profile.name)}. Acompanhe suas aulas por aqui.`} />
+      <View style={styles.sheet}>
       {loading ? (
         <LoadingView message="Carregando turmas..." />
       ) : (
-        <ScrollView
+        <FlatList
+          data={error ? [] : classes}
+          renderItem={renderClass}
+          keyExtractor={(item) => item.id}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />}
-        >
-          {error ? (
-            <EmptyState isError title="Não foi possível carregar" message={error} actionLabel="Tentar de novo" onAction={load} />
-          ) : (
-            <>
+          ListHeaderComponent={!error ? <>
               {supportTotal > 0 && (
-                <View style={{ gap: 8 }}>
-                  <Text style={text.label}>Para hoje</Text>
+                <View style={styles.alertSection}>
+                  <Text style={text.label}>PRECISAM DE ATENÇÃO</Text>
                   <Pressable
                     onPress={() => navigation.navigate('ClassPanel', { classId: supportClass.id, tab: 'performance' })}
-                    style={({ pressed }) => [styles.alert, pressed && { transform: [{ translateY: 2 }] }]}
+                    style={({ pressed }) => [styles.alert, pressed && styles.pressed]}
+                    accessibilityRole="button"
                   >
                     <Icon name="alert-triangle" size={22} color={colors.redText} />
                     <View style={{ flex: 1 }}>
@@ -121,33 +117,19 @@ export default function ClassesScreen({ navigation, route }) {
               )}
 
               <View style={styles.titleRow}>
-                <Text style={text.h2}>Minhas Turmas</Text>
-                {classes.length > 0 && <Text style={styles.count}>{plural(classes.length, 'turma', 'turmas')}</Text>}
+                <View style={styles.titleCopy}><Text style={text.h2}>Minhas turmas</Text><Text style={text.caption}>Selecione uma turma para ver alunos e atividades.</Text></View>
+                <View style={styles.count} accessible accessibilityLabel={`${classes.length} ${classes.length === 1 ? 'turma' : 'turmas'}`}>
+                  <Text style={styles.countNumber}>{classes.length}</Text>
+                  <Text style={styles.countLabel}>{classes.length === 1 ? 'TURMA' : 'TURMAS'}</Text>
+                </View>
               </View>
-
-              {classes.length === 0 ? (
-                <EmptyState
-                  image={require('../../../assets/mascotes/baleia.png')}
-                  title="Nenhuma turma por aqui"
-                  message="Crie sua primeira turma e compartilhe o código com os estudantes."
-                />
-              ) : (
-                classes.map((cls, i) => (
-                  <FadeIn key={cls.id} delay={i * 70}>
-                    <ClassCard
-                      cls={cls}
-                      onOpen={() => navigation.navigate('ClassPanel', { classId: cls.id })}
-                      onMenu={(top) => setMenu({ cls, top })}
-                    />
-                  </FadeIn>
-                ))
-              )}
-
-              <Button title="Criar Nova Turma" icon="plus" variant="teacher" onPress={() => navigation.navigate('ClassForm')} />
-            </>
-          )}
-        </ScrollView>
+            </> : null}
+          ListEmptyComponent={error ? <EmptyState isError title="Não foi possível carregar" message={error} actionLabel="Tentar de novo" onAction={load} /> :
+            <EmptyState image={require('../../../assets/mascotes/baleia.png')} title="Nenhuma turma por aqui" message="Crie sua primeira turma e compartilhe o código com os estudantes." />}
+          ListFooterComponent={!error ? <View style={styles.footer}><Button title="Criar nova turma" icon="plus" variant="teacher" onPress={() => navigation.navigate('ClassForm')} /></View> : null}
+        />
       )}
+      </View>
 
       <PopoverMenu
         visible={!!menu}
@@ -171,13 +153,13 @@ export default function ClassesScreen({ navigation, route }) {
       />
 
       <Toast message={toast} onHide={() => setToast('')} />
-    </Screen>
+    </View>
   );
 }
 
-function ClassCard({ cls, onOpen, onMenu }) {
+const ClassCard = memo(function ClassCard({ cls, onOpen, onMenu }) {
   return (
-    <Card onPress={onOpen} style={{ gap: 14 }}>
+    <Card onPress={onOpen} accessibilityLabel={`Abrir turma ${cls.name}`} style={{ gap: 14 }}>
       <View style={styles.cardTop}>
         <View style={styles.cardIcon}>
           <Icon name="users" size={24} color={colors.blue} />
@@ -190,8 +172,9 @@ function ClassCard({ cls, onOpen, onMenu }) {
           </View>
         </View>
         <Pressable
-          onPress={(e) => onMenu(e.nativeEvent.pageY + 20)}
-          style={styles.menuButton}
+          onPress={(e) => { e.stopPropagation(); onMenu(e.nativeEvent.pageY + 20); }}
+          style={({ pressed }) => [styles.menuButton, pressed && styles.pressed]}
+          accessibilityRole="button"
           accessibilityLabel="Ações da turma"
         >
           <Icon name="more-vertical" size={22} color={colors.gray} />
@@ -200,11 +183,11 @@ function ClassCard({ cls, onOpen, onMenu }) {
       <View style={styles.stats}>
         <Stat value={cls.studentsCount} label="alunos" />
         <Stat value={cls.quizzesCount} label="quizzes" />
-        <Stat value={`${cls.accuracy}%`} label="acertos" color={colors.green} />
+        <Stat value={cls.quizzesCount ? `${cls.accuracy}%` : '—'} label="acertos" color={colors.green} />
       </View>
     </Card>
   );
-}
+});
 
 function Stat({ value, label, color = colors.ink }) {
   return (
@@ -216,25 +199,22 @@ function Stat({ value, label, color = colors.ink }) {
 }
 
 const styles = StyleSheet.create({
-  header: { backgroundColor: colors.blue, paddingHorizontal: spacing.screen, paddingBottom: 20, gap: 16 },
-  headerTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  brandName: { fontFamily: fonts.extrabold, fontSize: 18, letterSpacing: 0.7, color: colors.white },
-  avatar: {
-    width: 44, height: 44, borderRadius: 22, backgroundColor: colors.white, borderWidth: 2,
-    borderColor: colors.white, alignItems: 'center', justifyContent: 'center',
-  },
-  avatarText: { fontFamily: fonts.extrabold, fontSize: 16, color: colors.blue },
-  teacherName: { fontFamily: fonts.extrabold, fontSize: 24, color: colors.white },
-  school: { fontFamily: fonts.semibold, fontSize: 15, color: '#DCE6FF', marginTop: 2 },
-  content: { padding: spacing.screen, paddingBottom: 32, gap: 16 },
+  root: { flex: 1, backgroundColor: colors.background },
+  sheet: teacherSheetStyle,
+  content: { paddingHorizontal: 20, paddingBottom: 32, flexGrow: 1 },
+  separator: { height: 12 },
+  footer: { paddingTop: 18 },
+  alertSection: { gap: 8, marginBottom: 22 },
   alert: {
     flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14,
     borderRadius: 16, borderWidth: 2, borderColor: '#F5B5B5', backgroundColor: colors.redSoft,
   },
   alertTitle: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.ink },
-  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
-  count: { fontFamily: fonts.bold, fontSize: 13, color: colors.gray },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 14 },
+  titleCopy: { flex: 1, gap: 3 },
+  count: { minWidth: 70, minHeight: 62, paddingHorizontal: 10, paddingVertical: 7, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: colors.blueSoft },
+  countNumber: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 26, color: colors.blue },
+  countLabel: { fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 0.6, color: colors.blue },
   cardTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   cardIcon: { width: 48, height: 48, borderRadius: 14, backgroundColor: colors.blueSoft, alignItems: 'center', justifyContent: 'center' },
   cardName: { fontFamily: fonts.extrabold, fontSize: 18, color: colors.ink },
@@ -242,4 +222,5 @@ const styles = StyleSheet.create({
   menuButton: { width: 44, height: 44, marginTop: -6, marginRight: -8, alignItems: 'center', justifyContent: 'center' },
   stats: { flexDirection: 'row', gap: 8, paddingTop: 12, borderTopWidth: 2, borderTopColor: '#F1F5F9' },
   statValue: { fontFamily: fonts.extrabold, fontSize: 20 },
+  pressed: { opacity: 0.7 },
 });
