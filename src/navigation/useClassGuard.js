@@ -10,14 +10,15 @@ export default function useClassGuard(uid, profile) {
   const [checkedFor, setCheckedFor] = useState(null);
 
   useEffect(() => {
-    if (!classId || checkedFor === classId) return;
+    if (!classId || checkedFor === classId) return undefined;
     let active = true;
     classStillExists(classId).then(async (exists) => {
+      if (!active) return;
       if (!exists) await clearClassId(uid).catch(() => {});
       if (active) setCheckedFor(classId);
     });
     return () => { active = false; };
-  }, [classId]);
+  }, [classId, checkedFor, uid]);
 
   return !!classId && checkedFor !== classId;
 }
