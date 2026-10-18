@@ -25,7 +25,7 @@ export default function SplashScreen({ navigation }) {
       ),
       -1
     );
-  }, []);
+  }, [float]);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: float.value }] }));
 
   return (

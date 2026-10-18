@@ -1,23 +1,30 @@
-import { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Easing, View, Text, StyleSheet } from 'react-native';
 import { colors, fonts } from '../theme';
 import Icon from './Icon';
+import useReducedMotion from '../hooks/useReducedMotion';
 
 // Dark pill at the bottom. Hides itself after 2.2s by calling onHide.
 export default function Toast({ message, onHide }) {
+  const reduceMotion = useReducedMotion();
+  const entrance = useRef(new Animated.Value(0)).current;
+  const hideRef = useRef(onHide);
+  useEffect(() => { hideRef.current = onHide; }, [onHide]);
   useEffect(() => {
     if (!message) return undefined;
-    const timer = setTimeout(onHide, 2200);
+    entrance.setValue(0);
+    Animated.timing(entrance, { toValue: 1, duration: reduceMotion ? 120 : 200, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+    const timer = setTimeout(() => hideRef.current?.(), 2200);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [message, reduceMotion, entrance]);
 
   if (!message) return null;
   return (
     <View style={styles.wrap} pointerEvents="none">
-      <View style={styles.toast}>
+      <Animated.View style={[styles.toast, { opacity: entrance, transform: [{ translateY: reduceMotion ? 0 : entrance.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }]}>
         <Icon name="check-circle" size={20} color={colors.yellow} />
         <Text style={styles.text}>{message}</Text>
-      </View>
+      </Animated.View>
     </View>
   );
 }

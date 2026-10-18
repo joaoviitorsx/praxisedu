@@ -10,6 +10,8 @@ const PATHS = {
   star: ['M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'],
   lock: ['R 3 11 18 11 2', 'M7 11V7a5 5 0 0 1 10 0v4'],
   check: ['M20 6 9 17l-5-5'],
+  play: ['M8 5v14l11-7z'],
+  search: ['C 11 11 8', 'm21 21-4.35-4.35'],
   x: ['M18 6 6 18', 'm6 6 12 12'],
   'chevron-left': ['m15 18-6-6 6-6'],
   'chevron-right': ['m9 18 6-6-6-6'],
@@ -69,7 +71,7 @@ export default function Icon({ name, size = 24, color = colors.ink, fill = 'none
           const [x, y, width, height, rx] = d.slice(2).split(' ').map(Number);
           return <Rect key={i} x={x} y={y} width={width} height={height} rx={rx} />;
         }
-        return <Path key={i} d={d} />;
+        return <Path key={i} d={d} fill={name === 'leaf' && i > 0 ? 'none' : fill} />;
       })}
     </Svg>
   );
