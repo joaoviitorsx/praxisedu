@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  View, Text, ScrollView, Pressable, KeyboardAvoidingView, Animated, Platform, StyleSheet,
+  View, Text, TextInput, ScrollView, Pressable, KeyboardAvoidingView, Animated, StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen, Icon, LoadingView, EmptyState } from '../../components';
-import AppTextInput from '../../components/AppTextInput';
 import { useAuth } from '../../contexts/AuthContext';
 import { listenChat, saveChatMessage, consumeAiQuota } from '../../services/chatService';
 import { askBioBot } from '../../services/aiService';
@@ -12,8 +11,6 @@ import { AI_DAILY_LIMIT } from '../../constants/gamification';
 import { friendlyError } from '../../utils/errors';
 import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { colors, fonts, text } from '../../theme';
-
-const SUGGESTIONS = ['O que é mitose?', 'Explique DNA com analogia', 'Célula animal x vegetal'];
 
 // Screen 15: BioBot chat (Gemini), history saved in botChats/{uid}
 export default function BioBotScreen() {
@@ -24,29 +21,52 @@ export default function BioBotScreen() {
   const [draft, setDraft] = useState('');
   const [typing, setTyping] = useState(false);
   const [sendError, setSendError] = useState('');
+  const [retryKey, setRetryKey] = useState(0);
+  const [pendingQuestion, setPendingQuestion] = useState('');
+  const [inputFocused, setInputFocused] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    return listenChat(user.uid, setMessages, (e) => setLoadError(friendlyError(e)));
-  }, [user.uid]);
+    setLoadError('');
+    return listenChat(user.uid, (data) => { setMessages(data); setLoadError(''); }, (e) => setLoadError(friendlyError(e)));
+  }, [user.uid, retryKey]);
 
   async function send(rawText) {
     const question = rawText.trim();
-    if (!question || typing) return;
+    if (!question || typing || pendingQuestion) return;
     setDraft('');
     setSendError('');
     setTyping(true);
+    let savedQuestion = false;
     try {
       await consumeAiQuota(user.uid, 'chatCount', AI_DAILY_LIMIT.chat);
       await saveChatMessage(user.uid, 'user', question);
+      savedQuestion = true;
       const history = [...(messages ?? []), { role: 'user', text: question }];
       const answer = await askBioBot(history);
       await saveChatMessage(user.uid, 'model', answer);
     } catch (e) {
+      if (savedQuestion) setPendingQuestion(question);
+      else setDraft(question);
       setSendError(friendlyError(e));
     } finally {
       setTyping(false);
     }
+  }
+
+  async function retryAnswer() {
+    if (!pendingQuestion || typing) return;
+    setTyping(true);
+    setSendError('');
+    try {
+      const history = messages ?? [];
+      const last = history[history.length - 1];
+      const completeHistory = last?.role === 'user' && last.text === pendingQuestion ? history : [...history, { role: 'user', text: pendingQuestion }];
+      const answer = await askBioBot(completeHistory);
+      await saveChatMessage(user.uid, 'model', answer);
+      setPendingQuestion('');
+    } catch (e) { setSendError(friendlyError(e)); }
+    finally { setTyping(false); }
   }
 
   const firstName = profile.name.split(' ')[0];
@@ -56,7 +76,7 @@ export default function BioBotScreen() {
     <Screen padded={false} lightStatusBar>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View style={styles.logoBox}>
-          <Icon name="leaf" size={30} color={colors.green} fill={colors.green} />
+          <Icon name="leaf" size={28} color={colors.green} fill={colors.green} />
           <View style={styles.sparkle}><Icon name="sparkles" size={12} color={colors.white} strokeWidth={2.6} /></View>
         </View>
         <View style={{ flex: 1 }}>
@@ -72,7 +92,7 @@ export default function BioBotScreen() {
       </View>
 
       {loadError ? (
-        <EmptyState isError title="Não foi possível carregar a conversa" message={loadError} />
+        <EmptyState isError title="Não foi possível carregar a conversa" message={loadError} actionLabel="Tentar novamente" actionVariant="success" onAction={() => setRetryKey((value) => value + 1)} />
       ) : messages === null ? (
         <LoadingView message="Carregando conversa..." />
       ) : (
@@ -87,37 +107,40 @@ export default function BioBotScreen() {
             {messages.map((m) => <Bubble key={m.id} role={m.role} text={m.text} />)}
             {typing && <TypingBubble />}
             {sendError ? <Text style={styles.error}>{sendError}</Text> : null}
+            {pendingQuestion ? <Pressable onPress={retryAnswer} disabled={typing} accessibilityRole="button" style={styles.retryReply}><Text style={styles.retryReplyText}>Tentar resposta novamente</Text></Pressable> : null}
           </ScrollView>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestionsBar}
-            contentContainerStyle={styles.suggestions} keyboardShouldPersistTaps="handled">
-            {SUGGESTIONS.map((s) => (
-              <Pressable key={s} onPress={() => send(s)} style={styles.suggestion}>
-                <Text style={styles.suggestionText}>{s}</Text>
+          <View style={styles.composer}>
+            <View style={styles.inputRow}>
+              <TextInput
+                value={draft}
+                onChangeText={setDraft}
+                onSubmitEditing={() => send(draft)}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
+                accessibilityLabel="Digite sua dúvida"
+                placeholder="Digite sua dúvida"
+                placeholderTextColor={colors.gray}
+                returnKeyType="send"
+                maxLength={500}
+                style={[styles.input, inputFocused && styles.inputFocused]}
+              />
+              <Pressable
+                onPress={() => send(draft)}
+                disabled={typing || !!pendingQuestion || !draft.trim()}
+                accessibilityRole="button"
+                accessibilityLabel="Enviar dúvida ao BioBot"
+                style={({ pressed }) => [
+                  styles.sendEdge,
+                  (typing || !!pendingQuestion || !draft.trim()) && styles.sendDisabled,
+                  pressed && styles.sendPressed,
+                ]}
+              >
+                <Icon name="send" size={22} color={colors.white} />
               </Pressable>
-            ))}
-          </ScrollView>
-
-          <View style={styles.inputRow}>
-            <AppTextInput
-              value={draft}
-              onChangeText={setDraft}
-              onSubmitEditing={() => send(draft)}
-              placeholder="Digite sua dúvida..."
-              placeholderTextColor="#64748B"
-              returnKeyType="send"
-              maxLength={500}
-              style={styles.input}
-            />
-            <Pressable onPress={() => send(draft)} accessibilityLabel="Enviar" style={styles.sendEdge}>
-              {({ pressed }) => (
-                <View style={[styles.send, pressed && { transform: [{ translateY: 3 }] }]}>
-                  <Icon name="send" size={22} color={colors.white} />
-                </View>
-              )}
-            </Pressable>
+            </View>
+            <Text style={styles.disclaimer}>Respostas geradas por IA podem conter erros.</Text>
           </View>
-          <Text style={styles.disclaimer}>Respostas geradas por IA podem conter erros.</Text>
         </KeyboardAvoidingView>
       )}
     </Screen>
@@ -162,7 +185,7 @@ function TypingBubble() {
     ])));
     loops.forEach((l) => l.start());
     return () => loops.forEach((l) => l.stop());
-  }, []);
+  }, [dots]);
 
   return (
     <View style={styles.botRow}>
@@ -183,7 +206,7 @@ const styles = StyleSheet.create({
   header: { backgroundColor: colors.green, paddingHorizontal: 20, paddingBottom: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
   logoBox: {
     width: 52, height: 52, borderRadius: 16, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center',
-    borderBottomWidth: 3, borderBottomColor: colors.greenDark,
+    borderWidth: 2, borderColor: colors.greenSoft,
   },
   sparkle: {
     position: 'absolute', right: -6, top: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: colors.purple,
@@ -213,19 +236,17 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold, fontSize: 15, color: colors.redText, backgroundColor: colors.redSoft,
     borderWidth: 2, borderColor: '#F5B5B5', borderRadius: 14, padding: 12,
   },
-  suggestionsBar: { flexGrow: 0 },
-  suggestions: { paddingHorizontal: 16, paddingTop: 8, gap: 8 },
-  suggestion: {
-    height: 44, paddingHorizontal: 14, borderRadius: 999, borderWidth: 2, borderColor: '#A7DFC1',
-    backgroundColor: colors.greenSoft, justifyContent: 'center',
-  },
-  suggestionText: { fontFamily: fonts.bold, fontSize: 15, color: colors.greenDark },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 6 },
+  retryReply: { minHeight: 48, alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 14, borderRadius: 12, backgroundColor: colors.greenSoft },
+  retryReplyText: { fontFamily: fonts.extrabold, fontSize: 14, color: colors.greenDark },
+  composer: { backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 4 },
   input: {
     flex: 1, height: 52, borderRadius: 999, borderWidth: 2, borderColor: colors.border, backgroundColor: colors.surface,
-    paddingHorizontal: 18, fontFamily: fonts.medium, fontSize: 16, color: colors.ink,
+    paddingHorizontal: 18, fontFamily: fonts.medium, fontSize: 16, color: colors.ink, textAlignVertical: 'center',
   },
-  sendEdge: { width: 52, height: 55, borderRadius: 26, backgroundColor: colors.greenDark },
-  send: { width: 52, height: 52, borderRadius: 26, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
-  disclaimer: { ...text.caption, textAlign: 'center', paddingBottom: 10, paddingHorizontal: 16 },
+  inputFocused: { borderColor: colors.green },
+  sendEdge: { width: 52, height: 52, borderRadius: 26, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
+  sendPressed: { transform: [{ scale: 0.96 }] },
+  sendDisabled: { opacity: 0.45 },
+  disclaimer: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, color: colors.gray, textAlign: 'center', paddingBottom: 8, paddingHorizontal: 16 },
 });

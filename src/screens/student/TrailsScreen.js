@@ -1,50 +1,76 @@
-import { useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen, Icon, Mascot, LoadingView, EmptyState } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
-import { listenTrail, listenProgress } from '../../services/trailService';
-import { getClass, listenActiveRoom } from '../../services/classService';
+import { listenProgress } from '../../services/trailService';
+import { listenClassTrail } from '../../services/classTrailService';
+import { listenClass, listenActiveRoom } from '../../services/classService';
+import { gradeForClass } from '../../features/student/trailLayout';
 import { currentLives } from '../../utils/lives';
 import { topicLabel } from '../../constants/topics';
 import { friendlyError } from '../../utils/errors';
 import { initials } from '../../utils/format';
 import TrailPath, { lessonStates } from './TrailPath';
+import StudentStatPopover from '../../components/StudentStatPopover';
+import { TabSwipeProtectedScroll } from '../../navigation/EdgeTabSwipe';
 import { colors, fonts, text, radius } from '../../theme';
 
-const YEARS = [1, 2, 3];
+function compactXp(value) {
+  const amount = Math.max(0, Number(value) || 0);
+  if (amount < 1000) return String(Math.floor(amount));
+  if (amount < 1000000) return `${(amount / 1000).toFixed(amount < 10000 ? 1 : 0).replace('.', ',')}k`;
+  return `${(amount / 1000000).toFixed(1).replace('.', ',')}M`;
+}
 
 // Screen 11: Trilhas (home of the student)
 export default function TrailsScreen({ navigation }) {
   const { user, profile } = useAuth();
   const insets = useSafeAreaInsets();
+  const { width, height, fontScale } = useWindowDimensions();
+  const narrowHeader = width < 360;
+  const accessibleHeader = width < 320 || fontScale > 1.3;
   const stats = profile.stats ?? {};
+  const statTriggers = useRef({});
+  const [activeStat, setActiveStat] = useState(null);
 
-  const [classInfo, setClassInfo] = useState(null);
-  const [pickedYear, setPickedYear] = useState(null);
+  const [classInfo, setClassInfo] = useState(undefined);
   const [pickedUnit, setPickedUnit] = useState(null);
   const [trail, setTrail] = useState(undefined); // undefined = loading, null = no content
   const [progress, setProgress] = useState(null);
   const [room, setRoom] = useState(null);
-  const [error, setError] = useState('');
+  const [classError, setClassError] = useState('');
+  const [trailError, setTrailError] = useState('');
+  const [progressError, setProgressError] = useState('');
+  const [retryKey, setRetryKey] = useState(0);
 
-  const year = pickedYear ?? classInfo?.grade ?? 1;
+  const year = gradeForClass(classInfo);
+  const error = classError || trailError || progressError;
 
-  // class (for the default year) + live "Modo Sala" notice
+  // The class is the only source of truth for the student's grade.
   useEffect(() => {
-    getClass(profile.classId).then(setClassInfo).catch(() => {});
+    if (!profile.classId) return undefined;
+    setClassInfo(undefined);
+    setClassError('');
+    return listenClass(profile.classId, (data) => { setClassInfo(data); setClassError(''); }, (e) => setClassError(friendlyError(e)));
+  }, [profile.classId, retryKey]);
+
+  useEffect(() => {
+    if (!profile.classId) return undefined;
     return listenActiveRoom(profile.classId, setRoom);
-  }, [profile.classId]);
+  }, [profile.classId, retryKey]);
 
   // progress of this student
-  useEffect(() => listenProgress(user.uid, setProgress, (e) => setError(friendlyError(e))), [user.uid]);
+  useEffect(() => listenProgress(user.uid, (data) => { setProgress(data); setProgressError(''); }, (e) => setProgressError(friendlyError(e))), [user.uid, retryKey]);
 
-  // trail of the selected year
+  // Never subscribe to another grade or silently fall back to grade 1.
   useEffect(() => {
     setTrail(undefined);
     setPickedUnit(null);
-    return listenTrail(year, setTrail, (e) => setError(friendlyError(e)));
-  }, [year]);
+    setTrailError('');
+    if (!year) return undefined;
+    return listenClassTrail(profile.classId, year, (data) => { setTrail(data); setTrailError(''); }, (e) => setTrailError(friendlyError(e)));
+  }, [profile.classId, year, retryKey]);
 
   const unit = useMemo(() => {
     if (!trail) return null;
@@ -57,54 +83,62 @@ export default function TrailsScreen({ navigation }) {
     navigation.navigate('Lesson', { lessonId: lesson.id, title: lesson.title });
   }
 
+  function openStat(id) {
+    statTriggers.current[id]?.measureInWindow((x, y, triggerWidth, triggerHeight) => {
+      if (!triggerWidth || !triggerHeight) return;
+      const value = id === 'streak'
+        ? `${stats.streak ?? 0} ${stats.streak === 1 ? 'dia' : 'dias'}`
+        : id === 'xp' ? `${stats.xp ?? 0} XP` : `${currentLives(stats)} de 5 vidas`;
+      setActiveStat({ id, value, anchor: { x, y, width: triggerWidth, height: triggerHeight } });
+    });
+  }
+
   return (
-    <Screen padded={false}>
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <Pressable onPress={() => navigation.navigate('StudentProfile')} style={styles.avatar} accessibilityLabel="Perfil">
-          <Text style={styles.avatarText}>{initials(profile.name)}</Text>
-        </Pressable>
-        <View style={{ flex: 1 }} />
-        <Pill icon="flame" color={colors.orange} background={colors.orangeSoft} label={`${stats.streak ?? 0} dias`} />
-        <Pill icon="zap" color={colors.purple} background={colors.purpleSoft} label={`${stats.xp ?? 0} XP`} />
-        <Pill icon="heart" color={colors.red} background={colors.redSoft} label={`${currentLives(stats)}/5`} />
+    <Screen padded={false} style={{ backgroundColor: colors.white }}>
+      <View style={[styles.header, narrowHeader && styles.headerNarrow, { paddingTop: insets.top + 8 }]}>
+        <View style={[styles.identityRow, accessibleHeader && styles.identityRowAccessible]}>
+          <Pressable onPress={() => navigation.navigate('StudentProfile')} hitSlop={4} style={({ pressed }) => [styles.avatar, pressed && styles.avatarPressed]} accessibilityRole="button" accessibilityLabel="Abrir meu perfil">
+            <Text style={styles.avatarText}>{initials(profile.name)}</Text>
+          </Pressable>
+          <View style={styles.identityText}>
+            <Text style={styles.headerCopy} numberOfLines={1}>Minha jornada</Text>
+            <Text style={[styles.headerCopy, styles.headerClass]} numberOfLines={1}>{classInfo?.name ?? 'Trilhas de biologia'}</Text>
+          </View>
+          <View style={[styles.headerStats, accessibleHeader && styles.headerStatsAccessible]}>
+            <Status icon="flame" color={colors.orangeText} label="Sequência" value={String(stats.streak ?? 0)} fullValue={`${stats.streak ?? 0} dias`} triggerRef={(node) => { statTriggers.current.streak = node; }} onPress={() => openStat('streak')} selected={activeStat?.id === 'streak'} />
+            <Status icon="zap" color={colors.purple} label="Experiência" value={compactXp(stats.xp)} fullValue={`${stats.xp ?? 0} XP`} triggerRef={(node) => { statTriggers.current.xp = node; }} onPress={() => openStat('xp')} selected={activeStat?.id === 'xp'} />
+            <Status icon="heart" color={colors.red} label="Vidas" value={`${currentLives(stats)}/5`} fullValue={`${currentLives(stats)} de 5`} triggerRef={(node) => { statTriggers.current.lives = node; }} onPress={() => openStat('lives')} selected={activeStat?.id === 'lives'} />
+          </View>
+        </View>
       </View>
 
       {error ? (
-        <EmptyState isError title="Não foi possível carregar" message={error} />
+        <EmptyState isError title="Não foi possível carregar" message={error} actionLabel="Tentar novamente" actionVariant="success" onAction={() => setRetryKey((value) => value + 1)} />
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <View>
-            <Text style={styles.kicker}>
-              {year}º ANO{unit ? ` · ${topicLabel(unit.topic).toUpperCase()}` : ''}
-            </Text>
-            <Text style={styles.unitTitle}>{unit?.title ?? trail?.title ?? ' '}</Text>
-          </View>
-
-          <View style={styles.years}>
-            {YEARS.map((y) => {
-              const on = y === year;
-              return (
-                <Pressable key={y} onPress={() => setPickedYear(y)} style={[styles.year, on && styles.yearOn]}>
-                  <Text style={[styles.yearText, on && styles.yearTextOn]}>{y}º Ano</Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          {trail === undefined || !progress ? (
+          {classInfo === undefined || (year && (trail === undefined || !progress)) ? (
             <LoadingView message="Carregando trilha..." />
+          ) : !classInfo ? (
+            <EmptyState isError title="Turma não encontrada" message="Entre novamente na sua turma para acessar as trilhas." actionLabel="Minha turma" onAction={() => navigation.navigate('MyClass')} />
+          ) : !year ? (
+            <EmptyState isError title="Ano da turma indisponível" message="Peça ao professor para conferir o ano cadastrado nesta turma." />
           ) : !unit ? (
             <EmptyState
               image={require('../../../assets/mascotes/sapo.png')}
               title="Trilha ainda não disponível"
-              message={`O conteúdo do ${year}º ano ainda não foi publicado. Tente outro ano.`}
+              message={`O conteúdo do ${year}º ano ainda não foi publicado.`}
             />
           ) : (
             <>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.unitsScroll} contentContainerStyle={styles.units}>
+              <View style={styles.intro}>
+                <Text style={styles.kicker}>TRILHA DO {year}º ANO</Text>
+                <Text style={styles.heroTitle}>{unit.title}</Text>
+                <Text style={styles.introHint}>Escolha um tema e avance pela sua jornada.</Text>
+              </View>
+              <TabSwipeProtectedScroll showsHorizontalScrollIndicator={false} style={styles.unitsScroll} contentContainerStyle={styles.units}>
                 {trail.units.map((u) => {
                   const on = u.id === unit.id;
-                  const done = u.lessons.filter((l) => progress[l.id]).length;
+                  const done = u.lessons.filter((l) => progress[l.id]?.completedAt || progress[l.id]?.stars > 0).length;
                   return (
                     <Pressable key={u.id} onPress={() => setPickedUnit(u.id)} style={[styles.unitEdge, { backgroundColor: on ? colors.green : colors.border }]}>
                       {({ pressed }) => (
@@ -117,7 +151,7 @@ export default function TrailsScreen({ navigation }) {
                     </Pressable>
                   );
                 })}
-              </ScrollView>
+              </TabSwipeProtectedScroll>
 
               {room && (
                 <Pressable onPress={() => navigation.navigate('Classroom')} style={styles.roomEdge}>
@@ -143,36 +177,50 @@ export default function TrailsScreen({ navigation }) {
           )}
         </ScrollView>
       )}
+      <StudentStatPopover active={activeStat} viewport={{ width, height }} onClose={() => setActiveStat(null)} />
     </Screen>
   );
 }
 
-function Pill({ icon, color, background, label }) {
+function Status({ icon, color, label, value, fullValue, triggerRef, onPress, selected }) {
   return (
-    <View style={[styles.pill, { backgroundColor: background }]}>
-      <Icon name={icon} size={20} color={color} fill={color} />
-      <Text style={styles.pillText}>{label}</Text>
-    </View>
+    <Pressable ref={triggerRef} onPress={onPress} style={styles.statusTouch} accessibilityRole="button" accessibilityLabel={`${label}: ${fullValue}`} accessibilityHint="Toque para saber mais" accessibilityState={{ expanded: selected }}>
+      {({ pressed }) => (
+        <View style={[styles.status, selected && styles.statusSelected, pressed && styles.statusPressed]}>
+          <Icon name={icon} size={16} color={color} fill={color} />
+          <Text style={[styles.statusValue, { color }]} numberOfLines={1}>{value}</Text>
+        </View>
+      )}
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingBottom: 12,
-    backgroundColor: colors.surface, borderBottomWidth: 2, borderBottomColor: colors.border,
+    paddingHorizontal: 16, paddingBottom: 10,
+    backgroundColor: colors.greenSoft,
   },
-  avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.white },
-  pill: { height: 40, paddingHorizontal: 10, borderRadius: radius.pill, flexDirection: 'row', alignItems: 'center', gap: 4 },
-  pillText: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.ink },
-  content: { padding: 20, paddingBottom: 32, gap: 14 },
+  headerNarrow: { paddingHorizontal: 12 },
+  identityRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  identityRowAccessible: { flexWrap: 'wrap' },
+  identityText: { flex: 1, minWidth: 0, gap: 1 },
+  headerCopy: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 18, color: colors.greenDark },
+  headerClass: { color: colors.gray },
+  avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
+  avatarPressed: { opacity: 0.75 },
+  avatarText: { fontFamily: fonts.extrabold, fontSize: 13, color: colors.white },
+  headerStats: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  headerStatsAccessible: { width: '100%', marginLeft: 46, marginTop: 4 },
+  statusTouch: { minWidth: 44, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
+  status: { height: 32, borderRadius: radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3, paddingHorizontal: 5, backgroundColor: colors.surface },
+  statusSelected: { borderWidth: 1, borderColor: colors.green },
+  statusPressed: { transform: [{ scale: 0.96 }] },
+  statusValue: { fontFamily: fonts.extrabold, fontSize: 11, fontVariant: ['tabular-nums'] },
+  content: { padding: 20, paddingTop: 16, paddingBottom: 32, gap: 14 },
+  intro: { gap: 4 },
+  heroTitle: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 28, color: colors.ink },
   kicker: { fontFamily: fonts.extrabold, fontSize: 13, letterSpacing: 0.8, color: colors.green },
-  unitTitle: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 28, color: colors.ink, marginTop: 4 },
-  years: { flexDirection: 'row', gap: 6, padding: 4, borderRadius: 16, backgroundColor: colors.border },
-  year: { flex: 1, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  yearOn: { backgroundColor: colors.white, borderBottomWidth: 2, borderBottomColor: '#CBD5E1' },
-  yearText: { fontFamily: fonts.bold, fontSize: 16, color: colors.gray },
-  yearTextOn: { fontFamily: fonts.extrabold, color: colors.greenDark },
+  introHint: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 18, color: colors.gray },
   unitsScroll: { marginHorizontal: -20, flexGrow: 0 },
   units: { paddingHorizontal: 20, paddingBottom: 8, gap: 10 },
   unitEdge: { width: 128, borderRadius: 18, paddingBottom: 4 },

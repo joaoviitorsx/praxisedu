@@ -15,29 +15,33 @@ const AVATAR_COLORS = [colors.orangeText, colors.blue, colors.purple, colors.gre
 export default function MyClassScreen({ navigation }) {
   const { user, profile } = useAuth();
   const classId = profile.classId;
-  const [cls, setCls] = useState(null);
-  const [members, setMembers] = useState(null);
+  const [cls, setCls] = useState(undefined);
+  const [members, setMembers] = useState(undefined);
   const [quizzes, setQuizzes] = useState(0);
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
+    if (!classId) { setCls(null); setMembers([]); return undefined; }
+    setError('');
     const onError = (e) => setError(friendlyError(e));
     const stopClass = listenClass(classId, setCls, onError);
     const stopMembers = listenClassMembers(classId, setMembers, onError);
     countPublishedQuizzes(classId).then(setQuizzes).catch(() => {});
     return () => { stopClass(); stopMembers(); };
-  }, [classId]);
+  }, [classId, retry]);
 
   if (error) {
     return (
       <Screen padded={false}>
         <Header title="Minha Turma" backLabel="Perfil" onBack={() => navigation.goBack()} background={colors.green} />
-        <EmptyState isError title="Não foi possível carregar" message={error} actionLabel="Voltar" onAction={() => navigation.goBack()} actionVariant="success" />
+        <EmptyState isError title="Não foi possível carregar" message={error} actionLabel="Tentar novamente" onAction={() => setRetry((value) => value + 1)} actionVariant="success" />
       </Screen>
     );
   }
-  if (!cls || !members) return <LoadingView message="Carregando turma..." />;
+  if (cls === undefined || members === undefined) return <LoadingView message="Carregando turma..." />;
+  if (!cls) return <Screen><EmptyState title="Turma indisponível" message="Sua turma não está disponível. Volte ao perfil e tente novamente." actionLabel="Voltar ao perfil" onAction={() => navigation.goBack()} actionVariant="success" /></Screen>;
 
   const position = members.findIndex((m) => m.id === user.uid) + 1;
   const classmates = members
