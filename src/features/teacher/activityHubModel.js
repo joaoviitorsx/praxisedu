@@ -10,5 +10,6 @@ export function activityDestination(kind, classId) {
   if (kind === 'trail') return { pathname: '/teacher/class/[classId]/trail/[unitId]', params: { classId, unitId: 'new' } };
   if (kind === 'trail-list') return { pathname: '/teacher/class/[classId]', params: { classId, tab: 'trails' } };
   if (kind === 'quiz') return { pathname: '/teacher/class/[classId]/quiz/new', params: { classId } };
+  if (kind === 'quiz-list') return { pathname: '/teacher/class/[classId]', params: { classId, tab: 'activities' } };
   return null;
 }

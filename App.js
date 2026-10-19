@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
@@ -10,6 +11,7 @@ import {
 import { AuthProvider } from './src/contexts/AuthContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import { LoadingView } from './src/components';
+import { preloadMascotImages } from './src/services/mascotImageCache';
 import { colors } from './src/theme';
 
 const navTheme = {
@@ -24,6 +26,7 @@ const navTheme = {
 };
 
 export default function App() {
+  useEffect(() => { preloadMascotImages().catch(() => {}); }, []);
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,

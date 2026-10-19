@@ -13,7 +13,7 @@ function Symbol({ size, tone, showElectron }) {
     <Svg width={size} height={size} viewBox="0 0 64 64">
       <Circle cx={32} cy={32} r={31} fill={bg} />
       {[-35, 35].map((angle) => (
-        <Ellipse key={angle} cx={32} cy={32} rx={24} ry={9} rotation={angle} origin="32, 32"
+        <Ellipse key={angle} cx={32} cy={32} rx={24} ry={9} transform={`rotate(${angle} 32 32)`}
           fill="none" stroke={fg} strokeWidth={2.6} />
       ))}
       <Path d="M32 20 C40.5 24.5 41.5 36 32 44 C22.5 36 23.5 24.5 32 20 Z" fill={fg} />

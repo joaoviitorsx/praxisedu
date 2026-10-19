@@ -6,7 +6,7 @@ import { trailSceneryForRows, sceneryMotionTargets, trailSceneryHeight } from '.
 test('cenário é determinístico e cresce apenas com os trechos da trilha', () => {
   const motifs = trailSceneryForRows(5, 320);
   assert.equal(motifs.length, 5);
-  assert.deepEqual(motifs.map((motif) => motif.kind), ['grass', 'tree', 'pond', 'grass', 'tree']);
+  assert.deepEqual(motifs.map((motif) => motif.kind), ['grass', 'tree', 'pond', 'grove', 'grass']);
   assert.ok(motifs.every((motif) => motif.x >= 0 && motif.x <= 320));
   assert.ok(motifs.every((motif, index) => motif.y >= index * 116));
 });

@@ -1,5 +1,5 @@
 const ROW_HEIGHT = 116;
-const MOTIFS = ['grass', 'tree', 'pond'];
+const MOTIFS = ['grass', 'tree', 'pond', 'grove'];
 const MOTIF_SIZE = 110;
 
 export function trailSceneryHeight(count, rowHeight) {

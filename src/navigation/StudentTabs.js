@@ -6,14 +6,17 @@ import DuelsScreen from '../screens/student/DuelsScreen';
 import ClassroomScreen from '../screens/student/ClassroomScreen';
 import BioBotScreen from '../screens/student/BioBotScreen';
 import RankingScreen from '../screens/student/RankingScreen';
+import useReducedMotion from '../hooks/useReducedMotion';
+import { TAB_TRANSITION } from './motion';
 
 const Tab = createBottomTabNavigator();
 const ICONS = { Trails: 'book-open', Duels: 'swords', Classroom: 'presentation', BioBot: 'message-circle', Ranking: 'trophy' };
 
 export default function StudentTabs() {
+  const reduceMotion = useReducedMotion();
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false, animation: 'fade' }}
+      screenOptions={{ headerShown: false, animation: reduceMotion ? 'none' : 'fade', transitionSpec: TAB_TRANSITION }}
       tabBar={(props) => (
         <TabBar {...props} icons={ICONS} accent={colors.green} accentSoft={colors.greenSoft} accentDark={colors.greenDark} />
       )}

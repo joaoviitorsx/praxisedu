@@ -22,6 +22,9 @@ test('trilha e quiz de sala abrem fluxos distintos na turma escolhida', () => {
   assert.deepEqual(activityDestination('quiz', 'bio1'), {
     pathname: '/teacher/class/[classId]/quiz/new', params: { classId: 'bio1' },
   });
+  assert.deepEqual(activityDestination('quiz-list', 'bio1'), {
+    pathname: '/teacher/class/[classId]', params: { classId: 'bio1', tab: 'activities' },
+  });
   assert.equal(activityDestination('quiz', ''), null);
 });
 
