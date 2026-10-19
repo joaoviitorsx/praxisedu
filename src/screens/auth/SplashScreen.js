@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
+import { Image } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import Animated, {
   FadeInDown, FadeInUp, ZoomIn, Easing,
@@ -8,6 +9,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Icon, Logo, GradientBackdrop } from '../../components';
 import { colors, fonts } from '../../theme';
+import { classMascotsImage } from '../../constants/mascotImages';
 
 const MASCOTS_RATIO = 808 / 242; // turma.png
 
@@ -49,7 +51,7 @@ export default function SplashScreen({ navigation }) {
         </View>
         {/* animals stand on the grass strip, right on the edge of the white sheet */}
         <Animated.View entering={FadeInUp.delay(650).duration(600)}>
-          <Image source={require('../../../assets/mascotes/turma.png')} style={{ width, height: width / MASCOTS_RATIO }} resizeMode="stretch" />
+          <Image source={classMascotsImage} style={{ width, height: width / MASCOTS_RATIO }} contentFit="fill" cachePolicy="memory-disk" priority="high" />
         </Animated.View>
       </View>
 

@@ -1,4 +1,5 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { colors, text } from '../theme';
 import Icon from './Icon';
 import Button from './Button';
@@ -7,7 +8,7 @@ import Button from './Button';
 export default function EmptyState({ image, title, message, isError, actionLabel, onAction, actionVariant = 'teacher' }) {
   return (
     <View style={styles.box}>
-      {image && <Image source={image} style={styles.image} resizeMode="contain" />}
+      {image && <Image source={image} style={styles.image} contentFit="contain" cachePolicy="memory-disk" />}
       {isError && (
         <View style={styles.errorIcon}>
           <Icon name="alert-triangle" size={32} color={colors.redText} />

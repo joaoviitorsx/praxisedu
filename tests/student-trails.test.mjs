@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { lessonStates, normalizeTrailData, orderedLessonQuestions, lessonResult, nextStreak } from '../src/features/student/trailModel.js';
+import { lessonStates, lessonCompletionKind, normalizeTrailData, orderedLessonQuestions, lessonResult, nextStreak } from '../src/features/student/trailModel.js';
 import { gradeForClass, trailNodeLayout } from '../src/features/student/trailLayout.js';
 
 test('ano da trilha é exclusivamente o ano válido da turma do aluno', () => {
@@ -29,6 +29,17 @@ test('trilha respeita a ordem do conteúdo e desbloqueia só a próxima lição 
   assert.deepEqual(trail.units[0].lessons.map((lesson) => lesson.id), ['a1', 'a2']);
   assert.deepEqual(lessonStates(trail.units[0].lessons, {}).map((item) => item.kind), ['current', 'locked']);
   assert.deepEqual(lessonStates(trail.units[0].lessons, { a1: { stars: 2 } }).map((item) => item.kind), ['done', 'current']);
+});
+
+test('celebra a etapa, o tópico ou a trilha conforme o progresso real', () => {
+  const trail = normalizeTrailData({ units: {
+    a: { lessons: { a1: { order: 1 }, a2: { order: 2 } } },
+    b: { lessons: { b1: { order: 1 } } },
+  } });
+  assert.equal(lessonCompletionKind(trail, {}, 'a1'), 'lesson');
+  assert.equal(lessonCompletionKind(trail, { a1: { stars: 1 } }, 'a2'), 'topic');
+  assert.equal(lessonCompletionKind(trail, { a1: { stars: 1 }, a2: { stars: 2 } }, 'b1'), 'trail');
+  assert.equal(lessonCompletionKind(trail, {}, 'unknown'), 'lesson');
 });
 
 test('questões válidas são ordenadas e o resultado distingue primeira vez de repetição', () => {

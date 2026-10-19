@@ -1,19 +1,9 @@
-import { View, Image, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { colors } from '../theme';
+import { mascotImages } from '../constants/mascotImages';
 import Icon from './Icon';
 import Mito from './Mito';
-
-const IMAGES = {
-  sapo: require('../../assets/mascotes/sapo.png'),
-  guara: require('../../assets/mascotes/guara.png'),
-  dinho: require('../../assets/mascotes/dinho.png'),
-  mandu: require('../../assets/mascotes/mandu.png'),
-  medusa: require('../../assets/mascotes/medusa.png'),
-  borbo: require('../../assets/mascotes/borbo.png'),
-  teco: require('../../assets/mascotes/teco.png'),
-  baleia: require('../../assets/mascotes/baleia.png'),
-  abelha: require('../../assets/mascotes/abelha.png'),
-};
 
 // Mascot picture. thinking = purple "?" badge, like in the prototype.
 export default function Mascot({ name, size = 100, thinking }) {
@@ -22,7 +12,7 @@ export default function Mascot({ name, size = 100, thinking }) {
   const badge = Math.max(18, Math.round(size * 0.26));
   return (
     <View style={{ width, height: size }}>
-      <Image source={IMAGES[name]} style={{ width, height: size }} resizeMode="contain" />
+      <Image source={mascotImages[name] ?? mascotImages.sapo} style={{ width, height: size }} contentFit="contain" cachePolicy="memory-disk" />
       {thinking && (
         <View style={[styles.badge, { width: badge, height: badge, borderRadius: badge / 2, right: Math.round(width * 0.12) }]}>
           <Icon name="help-circle" size={Math.round(badge * 0.6)} color={colors.white} strokeWidth={2.6} />

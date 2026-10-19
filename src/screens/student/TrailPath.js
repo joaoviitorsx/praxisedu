@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useIsFocused } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { Icon, Mascot } from '../../components';
@@ -11,24 +11,31 @@ import { trailSceneryHeight } from '../../features/student/trailSceneryModel';
 export { lessonStates } from '../../features/student/trailModel';
 
 const ROW_HEIGHT = 116;
+const decorativeA11y = Platform.OS === 'web'
+  ? { 'aria-hidden': true }
+  : { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' };
 
-export default function TrailPath({ items, mascot, onPlay }) {
+export default function TrailPath({ items, mascot, onPlay, sceneKey }) {
   const [width, setWidth] = useState(320);
   const pulse = useRef(new Animated.Value(0)).current;
-  const sceneEnter = useRef(new Animated.Value(0)).current;
+  const sceneEnter = useRef(new Animated.Value(1)).current;
+  const previousScene = useRef(sceneKey);
   const reduceMotion = useReducedMotion();
   const isFocused = useIsFocused();
   const layouts = items.map(({ kind }, index) => trailNodeLayout(index, width, kind));
   const currentIndex = items.findIndex((item) => item.kind === 'current');
-  const firstLessonId = items[0]?.lesson.id;
-
-  useEffect(() => {
-    if (reduceMotion) { sceneEnter.setValue(1); return undefined; }
+  useLayoutEffect(() => {
+    if (previousScene.current === sceneKey || reduceMotion) {
+      previousScene.current = sceneKey;
+      sceneEnter.setValue(1);
+      return undefined;
+    }
+    previousScene.current = sceneKey;
     sceneEnter.setValue(0);
-    const animation = Animated.timing(sceneEnter, { toValue: 1, duration: 360, useNativeDriver: true });
+    const animation = Animated.timing(sceneEnter, { toValue: 1, duration: 280, easing: Easing.out(Easing.cubic), useNativeDriver: true });
     animation.start();
     return () => animation.stop();
-  }, [sceneEnter, reduceMotion, mascot, firstLessonId]);
+  }, [sceneEnter, reduceMotion, sceneKey]);
 
   useEffect(() => {
     if (currentIndex < 0 || reduceMotion || !isFocused) { pulse.setValue(0); return undefined; }
@@ -48,21 +55,23 @@ export default function TrailPath({ items, mascot, onPlay }) {
   });
 
   return (
-    <View style={[styles.map, { height: trailSceneryHeight(items.length, ROW_HEIGHT) }]} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
-      <Animated.View pointerEvents="none" style={[styles.scenery, { width, height: trailSceneryHeight(items.length, ROW_HEIGHT), opacity: sceneEnter, transform: [{ translateY: sceneEnter.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }]}>
+    <Animated.View style={[styles.map, { height: trailSceneryHeight(items.length, ROW_HEIGHT), opacity: sceneEnter, transform: [{ translateY: sceneEnter.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
+      <View pointerEvents="none" style={[styles.scenery, { width, height: trailSceneryHeight(items.length, ROW_HEIGHT) }]}>
         <TrailScenery width={width} rows={items.length} rowHeight={ROW_HEIGHT} labelSides={layouts.map((layout) => layout.labelSide)} activeRow={currentIndex} reduceMotion={reduceMotion} isFocused={isFocused} />
-      </Animated.View>
-      <Svg width={width} height={items.length * ROW_HEIGHT} style={styles.paths} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      </View>
+      <Svg width={width} height={items.length * ROW_HEIGHT} style={styles.paths} pointerEvents="none" {...decorativeA11y}>
         {paths.map((path) => <Path key={path.id} d={path.d} fill="none" stroke={path.done ? '#B7E2CA' : '#CBD5E1'} strokeWidth={5} strokeLinecap="round" strokeDasharray="4 11" />)}
       </Svg>
       {items.map(({ lesson, kind, stars }, index) => {
         const layout = layouts[index];
         const done = kind === 'done';
         const current = kind === 'current';
+        const studyOnly = (lesson.questionsCount ?? 0) === 0 && (lesson.materials?.length ?? 0) > 0;
+        const action = studyOnly ? 'estudar' : 'jogar';
         const node = (
           <View style={[styles.nodeEdge, current ? styles.currentEdge : done ? styles.doneEdge : styles.lockedEdge]}>
             <View style={[styles.node, current ? styles.currentNode : done ? styles.doneNode : styles.lockedNode]}>
-              {current ? <Text style={styles.playText}>JOGAR</Text> : <Icon name={done ? 'check' : index === items.length - 1 ? 'trophy' : 'lock'} size={done ? 34 : 28} strokeWidth={done ? 3.4 : 2.4} color={done ? colors.white : colors.gray} />}
+              {current ? <Text style={[styles.playText, studyOnly && styles.studyText]}>{studyOnly ? 'ESTUDAR' : 'JOGAR'}</Text> : <Icon name={done ? 'check' : index === items.length - 1 ? 'trophy' : 'lock'} size={done ? 34 : 28} strokeWidth={done ? 3.4 : 2.4} color={done ? colors.white : colors.gray} />}
             </View>
           </View>
         );
@@ -72,7 +81,7 @@ export default function TrailPath({ items, mascot, onPlay }) {
             {kind === 'locked' ? (
               <View accessible accessibilityLabel={`${lesson.title}, bloqueada. Conclua a lição anterior.`} style={[styles.nodePosition, { left: layout.nodeLeft, width: layout.nodeWidth }]}>{node}</View>
             ) : (
-              <Pressable onPress={() => onPlay(lesson)} accessibilityRole="button" accessibilityLabel={`${lesson.title}, ${done ? 'concluída, jogar novamente' : 'próxima lição, jogar'}`} style={({ pressed }) => [styles.nodePosition, { left: layout.nodeLeft, width: layout.nodeWidth }, pressed && styles.pressed]}>{node}</Pressable>
+              <Pressable onPress={() => onPlay(lesson)} accessibilityRole="button" accessibilityLabel={`${lesson.title}, ${done ? `concluída, ${action} novamente` : `próxima etapa, ${action}`}`} style={({ pressed }) => [styles.nodePosition, { left: layout.nodeLeft, width: layout.nodeWidth }, pressed && styles.pressed]}>{node}</Pressable>
             )}
             {done && <View pointerEvents="none" style={[styles.stars, { left: layout.nodeLeft + (layout.nodeWidth - 58) / 2 }]}>{[0, 1, 2].map((star) => <Icon key={star} name="star" size={18} strokeWidth={1.6} color={star < stars ? colors.yellow : '#CBD5E1'} fill={star < stars ? colors.yellow : '#CBD5E1'} />)}</View>}
             <Text pointerEvents="none" style={[styles.label, { left: layout.labelLeft, width: layout.labelWidth, textAlign: layout.labelSide === 'left' ? 'right' : 'left' }, kind === 'locked' && styles.lockedLabel]}>{lesson.title}</Text>
@@ -80,7 +89,7 @@ export default function TrailPath({ items, mascot, onPlay }) {
         );
       })}
       {currentIndex >= 0 && mascot && <View pointerEvents="none" style={[styles.mascot, { top: currentIndex * ROW_HEIGHT + 62, left: layouts[currentIndex].nodeLeft > width / 2 ? 0 : Math.max(0, width - 80) }]}><Mascot name={mascot} size={50} /></View>}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -99,6 +108,7 @@ const styles = StyleSheet.create({
   currentNode: { height: 78, backgroundColor: colors.yellow },
   lockedNode: { height: 68, backgroundColor: colors.border },
   playText: { fontFamily: fonts.extrabold, fontSize: 17, letterSpacing: 0.6, color: colors.ink },
+  studyText: { fontSize: 12 },
   pressed: { transform: [{ translateY: 5 }] },
   pulse: { position: 'absolute', top: -8, width: 100, height: 94, borderRadius: 50, backgroundColor: colors.yellow },
   label: { position: 'absolute', top: 22, fontFamily: fonts.bold, fontSize: 13, lineHeight: 18, color: colors.ink },

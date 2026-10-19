@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, Pressable, Alert, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Alert, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen, Button, Icon, Mascot } from '../../components';
 import AppTextInput from '../../components/AppTextInput';
@@ -8,6 +9,7 @@ import { findClassByCode, joinClass, getClass, countClassMembers } from '../../s
 import { friendlyError } from '../../utils/errors';
 import { initials } from '../../utils/format';
 import { colors, fonts, text } from '../../theme';
+import { classMascotsImage } from '../../constants/mascotImages';
 
 // Screen 25 (Entrar na turma) and 25ok (Entrou na turma).
 // `welcome` is kept by the navigator: it is set BEFORE the join is written, so the
@@ -91,7 +93,7 @@ function JoinSuccess({ welcome, onContinue }) {
   return (
     <Screen style={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: Math.max(insets.bottom, 16) + 16 }}>
       <View style={styles.successBody}>
-        <Image source={require('../../../assets/mascotes/turma.png')} style={styles.mascots} resizeMode="contain" />
+        <Image source={classMascotsImage} style={styles.mascots} contentFit="contain" cachePolicy="memory-disk" />
         <View style={styles.accepted}>
           <Icon name="check-circle" size={18} color={colors.green} />
           <Text style={styles.acceptedText}>CÓDIGO {welcome.code} ACEITO</Text>

@@ -11,6 +11,8 @@ const VARIANTS = {
   primary: { bg: colors.yellow, text: colors.ink, shadow: colors.yellowDark },
   teacher: { bg: colors.blue, text: colors.white, shadow: colors.blueDark },
   success: { bg: colors.green, text: colors.white, shadow: colors.greenDark },
+  reward: { bg: colors.green, text: colors.white, shadow: colors.greenDark },
+  onGreen: { bg: colors.white, text: colors.greenDark, shadow: '#B8DFCB' },
   dark: { bg: colors.ink, text: colors.white, shadow: '#000000' },
   danger: { bg: colors.red, text: colors.white, shadow: colors.redDark },
   outline: { bg: colors.white, text: colors.blue, shadow: '#C7D5F8', border: '#C7D5F8' },

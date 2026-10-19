@@ -109,6 +109,7 @@ export default function AttendanceTab({ classId, members, onDirtyChange, showHea
     keyboardShouldPersistTaps="handled"
     ListHeaderComponent={<View style={styles.headerArea}>
       {showHeading ? <View><Text style={styles.heading}>Chamada</Text><Text style={text.caption}>Registre e consulte a presença por dia.</Text></View> : null}
+      {!showHeading ? <View style={styles.dateHeading}><View style={styles.stepNumber}><Text style={styles.stepNumberText}>02</Text></View><View><Text style={styles.dateEyebrow}>REGISTRO DO DIA</Text><Text style={styles.dateHeadingTitle}>Escolha a data</Text></View></View> : null}
       <View style={styles.dateCard}>
         <Pressable onPress={() => changeDate(-1)} accessibilityRole="button" accessibilityLabel="Dia anterior" style={({ pressed }) => [styles.dateArrow, pressed && styles.pressed]}><Icon name="chevron-left" size={22} color={colors.blue} /></Pressable>
         <View style={{ flex: 1, alignItems: 'center' }}><Text style={text.label}>{isToday ? 'HOJE' : 'DATA DA CHAMADA'}</Text><Text style={styles.dateText}>{dateLabel}</Text></View>
@@ -132,8 +133,8 @@ export default function AttendanceTab({ classId, members, onDirtyChange, showHea
           <Text style={styles.listHelper}>{record ? 'Toque em um aluno para corrigir a presença.' : 'Todos começam como falta. Toque em quem está presente.'}</Text>
         </View>
         <View style={styles.bulkActions}>
-          <Pressable onPress={() => { dirtyRef.current = true; setMarks(Object.fromEntries(members.map((member) => [member.id, 'present']))); setDirty(true); onDirtyChange?.(true); setNotice(''); }} style={({ pressed }) => [styles.bulkButton, styles.allPresent, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Marcar todos os alunos presentes"><Text style={styles.allPresentText}>Todos presentes</Text></Pressable>
-          <Pressable onPress={() => { dirtyRef.current = true; setMarks(Object.fromEntries(members.map((member) => [member.id, 'absent']))); setDirty(true); onDirtyChange?.(true); setNotice(''); }} style={({ pressed }) => [styles.bulkButton, styles.allAbsent, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Marcar todos os alunos faltantes"><Text style={styles.allAbsentText}>Todos faltantes</Text></Pressable>
+          <Pressable onPress={() => { dirtyRef.current = true; setMarks(Object.fromEntries(members.map((member) => [member.id, 'present']))); setDirty(true); onDirtyChange?.(true); setNotice(''); }} style={({ pressed }) => [styles.bulkButton, styles.allPresent, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Marcar todos os alunos presentes"><Icon name="check" size={17} color={colors.greenDark} /><Text style={styles.allPresentText}>Todos presentes</Text></Pressable>
+          <Pressable onPress={() => { dirtyRef.current = true; setMarks(Object.fromEntries(members.map((member) => [member.id, 'absent']))); setDirty(true); onDirtyChange?.(true); setNotice(''); }} style={({ pressed }) => [styles.bulkButton, styles.allAbsent, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Marcar todos os alunos faltantes"><Icon name="x" size={17} color={colors.redText} /><Text style={styles.allAbsentText}>Todos faltantes</Text></Pressable>
         </View>
       </> : null}
     </View>}
@@ -179,8 +180,13 @@ const styles = StyleSheet.create({
   content: { paddingBottom: 24, gap: 8 },
   headerArea: { gap: 14, paddingTop: 8, paddingBottom: 4 },
   heading: { ...text.h2, marginBottom: 4 },
-  dateCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.border, borderRadius: 18, paddingVertical: 8, paddingHorizontal: 6 },
-  dateArrow: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  dateHeading: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  stepNumber: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.blueSoft },
+  stepNumberText: { fontFamily: fonts.extrabold, fontSize: 13, color: colors.blue },
+  dateEyebrow: { fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 0.9, color: colors.blue },
+  dateHeadingTitle: { fontFamily: fonts.extrabold, fontSize: 19, color: colors.ink },
+  dateCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderWidth: 1.5, borderColor: '#C7D5F8', borderRadius: 18, paddingVertical: 8, paddingHorizontal: 6 },
+  dateArrow: { width: 48, height: 48, borderRadius: 14, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
   dateText: { fontFamily: fonts.extrabold, fontSize: 16, color: colors.ink, textTransform: 'capitalize', textAlign: 'center' },
   recentSection: { gap: 8, marginTop: 8, paddingTop: 16, borderTopWidth: 1, borderTopColor: colors.border },
   recentHeading: { ...text.label },
@@ -197,7 +203,7 @@ const styles = StyleSheet.create({
   statusSaved: { backgroundColor: colors.greenSoft },
   statusPending: { backgroundColor: colors.yellowSoft },
   callStatusText: { fontFamily: fonts.bold, fontSize: 12 },
-  summary: { flexDirection: 'row', paddingVertical: 8, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 18 },
+  summary: { flexDirection: 'row', paddingVertical: 8, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: '#C7D5F8', borderRadius: 18 },
   summaryDivider: { width: 1, marginVertical: 10, backgroundColor: colors.border },
   stat: { flex: 1, alignItems: 'center', gap: 2, padding: 8 },
   statValue: { fontFamily: fonts.extrabold, fontSize: 25, lineHeight: 31 },
@@ -205,11 +211,11 @@ const styles = StyleSheet.create({
   listHeading: { fontFamily: fonts.extrabold, fontSize: 18, lineHeight: 24, color: colors.ink },
   listHelper: { ...text.caption, lineHeight: 19 },
   bulkActions: { flexDirection: 'row', gap: 8 },
-  bulkButton: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 14, paddingHorizontal: 8 },
+  bulkButton: { flex: 1, minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, borderRadius: 14, paddingHorizontal: 7 },
   allPresent: { backgroundColor: colors.greenSoft },
   allAbsent: { backgroundColor: colors.redSoft },
-  allPresentText: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.greenDark },
-  allAbsentText: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.redText },
+  allPresentText: { fontFamily: fonts.extrabold, fontSize: 13, color: colors.greenDark },
+  allAbsentText: { fontFamily: fonts.extrabold, fontSize: 13, color: colors.redText },
   row: { minHeight: 70, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 2, borderColor: colors.border, borderRadius: 16, backgroundColor: colors.surface },
   gridColumns: { gap: 8 },
   gridTile: { aspectRatio: 1, flexDirection: 'column', alignItems: 'stretch', justifyContent: 'space-between', gap: 4, padding: 10, borderWidth: 1 },

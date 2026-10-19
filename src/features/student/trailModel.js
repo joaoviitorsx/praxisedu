@@ -6,7 +6,7 @@ export function normalizeTrailData(raw) {
   if (!raw) return null;
   return {
     title: raw.title,
-    units: Object.entries(raw.units ?? {}).map(([id, unit]) => ({
+    units: Object.entries(raw.units ?? {}).filter(([, unit]) => unit && !unit.hidden).map(([id, unit]) => ({
       ...unit, id,
       lessons: Object.entries(unit.lessons ?? {}).map(([lessonId, lesson]) => ({ ...lesson, id: lessonId })).sort(byOrder),
     })).sort(byOrder),
@@ -25,6 +25,15 @@ export function lessonStates(lessons = [], progress = {}) {
     if (!nextFound) { nextFound = true; return { lesson, kind: 'current', stars: 0 }; }
     return { lesson, kind: 'locked', stars: 0 };
   });
+}
+
+export function lessonCompletionKind(trail, progress, lessonId) {
+  const unit = trail?.units?.find((item) => item.lessons.some((lesson) => lesson.id === lessonId));
+  if (!unit) return 'lesson';
+  const doneAfterThisLesson = (lesson) => lesson.id === lessonId || !!(progress?.[lesson.id]?.completedAt || progress?.[lesson.id]?.stars > 0);
+  if (trail.units.every((item) => item.lessons.every(doneAfterThisLesson))) return 'trail';
+  if (unit.lessons.every(doneAfterThisLesson)) return 'topic';
+  return 'lesson';
 }
 
 export function orderedLessonQuestions(raw) {

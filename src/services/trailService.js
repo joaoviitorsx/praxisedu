@@ -7,6 +7,7 @@ import { XP_PER_CORRECT, XP_PER_CORRECT_REPLAY } from '../constants/gamification
 import sampleTrails from '../../seed/trails.json';
 import sampleQuestions from '../../seed/lessonQuestions.json';
 import { earnedBadges } from '../features/student/badgeModel';
+import { normalizeMaterials } from '../features/trailMaterials';
 
 // trails/grade1 | grade2 | grade3 (content imported by the team). Returns the unsubscribe function.
 export function listenTrail(grade, onData, onError) {
@@ -27,6 +28,17 @@ export async function getLessonQuestions(lessonId, classId) {
   }
   const snap = await get(ref(db, `lessonQuestions/${lessonId}`));
   return orderedLessonQuestions(snap.val() ?? sampleQuestions[lessonId]);
+}
+
+export async function getLessonMaterials(lessonId, classId) {
+  if (!classId) return [];
+  const snapshot = await get(ref(db, `classTrails/${classId}/units`));
+  const units = snapshot.val() ?? {};
+  for (const unit of Object.values(units)) {
+    const lesson = unit.lessons?.[lessonId];
+    if (lesson) return normalizeMaterials(lesson.materials);
+  }
+  return [];
 }
 
 export async function loseLife(uid) {

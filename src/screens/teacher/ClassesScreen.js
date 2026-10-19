@@ -2,8 +2,9 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, FlatList, Pressable, RefreshControl, StyleSheet } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
-  Card, Chip, Button, Icon, LoadingView, EmptyState, ConfirmModal, PopoverMenu, Toast,
+  Card, Chip, Icon, LoadingView, EmptyState, ConfirmModal, PopoverMenu, Toast,
 } from '../../components';
 import TeacherHero, { teacherSheetStyle } from '../../components/TeacherHero';
 import { useAuth } from '../../contexts/AuthContext';
@@ -53,6 +54,7 @@ export default function ClassesScreen({ navigation, route }) {
 
   const supportTotal = classes.reduce((sum, c) => sum + c.supportCount, 0);
   const supportClass = classes.find((c) => c.supportCount > 0);
+  const studentsTotal = classes.reduce((sum, cls) => sum + cls.studentsCount, 0);
 
   async function copyCode(cls) {
     await Clipboard.setStringAsync(cls.code);
@@ -96,6 +98,16 @@ export default function ClassesScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />}
           ListHeaderComponent={!error ? <>
+              <LinearGradient colors={['#244BAD', colors.blueDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.overview}>
+                <View pointerEvents="none" style={styles.overviewOrb} />
+                <View style={styles.overviewTop}><View style={styles.overviewIcon}><Icon name="school" size={25} color={colors.white} /></View>
+                  <View style={styles.count} accessible accessibilityLabel={`${classes.length} ${classes.length === 1 ? 'turma' : 'turmas'}`}><Text style={styles.countNumber}>{classes.length}</Text><Text style={styles.countLabel}>{classes.length === 1 ? 'TURMA' : 'TURMAS'}</Text></View>
+                </View>
+                <Text style={styles.overviewEyebrow}>SEU ESPAÇO DE ENSINO</Text>
+                <Text style={styles.overviewTitle}>Suas turmas, em um só lugar.</Text>
+                <Text style={styles.overviewDescription}>{studentsTotal} {studentsTotal === 1 ? 'aluno acompanha' : 'alunos acompanham'} suas atividades.</Text>
+                <Pressable onPress={() => navigation.navigate('ClassForm')} accessibilityRole="button" accessibilityLabel="Criar nova turma" style={({ pressed }) => [styles.createAction, pressed && styles.pressed]}><Icon name="plus" size={20} color={colors.blueDark} /><Text style={styles.createActionText}>Criar nova turma</Text><Icon name="arrow-right" size={18} color={colors.blueDark} /></Pressable>
+              </LinearGradient>
               {supportTotal > 0 && (
                 <View style={styles.alertSection}>
                   <Text style={text.label}>PRECISAM DE ATENÇÃO</Text>
@@ -117,16 +129,11 @@ export default function ClassesScreen({ navigation, route }) {
               )}
 
               <View style={styles.titleRow}>
-                <View style={styles.titleCopy}><Text style={text.h2}>Minhas turmas</Text><Text style={text.caption}>Selecione uma turma para ver alunos e atividades.</Text></View>
-                <View style={styles.count} accessible accessibilityLabel={`${classes.length} ${classes.length === 1 ? 'turma' : 'turmas'}`}>
-                  <Text style={styles.countNumber}>{classes.length}</Text>
-                  <Text style={styles.countLabel}>{classes.length === 1 ? 'TURMA' : 'TURMAS'}</Text>
-                </View>
+                <View style={styles.titleCopy}><Text style={styles.listEyebrow}>VISÃO GERAL</Text><Text style={text.h2}>Minhas turmas</Text><Text style={text.caption}>Abra uma turma para acompanhar alunos e atividades.</Text></View>
               </View>
             </> : null}
           ListEmptyComponent={error ? <EmptyState isError title="Não foi possível carregar" message={error} actionLabel="Tentar de novo" onAction={load} /> :
             <EmptyState image={require('../../../assets/mascotes/baleia.png')} title="Nenhuma turma por aqui" message="Crie sua primeira turma e compartilhe o código com os estudantes." />}
-          ListFooterComponent={!error ? <View style={styles.footer}><Button title="Criar nova turma" icon="plus" variant="teacher" onPress={() => navigation.navigate('ClassForm')} /></View> : null}
         />
       )}
       </View>
@@ -159,13 +166,14 @@ export default function ClassesScreen({ navigation, route }) {
 
 const ClassCard = memo(function ClassCard({ cls, onOpen, onMenu }) {
   return (
-    <Card onPress={onOpen} accessibilityLabel={`Abrir turma ${cls.name}`} style={{ gap: 14 }}>
+    <Card onPress={onOpen} accessibilityLabel={`Abrir turma ${cls.name}`} style={styles.classCard}>
       <View style={styles.cardTop}>
         <View style={styles.cardIcon}>
-          <Icon name="users" size={24} color={colors.blue} />
+          <Icon name="school" size={24} color={colors.blue} />
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.cardName}>{cls.name}</Text>
+        <View style={styles.cardCopy}>
+          <Text style={styles.cardEyebrow}>{cls.grade}º ANO</Text>
+          <Text style={styles.cardName} numberOfLines={2}>{cls.name}</Text>
           <View style={styles.chips}>
             <Chip label={cls.code} spaced />
             {cls.roomActive && <Chip label="Modo Sala: ATIVO" color={colors.ink} background={colors.yellow} />}
@@ -185,6 +193,7 @@ const ClassCard = memo(function ClassCard({ cls, onOpen, onMenu }) {
         <Stat value={cls.quizzesCount} label="quizzes" />
         <Stat value={cls.quizzesCount ? `${cls.accuracy}%` : '—'} label="acertos" color={colors.green} />
       </View>
+      <View style={styles.cardAction}><Text style={styles.cardActionText}>Abrir turma</Text><Icon name="arrow-right" size={18} color={colors.blue} /></View>
     </Card>
   );
 });
@@ -201,26 +210,38 @@ function Stat({ value, label, color = colors.ink }) {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
   sheet: teacherSheetStyle,
-  content: { paddingHorizontal: 20, paddingBottom: 32, flexGrow: 1 },
+  content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 32, flexGrow: 1 },
   separator: { height: 12 },
-  footer: { paddingTop: 18 },
-  alertSection: { gap: 8, marginBottom: 22 },
+  overview: { overflow: 'hidden', gap: 7, padding: 19, borderRadius: 24, marginBottom: 20 },
+  overviewOrb: { position: 'absolute', width: 190, height: 190, borderRadius: 95, top: -85, right: -50, backgroundColor: 'rgba(255,255,255,0.08)' },
+  overviewTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 2 },
+  overviewIcon: { width: 48, height: 48, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.17)' },
+  overviewEyebrow: { fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 1, color: '#DCE6FF' },
+  overviewTitle: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 28, color: colors.white, maxWidth: 270 },
+  overviewDescription: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 18, color: '#E8EFFF' },
+  createAction: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 13, borderRadius: 14, backgroundColor: colors.white, marginTop: 8 },
+  createActionText: { flex: 1, fontFamily: fonts.extrabold, fontSize: 14, color: colors.blueDark },
+  alertSection: { gap: 8, marginBottom: 20 },
   alert: {
     flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14,
     borderRadius: 16, borderWidth: 2, borderColor: '#F5B5B5', backgroundColor: colors.redSoft,
   },
   alertTitle: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.ink },
-  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 14 },
-  titleCopy: { flex: 1, gap: 3 },
-  count: { minWidth: 70, minHeight: 62, paddingHorizontal: 10, paddingVertical: 7, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: colors.blueSoft },
-  countNumber: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 26, color: colors.blue },
-  countLabel: { fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 0.6, color: colors.blue },
+  titleRow: { marginBottom: 14 },
+  titleCopy: { gap: 3 }, listEyebrow: { ...text.label, fontSize: 10, color: colors.blue },
+  count: { minWidth: 64, minHeight: 58, paddingHorizontal: 10, paddingVertical: 6, alignItems: 'center', justifyContent: 'center', borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.17)' },
+  countNumber: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 26, color: colors.white },
+  countLabel: { fontFamily: fonts.extrabold, fontSize: 9, letterSpacing: 0.6, color: colors.white },
+  classCard: { gap: 14, borderColor: '#CBD9F7' },
   cardTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   cardIcon: { width: 48, height: 48, borderRadius: 14, backgroundColor: colors.blueSoft, alignItems: 'center', justifyContent: 'center' },
-  cardName: { fontFamily: fonts.extrabold, fontSize: 18, color: colors.ink },
+  cardCopy: { flex: 1, minWidth: 0 }, cardEyebrow: { fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 0.7, color: colors.blue, marginBottom: 2 },
+  cardName: { fontFamily: fonts.extrabold, fontSize: 17, lineHeight: 23, color: colors.ink },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
   menuButton: { width: 44, height: 44, marginTop: -6, marginRight: -8, alignItems: 'center', justifyContent: 'center' },
-  stats: { flexDirection: 'row', gap: 8, paddingTop: 12, borderTopWidth: 2, borderTopColor: '#F1F5F9' },
+  stats: { flexDirection: 'row', gap: 8, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.border },
+  cardAction: { minHeight: 38, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12, borderRadius: 11, backgroundColor: colors.blueSoft },
+  cardActionText: { fontFamily: fonts.bold, fontSize: 13, color: colors.blue },
   statValue: { fontFamily: fonts.extrabold, fontSize: 20 },
   pressed: { opacity: 0.7 },
 });

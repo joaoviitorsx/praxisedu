@@ -4,14 +4,17 @@ import TabBar from './TabBar';
 import ClassesScreen from '../screens/teacher/ClassesScreen';
 import ActivityHubScreen from '../screens/teacher/ActivityHubScreen';
 import TeacherProfileScreen from '../screens/teacher/TeacherProfileScreen';
+import useReducedMotion from '../hooks/useReducedMotion';
+import { TAB_TRANSITION } from './motion';
 
 const Tab = createBottomTabNavigator();
 const ICONS = { Classes: 'users', CreateQuiz: 'book-open', Profile: 'user' };
 
 export default function TeacherTabs() {
+  const reduceMotion = useReducedMotion();
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false, animation: 'fade' }}
+      screenOptions={{ headerShown: false, animation: reduceMotion ? 'none' : 'fade', transitionSpec: TAB_TRANSITION }}
       tabBar={(props) => (
         <TabBar {...props} icons={ICONS} accent={colors.blue} accentSoft={colors.blueSoft} accentDark={colors.blue} />
       )}
