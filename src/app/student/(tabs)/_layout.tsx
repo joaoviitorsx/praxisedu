@@ -4,8 +4,10 @@ import { colors } from '../../../theme';
 
 const icons = { trails: 'book-open', duels: 'swords', classroom: 'presentation', biobot: 'message-circle', ranking: 'trophy' };
 
+export const unstable_settings = { anchor: 'trails' };
+
 export default function StudentTabsLayout() {
-  return <TopTabs initialRouteName="trails" backBehavior="initialRoute" tabBarPosition="bottom" screenOptions={{ lazy: true, lazyPreloadDistance: 1, swipeEnabled: true, animationEnabled: true }} tabBar={(props) => (
+  return <TopTabs backBehavior="initialRoute" tabBarPosition="bottom" screenOptions={{ lazy: true, lazyPreloadDistance: 1, swipeEnabled: true, animationEnabled: true }} tabBar={(props) => (
     <TabBar {...props} icons={icons} accent={colors.green} accentSoft={colors.greenSoft} accentDark={colors.greenDark} featuredRoute="biobot" />
   )}>
     <TopTabs.Screen name="trails" options={{ title: 'Trilhas' }} />

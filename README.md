@@ -21,6 +21,8 @@ npx expo start
 
 Open the Expo Go app on your phone and scan the QR code (phone and computer on the same Wi-Fi).
 
+No Expo account is needed. On a different network, run `npm run start:tunnel` (ngrok). Avoid plain `npx expo start --tunnel`: since SDK 58 it uses the Expo tunnel, which requires `npx expo login`.
+
 ### Firebase setup
 
 1. Create a Firebase project with **Authentication (Email/Password)** and **Realtime Database**.

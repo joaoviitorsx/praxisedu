@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert, View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { usePreventRemove } from 'expo-router/react-navigation';
 import { LoadingView, EmptyState, Toast } from '../../components';
 import TeacherHero, { teacherSheetStyle } from '../../components/TeacherHero';
@@ -23,17 +23,16 @@ const TABS = [
 
 export default function ClassPanelScreen() {
   const { classId, tab: initialTab, toast } = useLocalSearchParams();
-  const navigation = useNavigation();
   const [tab, setTab] = useState(typeof initialTab === 'string' ? initialTab : 'students');
   const [cls, setCls] = useState(null);
   const [members, setMembers] = useState(null);
   const [error, setError] = useState('');
   const [attendanceDirty, setAttendanceDirty] = useState(false);
 
-  usePreventRemove(tab === 'attendance' && attendanceDirty, ({ data }) => {
+  usePreventRemove(tab === 'attendance' && attendanceDirty, ({ repeat }) => {
     Alert.alert('Sair sem salvar?', 'As marcações desta chamada serão perdidas.', [
       { text: 'Continuar editando', style: 'cancel' },
-      { text: 'Sair', style: 'destructive', onPress: () => navigation.dispatch(data.action) },
+      { text: 'Sair', style: 'destructive', onPress: () => repeat() },
     ]);
   });
 
