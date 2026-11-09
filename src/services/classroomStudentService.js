@@ -4,19 +4,83 @@ import { roomIsOpen, orderedQuizQuestions, scoreQuiz } from '../features/student
 import { unlockBadges } from './badgeService';
 
 export function listenStudentRoom(classId, onData, onError) {
-  return onValue(ref(db, `classroomMode/${classId}`), (snapshot) => onData(snapshot.val()), onError);
+  let emitted = false;
+  const timer = setTimeout(() => {
+    if (!emitted) {
+      emitted = true;
+      onData(null);
+    }
+  }, 1500);
+  const stop = onValue(
+    ref(db, `classroomMode/${classId}`),
+    (snapshot) => {
+      emitted = true;
+      clearTimeout(timer);
+      onData(snapshot.val());
+    },
+    (err) => {
+      clearTimeout(timer);
+      if (onError) onError(err);
+    }
+  );
+  return () => {
+    clearTimeout(timer);
+    stop();
+  };
 }
 
 export function listenOwnClassroomAnswer(classId, quizId, uid, onData, onError) {
-  return onValue(ref(db, `answers/${classId}/${quizId}/${uid}`), (snapshot) => {
-    const answer = snapshot.val();
-    onData(answer);
-    if (answer?.total > 0 && answer.correctCount === answer.total) unlockBadges(uid, ['classroom_hero']).catch(() => {});
-  }, onError);
+  let emitted = false;
+  const timer = setTimeout(() => {
+    if (!emitted) {
+      emitted = true;
+      onData(null);
+    }
+  }, 1500);
+  const stop = onValue(
+    ref(db, `answers/${classId}/${quizId}/${uid}`),
+    (snapshot) => {
+      emitted = true;
+      clearTimeout(timer);
+      const answer = snapshot.val();
+      onData(answer);
+      if (answer?.total > 0 && answer.correctCount === answer.total) unlockBadges(uid, ['classroom_hero']).catch(() => {});
+    },
+    (err) => {
+      clearTimeout(timer);
+      if (onError) onError(err);
+    }
+  );
+  return () => {
+    clearTimeout(timer);
+    stop();
+  };
 }
 
 export function listenServerOffset(onData, onError) {
-  return onValue(ref(db, '.info/serverTimeOffset'), (snapshot) => onData(snapshot.val() ?? 0), onError);
+  let emitted = false;
+  const timer = setTimeout(() => {
+    if (!emitted) {
+      emitted = true;
+      onData(0);
+    }
+  }, 1000);
+  const stop = onValue(
+    ref(db, '.info/serverTimeOffset'),
+    (snapshot) => {
+      emitted = true;
+      clearTimeout(timer);
+      onData(snapshot.val() ?? 0);
+    },
+    (err) => {
+      clearTimeout(timer);
+      if (onError) onError(err);
+    }
+  );
+  return () => {
+    clearTimeout(timer);
+    stop();
+  };
 }
 
 export async function getPublishedClassroomQuiz(classId, quizId) {

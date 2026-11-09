@@ -198,10 +198,18 @@ export async function countClassMembers(classId) {
 }
 
 // Live "Modo Sala" of the class (null when there is none or it already ended).
-// TODO (Ana Luiza): use the server time offset (section 6.6) instead of Date.now().
 export function listenActiveRoom(classId, onData) {
-  return onValue(ref(db, `classroomMode/${classId}`), (snap) => {
+  let offset = 0;
+  const stopOffset = onValue(ref(db, '.info/serverTimeOffset'), (snap) => {
+    offset = snap.val() ?? 0;
+  }, () => {});
+  const stopRoom = onValue(ref(db, `classroomMode/${classId}`), (snap) => {
     const room = snap.val();
-    onData(room && room.active && Date.now() < room.endsAt ? room : null);
+    const now = Date.now() + offset;
+    onData(room && room.active && now < room.endsAt ? room : null);
   }, () => onData(null));
+  return () => {
+    stopOffset();
+    stopRoom();
+  };
 }
