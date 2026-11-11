@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Mascot, Screen } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
@@ -74,7 +74,11 @@ export default function ClassroomScreen() {
     try {
       const saved = await submitClassroomAnswers({ classId: profile.classId, quizId: room.quizId, uid: user.uid, name: profile.name, picks: nextPicks, startedAt });
       setAnswer({ ...saved, picks: nextPicks });
-    } catch (cause) { Alert.alert('Resposta não enviada', friendlyError(cause)); }
+    } catch (cause) {
+      const msg = friendlyError(cause);
+      if (Platform.OS === 'web' && typeof window !== 'undefined') window.alert(`Resposta não enviada: ${msg}`);
+      else Alert.alert('Resposta não enviada', msg);
+    }
     finally { setSaving(false); busy.current = false; }
   }
 
@@ -85,7 +89,7 @@ export default function ClassroomScreen() {
       : !room || (!open && !answer) ? <View style={styles.center}><View style={styles.mascot}><Mascot name="sapo" size={100} thinking /></View><EmptyState title="Nenhuma atividade ao vivo agora" message={room?.active ? 'O tempo desta atividade terminou. Aguarde o professor iniciar uma nova sessão.' : 'Quando o professor liberar um quiz, ele aparecerá aqui automaticamente.'} /></View>
       : quiz === undefined || answer === undefined ? <LoadingView message="Preparando quiz da turma..." />
       : !quiz || !quiz.questions.length ? <View style={styles.center}><EmptyState title="Quiz indisponível" message="O professor precisa publicar questões válidas antes de iniciar esta atividade." /></View>
-      : answer ? <View style={styles.center}><View style={styles.sentIcon}><Icon name="check" size={36} color={colors.white} /></View><Text style={styles.sentTitle}>Resposta enviada!</Text><Text style={styles.sentText}>Você concluiu {quiz.title}. O professor já pode acompanhar sua participação.</Text><View style={styles.sentCard}><Icon name="shield-check" size={24} color={colors.green} /><Text style={styles.sentCardText}>Esta atividade só pode ser respondida uma vez.</Text></View></View>
+      : answer ? <View style={styles.center}><View style={styles.sentIcon}><Icon name="check" size={36} color={colors.white} /></View><Text style={styles.sentTitle}>Resposta enviada!</Text><Text style={styles.sentText}>Você concluiu {quiz.title}{Number.isFinite(answer.correctCount) && Number.isFinite(answer.total) ? ` (${answer.correctCount}/${answer.total} acertos)` : ''}. O professor já pode acompanhar sua participação.</Text><View style={styles.sentCard}><Icon name="shield-check" size={24} color={colors.green} /><Text style={styles.sentCardText}>Esta atividade só pode ser respondida uma vez.</Text></View></View>
       : <><ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.progressRow}><Text style={styles.counter}>QUESTÃO {index + 1} DE {quiz.questions.length}</Text><Text style={styles.remaining}>{timeLabel(room.endsAt - serverNow)} restantes</Text></View><View style={styles.track}><View style={[styles.fill, { width: `${(index + 1) / quiz.questions.length * 100}%` }]} /></View>
         <Text style={styles.question}>{question.text}</Text>

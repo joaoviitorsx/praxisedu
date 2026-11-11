@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Button, Chip, ConfirmModal, EmptyState, Icon, LoadingView } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
@@ -45,7 +45,17 @@ export default function ActivitiesScreen({ classId, membersCount = 0 }) {
   const toggleRoom = useCallback((quiz) => {
     if (room?.active && now < room.endsAt) {
       if (room.quizId !== quiz.id) {
-        Alert.alert('Uma aula já está ativa', 'Encerre o Modo Sala atual antes de liberar outro quiz.');
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
+          window.alert('Uma aula já está ativa. Encerre o Modo Sala atual antes de liberar outro quiz.');
+        } else {
+          Alert.alert('Uma aula já está ativa', 'Encerre o Modo Sala atual antes de liberar outro quiz.');
+        }
+        return;
+      }
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        if (window.confirm('Encerrar Modo Sala? Os alunos não poderão mais responder durante a aula.')) {
+          perform(quiz.id, () => stopClassroomMode(classId));
+        }
         return;
       }
       Alert.alert('Encerrar Modo Sala?', 'Os alunos não poderão mais responder durante a aula.', [
@@ -54,7 +64,14 @@ export default function ActivitiesScreen({ classId, membersCount = 0 }) {
       ]);
       return;
     }
-    Alert.alert('Liberar para a aula?', `O quiz ficará disponível por 15 minutos para os alunos de ${membersCount ? `${membersCount} participantes` : 'sua turma'}.`, [
+    const promptMsg = `O quiz ficará disponível por 15 minutos para os alunos de ${membersCount ? `${membersCount} participantes` : 'sua turma'}.`;
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      if (window.confirm(`Liberar para a aula?\n\n${promptMsg}`)) {
+        perform(quiz.id, () => startClassroomMode(classId, user.uid, quiz));
+      }
+      return;
+    }
+    Alert.alert('Liberar para a aula?', promptMsg, [
       { text: 'Cancelar', style: 'cancel' },
       { text: 'Liberar', onPress: () => perform(quiz.id, () => startClassroomMode(classId, user.uid, quiz)) },
     ]);

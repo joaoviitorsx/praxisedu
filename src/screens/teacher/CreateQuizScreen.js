@@ -6,7 +6,9 @@ import TeacherHero, { teacherSheetStyle } from '../../components/TeacherHero';
 import QuestionForm from '../../components/QuestionForm';
 import { useAuth } from '../../contexts/AuthContext';
 import { TOPICS } from '../../constants/topics';
+import { AI_DAILY_LIMIT } from '../../constants/gamification';
 import { generateQuestions } from '../../services/aiService';
+import { consumeAiQuota } from '../../services/chatService';
 import { loadTeacherClasses } from '../../services/classService';
 import { createQuiz } from '../../services/quizService';
 import { validateQuiz } from '../../features/teacher/quizModel';
@@ -62,6 +64,7 @@ export default function CreateQuizScreen() {
     if (!theme) { setAiError('Escolha um tema acima ou descreva o conteúdo aqui.'); return; }
     setAiError(''); setGenerating(true);
     try {
+      await consumeAiQuota(user.uid, 'generateCount', AI_DAILY_LIMIT.generate);
       const generated = await generateQuestions(theme, 3);
       setQuestions((current) => [
         ...current.filter((question) => question.text.trim() || question.options.some((option) => option.trim())),
