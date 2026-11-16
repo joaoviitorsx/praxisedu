@@ -8,7 +8,15 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "br.edu.unifor.praxisedu",
+      "userInterfaceStyle": "light",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "NSLocalNetworkUsageDescription": "O Práxis Edu precisa acessar a rede local para conectar ao servidor de desenvolvimento durante os testes."
+      }
     },
     "android": {
       "adaptiveIcon": {
