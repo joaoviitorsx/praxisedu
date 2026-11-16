@@ -14,13 +14,31 @@ import { classMascotsImage } from '../../constants/mascotImages';
 import useReducedMotion from '../../hooks/useReducedMotion';
 
 const MASCOTS_RATIO = 808 / 242; // turma.png
-const SHEET_OVERLAP = 28;
+const SHEET_OVERLAP = 24;
 
-const HIGHLIGHTS = [
-  { icon: 'book-open', label: 'Trilhas' },
-  { icon: 'sparkles', label: 'Quizzes' },
-  { icon: 'trophy', label: 'Ranking' },
+// soft floating bubbles (position in % of the hero, size in px)
+const BUBBLES = [
+  { left: '10%', top: '30%', size: 22, color: 'rgba(255,170,90,0.85)', delay: 0 },
+  { left: '84%', top: '12%', size: 16, color: colors.yellow, delay: 600 },
+  { left: '86%', top: '46%', size: 14, color: 'rgba(255,255,255,0.35)', delay: 1200 },
+  { left: '6%', top: '58%', size: 10, color: 'rgba(255,255,255,0.3)', delay: 900 },
 ];
+
+function Bubble({ left, top, size, color, delay, reduceMotion }) {
+  const y = useSharedValue(0);
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    const t = setTimeout(() => {
+      y.value = withRepeat(withSequence(
+        withTiming(-10, { duration: 2400, easing: Easing.inOut(Easing.quad) }),
+        withTiming(0, { duration: 2400, easing: Easing.inOut(Easing.quad) })
+      ), -1);
+    }, delay);
+    return () => { clearTimeout(t); cancelAnimation(y); };
+  }, [y, delay, reduceMotion]);
+  const style = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
+  return <Animated.View pointerEvents="none" style={[{ position: 'absolute', left, top, width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style]} />;
+}
 
 export default function SplashScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -47,7 +65,18 @@ export default function SplashScreen({ navigation }) {
   }, [float, reduceMotion]);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: float.value }] }));
 
-  const mascotsWidth = Math.min(width, 520);
+  // the class breathes gently (tiny scale bounce)
+  const breathe = useSharedValue(1);
+  useEffect(() => {
+    if (reduceMotion) { cancelAnimation(breathe); breathe.value = 1; return; }
+    breathe.value = withRepeat(withSequence(
+      withTiming(1.025, { duration: 1800, easing: Easing.inOut(Easing.quad) }),
+      withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.quad) })
+    ), -1);
+  }, [breathe, reduceMotion]);
+  const breatheStyle = useAnimatedStyle(() => ({ transform: [{ scale: breathe.value }] }));
+
+  const mascotsWidth = Math.min(width * 1.08, 560);
 
   return (
     <View style={styles.root}>
@@ -60,6 +89,8 @@ export default function SplashScreen({ navigation }) {
         />
         {/* one soft halo behind the logo instead of scattered dots */}
         <View pointerEvents="none" style={[styles.halo, { top: insets.top - 40 }]} />
+        <View pointerEvents="none" style={styles.corner} />
+        {BUBBLES.map((b, i) => <Bubble key={i} {...b} reduceMotion={reduceMotion} />)}
 
         <View style={[styles.brand, { paddingTop: insets.top + (compact ? 12 : 28) }]}>
           <Animated.View entering={enter(ZoomIn.springify().damping(14).delay(100))} style={floatStyle}>
@@ -75,26 +106,20 @@ export default function SplashScreen({ navigation }) {
             entering={enter(FadeInDown.delay(420).duration(500))}
             style={[styles.headline, compact && styles.headlineCompact]}
           >
-            Biologia do Ensino Médio{'\n'}em trilhas curtas e divertidas
+            Aprender nunca foi tão divertido
           </Animated.Text>
-          <Animated.View entering={enter(FadeInDown.delay(540).duration(500))} style={styles.highlights}>
-            {HIGHLIGHTS.map((h) => (
-              <View key={h.label} style={styles.chip}>
-                <Icon name={h.icon} size={16} color={colors.yellow} />
-                <Text style={styles.chipText}>{h.label}</Text>
-              </View>
-            ))}
-          </Animated.View>
         </View>
 
         {/* the class stands on the edge of the sheet, sheet overlaps the grass */}
         <Animated.View entering={enter(FadeInUp.delay(650).duration(600))} style={styles.mascots}>
+          <Animated.View style={breatheStyle}>
           <Image
             source={classMascotsImage}
             style={{ width: mascotsWidth, height: mascotsWidth / MASCOTS_RATIO }}
             contentFit="fill" cachePolicy="memory-disk" priority="high"
             accessibilityLabel="Turma de mascotes do Práxis Edu"
           />
+          </Animated.View>
         </Animated.View>
       </View>
 
@@ -104,7 +129,7 @@ export default function SplashScreen({ navigation }) {
       >
         <View style={styles.pill}>
           <Icon name="leaf" size={18} color={colors.green} />
-          <Text style={styles.pillText}>Feito para quem está no Ensino Médio</Text>
+          <Text style={styles.pillText}>Biologia no Ensino Médio</Text>
         </View>
         <View style={styles.buttons}>
           <Button title="Entrar" onPress={() => navigation.navigate('Login')} />
@@ -122,6 +147,10 @@ const styles = StyleSheet.create({
     position: 'absolute', alignSelf: 'center', width: 340, height: 340, borderRadius: radius.pill,
     backgroundColor: 'rgba(255,255,255,0.07)',
   },
+  corner: {
+    position: 'absolute', right: -90, top: -90, width: 240, height: 240, borderRadius: 120,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
   brand: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, paddingHorizontal: spacing.screen },
   logoRing: {
     padding: 10, borderRadius: radius.pill, backgroundColor: 'rgba(255,255,255,0.14)',
@@ -132,13 +161,7 @@ const styles = StyleSheet.create({
   nameCompact: { fontSize: 34 },
   headline: { fontFamily: fonts.semibold, fontSize: 18, lineHeight: 26, color: '#E9DDFF', textAlign: 'center' },
   headlineCompact: { fontSize: 16, lineHeight: 22 },
-  highlights: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: spacing.sm, marginTop: spacing.xs },
-  chip: {
-    flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6, paddingHorizontal: spacing.md,
-    borderRadius: radius.pill, backgroundColor: 'rgba(255,255,255,0.12)',
-  },
-  chipText: { fontFamily: fonts.bold, fontSize: 14, color: colors.white },
-  mascots: { alignItems: 'center', marginBottom: -SHEET_OVERLAP + 6 },
+  mascots: { alignItems: 'center', marginBottom: SHEET_OVERLAP - 4, zIndex: 2 },
   sheet: {
     marginTop: -SHEET_OVERLAP, backgroundColor: colors.background,
     borderTopLeftRadius: 28, borderTopRightRadius: 28,
@@ -147,8 +170,9 @@ const styles = StyleSheet.create({
   },
   pill: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: 6, paddingHorizontal: 14,
-    borderRadius: radius.pill, backgroundColor: colors.greenSoft,
+    borderRadius: radius.pill, backgroundColor: colors.white,
+    borderWidth: 1, borderColor: 'rgba(124,58,237,0.12)',
   },
-  pillText: { fontFamily: fonts.bold, fontSize: 14, color: colors.greenDark },
+  pillText: { fontFamily: fonts.bold, fontSize: 15, color: colors.ink },
   buttons: { width: '100%', gap: spacing.md },
 });
