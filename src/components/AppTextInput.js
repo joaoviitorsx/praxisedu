@@ -6,10 +6,15 @@ export default function AppTextInput({ placeholder, placeholderTextColor = '#647
   const flat = StyleSheet.flatten(style) || {};
   const showPlaceholder = !!placeholder && !value;
   const isMultiline = !!props.multiline;
+  // margins belong to the wrapper, otherwise the placeholder overlay drifts off the input
+  const marginKeys = ['margin', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'marginVertical', 'marginHorizontal'];
+  const margins = {};
+  const inputReset = {};
+  marginKeys.forEach((k) => { if (flat[k] != null) { margins[k] = flat[k]; inputReset[k] = 0; } });
 
   return (
-    <View style={[styles.wrapper, flat.flex != null && { flex: flat.flex }, flat.width != null && { width: flat.width }, flat.alignSelf && { alignSelf: flat.alignSelf }]}>
-      <TextInput {...props} value={value} style={[style, flat.flex != null && { flex: undefined }]} />
+    <View style={[styles.wrapper, flat.flex != null && { flex: flat.flex }, flat.width != null && { width: flat.width }, flat.alignSelf && { alignSelf: flat.alignSelf }, margins]}>
+      <TextInput {...props} value={value} style={[style, inputReset, flat.flex != null && { flex: undefined }]} />
       {showPlaceholder && (
         <View pointerEvents="none" style={[styles.overlay, { justifyContent: isMultiline ? 'flex-start' : 'center' }]}>
           <Text
