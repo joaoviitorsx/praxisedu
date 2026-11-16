@@ -30,6 +30,8 @@ const soundAssets = {
   wrong: require('../../assets/sounds/wrong.wav'),
   victory: require('../../assets/sounds/victory.wav'),
   click: require('../../assets/sounds/click.wav'),
+  start: require('../../assets/sounds/start.wav'),
+  open: require('../../assets/sounds/open.wav'),
 };
 
 const players = {};
@@ -104,6 +106,36 @@ function playWebTone(type) {
         osc.start(start);
         osc.stop(start + 0.3);
       });
+    } else if (type === 'start') {
+      // Quick rising arpeggio (C5, E5, G5, C6)
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+        const start = ctx.currentTime + i * 0.055;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.18, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.22);
+      });
+    } else if (type === 'open') {
+      // Soft upward pop
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(500, now);
+      osc.frequency.exponentialRampToValueAtTime(1500, now + 0.12);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
     } else if (type === 'click') {
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
@@ -194,4 +226,28 @@ export function playClickSound() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)?.catch?.(() => {});
     }
   } catch {}
+}
+
+function playWithImpact(name, style) {
+  if (Platform.OS === 'web') {
+    playWebTone(name);
+  } else {
+    playNativeSound(name);
+  }
+
+  try {
+    if (Haptics?.impactAsync) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle[style])?.catch?.(() => {});
+    }
+  } catch {}
+}
+
+// "Jogar"/"Estudar" on a trail stage.
+export function playStartSound() {
+  playWithImpact('start', 'Light');
+}
+
+// Opening a trail/unit.
+export function playOpenSound() {
+  playWithImpact('open', 'Soft');
 }

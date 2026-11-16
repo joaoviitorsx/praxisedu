@@ -12,6 +12,7 @@ import { lessonCompletionKind } from '../../features/student/trailModel';
 import { currentLives } from '../../utils/lives';
 import { topicLabel } from '../../constants/topics';
 import { friendlyError } from '../../utils/errors';
+import { playOpenSound, playStartSound } from '../../services/soundService';
 import { initials } from '../../utils/format';
 import TrailPath, { lessonStates } from './TrailPath';
 import StudentStatPopover from '../../components/StudentStatPopover';
@@ -86,6 +87,7 @@ export default function TrailsScreen({ navigation }) {
   const topicProgress = items.length ? Math.round(completedCount / items.length * 100) : 0;
 
   function playLesson(lesson) {
+    playStartSound();
     navigation.navigate('Lesson', {
       lessonId: lesson.id,
       title: lesson.title,
@@ -174,7 +176,7 @@ export default function TrailsScreen({ navigation }) {
                   const percent = total ? Math.round(done / total * 100) : 0;
                   const name = u.title?.trim() || topicLabel(u.topic) || 'Tópico sem título';
                   return (
-                    <Pressable key={u.id} onPress={() => setPickedUnit(u.id)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={`${name}, ${total ? `${done} de ${total} etapas concluídas` : 'etapas em breve'}`}
+                    <Pressable key={u.id} onPress={() => { if (u.id !== unit?.id) playOpenSound(); setPickedUnit(u.id); }} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={`${name}, ${total ? `${done} de ${total} etapas concluídas` : 'etapas em breve'}`}
                       style={({ pressed }) => [styles.unit, on && styles.unitSelected, pressed && styles.unitPressed]}>
                       <View style={styles.unitTop}>
                         <Text style={[styles.unitIndex, on && styles.unitIndexSelected]}>TÓPICO {String(unitIndex + 1).padStart(2, '0')}</Text>
