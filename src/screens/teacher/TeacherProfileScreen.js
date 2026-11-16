@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Icon, Button, LoadingView, EmptyState } from '../../components';
 import TeacherHero, { teacherSheetStyle } from '../../components/TeacherHero';
@@ -9,6 +9,7 @@ import { loadTeacherClasses } from '../../services/classService';
 import { friendlyError } from '../../utils/errors';
 import { initials } from '../../utils/format';
 import { colors, fonts } from '../../theme';
+import { confirmAction } from '../../utils/alert';
 
 export default function TeacherProfileScreen({ navigation }) {
   const { user, profile, signOut } = useAuth();
@@ -33,10 +34,7 @@ export default function TeacherProfileScreen({ navigation }) {
     profile?.school && { icon: 'school', label: 'Escola', value: profile.school },
     { icon: 'book-open', label: 'Disciplina', value: 'Biologia · Ensino Médio' },
   ].filter(Boolean);
-  const confirmSignOut = () => Alert.alert('Sair da conta?', 'Você poderá entrar novamente quando quiser.', [
-    { text: 'Cancelar', style: 'cancel' },
-    { text: 'Sair', style: 'destructive', onPress: signOut },
-  ]);
+  const confirmSignOut = () => confirmAction('Sair da conta?', 'Você poderá entrar novamente quando quiser.', 'Sair', signOut);
 
   return (
     <View style={styles.root}>

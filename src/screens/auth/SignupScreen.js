@@ -57,7 +57,7 @@ export default function SignupScreen({ navigation }) {
         </View>
 
         <Input label="Nome completo" value={name} onChangeText={setName} placeholder="Seu nome e sobrenome"
-          autoCapitalize="words" valid={nameOk} error={!nameOk && name ? 'Digite nome e sobrenome' : undefined} />
+          autoCapitalize="words" maxLength={60} valid={nameOk} error={!nameOk && name ? 'Digite nome e sobrenome' : undefined} />
         <Input label="E-mail" value={email} onChangeText={setEmail} placeholder="seu@email.com"
           autoCapitalize="none" keyboardType="email-address" valid={emailOk}
           error={!emailOk && email ? 'Digite um e-mail válido' : undefined} />

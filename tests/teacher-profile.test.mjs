@@ -43,7 +43,6 @@ test('indicadores de ensino compartilham um painel com leitura acessível', () =
 });
 
 test('saída da conta pede confirmação', () => {
-  assert.match(screen, /Alert\.alert\('Sair da conta\?'/);
-  assert.match(screen, /style: 'cancel'/);
-  assert.match(screen, /style: 'destructive', onPress: signOut/);
+  assert.match(screen, /confirmAction\('Sair da conta\?'/);
+  assert.match(screen, /'Sair', signOut\)/);
 });

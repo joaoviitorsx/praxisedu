@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Screen } from '../../components';
@@ -11,6 +11,7 @@ import { DUEL_POINTS, XP_PER_CORRECT } from '../../constants/gamification';
 import { topicLabel } from '../../constants/topics';
 import { friendlyError } from '../../utils/errors';
 import { colors, fonts, text } from '../../theme';
+import { confirmAction, showAlert } from '../../utils/alert';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -51,7 +52,7 @@ export default function DuelDetailScreen({ duelId }) {
     busy.current = true;
     setSaving(true);
     try { await finishDuelTurn(profile.classId, duelId, user.uid, nextPicks); }
-    catch (cause) { Alert.alert('Não foi possível enviar seu turno', friendlyError(cause)); }
+    catch (cause) { showAlert('Não foi possível enviar seu turno', friendlyError(cause)); }
     finally { busy.current = false; setSaving(false); }
   }
 
@@ -60,15 +61,12 @@ export default function DuelDetailScreen({ duelId }) {
     busy.current = true;
     setSaving(true);
     try { await claimDuelReward({ classId: profile.classId, duelId, uid: user.uid, name: profile.name }); }
-    catch (cause) { Alert.alert('Não foi possível resgatar os pontos', friendlyError(cause)); }
+    catch (cause) { showAlert('Não foi possível resgatar os pontos', friendlyError(cause)); }
     finally { busy.current = false; setSaving(false); }
   }
 
   function decline() {
-    Alert.alert('Recusar duelo?', 'O desafio será encerrado para os dois jogadores.', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Recusar', style: 'destructive', onPress: async () => { try { await declineDuel(profile.classId, duelId, user.uid); } catch (cause) { Alert.alert('Não foi possível recusar', friendlyError(cause)); } } },
-    ]);
+    confirmAction('Recusar duelo?', 'O desafio será encerrado para os dois jogadores.', 'Recusar', async () => { try { await declineDuel(profile.classId, duelId, user.uid); } catch (cause) { showAlert('Não foi possível recusar', friendlyError(cause)); } });
   }
 
   return <Screen padded={false}>

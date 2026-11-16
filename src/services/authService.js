@@ -27,7 +27,6 @@ export async function signUp({ name, email, password, role }) {
 
 // Friendly Portuguese messages for the most common Firebase errors
 export function authErrorMessage(error) {
-  console.log('[auth error]', error?.code, error?.message);
   if (/PERMISSION_DENIED/i.test(`${error?.code} ${error?.message}`)) {
     return 'O banco recusou a gravação. Publique as regras do database.rules.json no Firebase.';
   }

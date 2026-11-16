@@ -8,7 +8,7 @@ How to work on Práxis Edu without stepping on each other. Read the README first
 2. Ask João Vitor for the Firebase values and create your own `.env` from `.env.example`
    (the `.env` file is never committed; share the values outside Git).
 3. Send your Google e-mail to João Vitor so he adds you to the Firebase project (Editor).
-4. `npx expo start -c` and open it in **Expo Go** (SDK 57).
+4. `npx expo start -c` and open it in **Expo Go** (SDK 58). No Expo login needed; on another network use `npm run start:tunnel`.
 5. Create your own test accounts in the app (sign up as teacher and as student). Do not reuse someone else's.
 
 ## 2. Who owns what

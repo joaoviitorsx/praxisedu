@@ -4,8 +4,10 @@ import { colors } from '../../../theme';
 
 const icons = { classes: 'users', 'create-quiz': 'book-open', attendance: 'check-circle', profile: 'user' };
 
+export const unstable_settings = { anchor: 'classes' };
+
 export default function TeacherTabsLayout() {
-  return <TopTabs initialRouteName="classes" backBehavior="initialRoute" tabBarPosition="bottom" screenOptions={{ lazy: true, lazyPreloadDistance: 1, swipeEnabled: true, animationEnabled: true }} tabBar={(props) => (
+  return <TopTabs backBehavior="initialRoute" tabBarPosition="bottom" screenOptions={{ lazy: true, lazyPreloadDistance: 1, swipeEnabled: false, animationEnabled: true }} tabBar={(props) => (
     <TabBar {...props} icons={icons} accent={colors.blue} accentSoft={colors.blueSoft} accentDark={colors.blue} />
   )}>
     <TopTabs.Screen name="classes" options={{ title: 'Turmas' }} />

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Screen } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
 import { getLessonMaterials, getLessonQuestions, loseLife, completeLesson } from '../../services/trailService';
+import { playClickSound, playCorrectSound, playWrongSound, playVictorySound } from '../../services/soundService';
 import LessonMaterials from './LessonMaterials';
 import { lessonResult } from '../../features/student/trailModel';
 import { currentLives } from '../../utils/lives';
@@ -12,8 +13,12 @@ import { friendlyError } from '../../utils/errors';
 import { colors, fonts } from '../../theme';
 import LessonFeedback from './LessonFeedback';
 import LessonCompletion from './LessonCompletion';
+import { confirmAction, showAlert } from '../../utils/alert';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
+
+// Lesson id prefix (g1_cyto_01) -> notebook topic.
+const NOTE_TOPIC_BY_PREFIX = { cyto: 'citologia', anat: 'fisiologia', bota: 'fisiologia', micro: 'geral' };
 
 export default function LessonScreen({ navigation, route }) {
   const { user, profile } = useAuth();
@@ -58,9 +63,7 @@ export default function LessonScreen({ navigation, route }) {
 
   function leave() {
     if (result || (!index && !verified)) return navigation.goBack();
-    Alert.alert('Sair da lição?', 'O progresso desta tentativa ainda não foi salvo.', [
-      { text: 'Continuar', style: 'cancel' }, { text: 'Sair', style: 'destructive', onPress: () => navigation.goBack() },
-    ]);
+    confirmAction('Sair da lição?', 'O progresso desta tentativa ainda não foi salvo.', 'Sair', () => navigation.goBack());
   }
 
   async function verify() {
@@ -68,12 +71,17 @@ export default function LessonScreen({ navigation, route }) {
     busy.current = true; setChecking(true);
     setPicks((old) => [...old, choice]);
     setVerified(true);
+    if (correctChoice) {
+      playCorrectSound();
+    } else {
+      playWrongSound();
+    }
     try {
       if (!correctChoice) setLives(await loseLife(user.uid));
     } catch (e) {
       setPicks((old) => old.slice(0, -1));
       setVerified(false);
-      Alert.alert('Não foi possível registrar a resposta', friendlyError(e));
+      showAlert('Não foi possível registrar a resposta', friendlyError(e));
     }
     finally { setChecking(false); busy.current = false; }
   }
@@ -86,8 +94,9 @@ export default function LessonScreen({ navigation, route }) {
     try {
       const calculated = lessonResult(questions, picks, null);
       const saved = await completeLesson({ uid: user.uid, lessonId, name: profile.name, classId: profile.classId, result: calculated });
+      playVictorySound();
       setResult(saved);
-    } catch (e) { Alert.alert('Não foi possível salvar a lição', `${friendlyError(e)} Tente novamente.`); }
+    } catch (e) { showAlert('Não foi possível salvar a lição', `${friendlyError(e)} Tente novamente.`); }
     finally { setSaving(false); busy.current = false; }
   }
 
@@ -96,8 +105,9 @@ export default function LessonScreen({ navigation, route }) {
     busy.current = true; setSaving(true);
     try {
       const saved = await completeLesson({ uid: user.uid, lessonId, name: profile.name, classId: profile.classId, result: { correct: 0, total: 0, stars: 1 } });
+      playVictorySound();
       setResult(saved);
-    } catch (e) { Alert.alert('Não foi possível concluir a etapa', `${friendlyError(e)} Tente novamente.`); }
+    } catch (e) { showAlert('Não foi possível concluir a etapa', `${friendlyError(e)} Tente novamente.`); }
     finally { setSaving(false); busy.current = false; }
   }
 
@@ -121,7 +131,7 @@ export default function LessonScreen({ navigation, route }) {
       : reading ? <>
         <ScrollView contentContainerStyle={[styles.content, styles.studyContent]} showsVerticalScrollIndicator={false}>
           <View style={styles.studyHeadingRow}><View style={styles.studyHeadingCopy}><Text style={styles.studyHeading}>Materiais de estudo</Text><Text style={styles.studyDescription}>Conteúdo preparado pelo professor</Text></View><Text style={styles.studyCountText}>{materials.length} {materials.length === 1 ? 'material' : 'materiais'}</Text></View>
-          <LessonMaterials materials={materials} onError={(cause) => Alert.alert('Não foi possível abrir o material', friendlyError(cause))} />
+          <LessonMaterials materials={materials} onError={(cause) => showAlert('Não foi possível abrir o material', friendlyError(cause))} />
         </ScrollView>
         <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
           <Button title={questions.length ? 'Responder questões' : 'Concluir etapa'} onPress={questions.length ? () => setReading(false) : finishContent} loading={saving} variant="success" icon={questions.length ? 'arrow-right' : 'check'} />
@@ -133,17 +143,35 @@ export default function LessonScreen({ navigation, route }) {
             const selected = choice === optionIndex;
             const correct = verified && optionIndex === question.answer;
             const wrong = verified && selected && !correct;
-            return <Pressable key={optionIndex} disabled={verified} onPress={() => setChoice(optionIndex)} accessibilityRole="radio" accessibilityState={{ selected, disabled: verified }} accessibilityLabel={`${LETTERS[optionIndex]}. ${option}${correct ? ', resposta correta' : wrong ? ', resposta incorreta' : ''}`}
+            return <Pressable key={optionIndex} disabled={verified} onPress={() => { playClickSound(); setChoice(optionIndex); }} accessibilityRole="radio" accessibilityState={{ selected, disabled: verified }} accessibilityLabel={`${LETTERS[optionIndex]}. ${option}${correct ? ', resposta correta' : wrong ? ', resposta incorreta' : ''}`}
               style={({ pressed }) => [styles.option, selected && styles.optionSelected, correct && styles.optionCorrect, wrong && styles.optionWrong, pressed && !verified && styles.pressed]}>
               <View style={[styles.letter, selected && styles.letterSelected, correct && styles.letterCorrect, wrong && styles.letterWrong]}><Text style={[styles.letterText, (selected || correct) && styles.letterTextOn]}>{LETTERS[optionIndex]}</Text></View>
               <Text style={styles.optionText}>{option}</Text>{(correct || wrong) && <Icon name={correct ? 'check-circle' : 'x-circle'} size={21} color={correct ? colors.green : colors.red} />}
             </Pressable>;
           })}</View>
         </ScrollView>
-        {verified ? <LessonFeedback key={index} correct={correctChoice} correctAnswer={`${LETTERS[question.answer]}. ${question.options[question.answer]}`} explanation={question.explanation} lives={lives} checking={checking} loading={saving || checking} isLast={isLast} onContinue={advance} bottomInset={Math.max(insets.bottom, 12) + 10} />
-          : <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
+        {verified ? (
+          <LessonFeedback
+            key={index}
+            correct={correctChoice}
+            correctAnswer={`${LETTERS[question.answer]}. ${question.options[question.answer]}`}
+            explanation={question.explanation}
+            mnemonic={question.mnemonic}
+            questionText={question.text}
+            topic={NOTE_TOPIC_BY_PREFIX[lessonId.split('_')[1]] ?? 'geral'}
+            uid={user?.uid}
+            lives={lives}
+            checking={checking}
+            loading={saving || checking}
+            isLast={isLast}
+            onContinue={advance}
+            bottomInset={Math.max(insets.bottom, 12) + 10}
+          />
+        ) : (
+          <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
             <Button title="Verificar resposta" onPress={verify} disabled={choice === null} loading={checking} variant="primary" icon="check" />
-          </View>}
+          </View>
+        )}
       </>}
   </Screen>;
 }

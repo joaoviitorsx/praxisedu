@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { listenAuth, signOut } from '../services/authService';
 import { listenProfile } from '../services/userService';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext(/** @type {any} */ (null));
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null); // Firebase Auth user

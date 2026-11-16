@@ -9,7 +9,7 @@ test('abas usam pager nativo com barra inferior e carregamento de vizinhas', () 
     const layout = read(`../src/app/${role}/(tabs)/_layout.tsx`);
     assert.match(layout, /expo-router\/js-top-tabs/);
     assert.match(layout, /tabBarPosition="bottom"/);
-    assert.match(layout, /swipeEnabled: true/);
+    assert.match(layout, /swipeEnabled: false/);
     assert.match(layout, /lazyPreloadDistance: 1/);
     assert.doesNotMatch(layout, /reverseOrder/);
   }
@@ -38,10 +38,27 @@ test('BioBot recebe círculo central e animação de foco com movimento reduzido
 
 test('barra do aluno é compacta sem reduzir o alvo do BioBot', () => {
   const bar = read('../src/navigation/TabBar.js');
-  assert.match(bar, /studentTab: \{ minHeight: 56/);
-  assert.match(bar, /featuredTab: \{ height: 64, marginTop: -8/);
-  assert.match(bar, /featuredCircle: \{ width: 54, height: 54/);
+  assert.match(bar, /studentTab: \{\s*minHeight: 56/);
+  assert.match(bar, /featuredTab: \{\s*height: 64,\s*marginTop: -8/);
+  assert.match(bar, /featuredCircle: \{\s*width: 54,\s*height: 54/);
   assert.match(bar, /barWithFeatured: \{[^}]*paddingTop: 2/);
+});
+
+test('barra usa o contrato de abas do expo-router 58', () => {
+  const bar = read('../src/navigation/TabBar.js');
+  assert.match(bar, /emitter \?\? navigation/);
+  assert.match(bar, /navigateToTab\(route\.key\)/);
+  for (const role of ['teacher', 'student']) {
+    const layout = read(`../src/app/${role}/(tabs)/_layout.tsx`);
+    assert.match(layout, /unstable_settings = \{ anchor: /);
+    assert.doesNotMatch(layout, /initialRouteName/);
+  }
+});
+
+test('sair da chamada sem salvar libera o bloqueio antes de navegar', () => {
+  const panel = read('../src/screens/teacher/ClassPanelScreen.js');
+  assert.match(panel, /\(\{ repeat \}\)/);
+  assert.doesNotMatch(panel, /data\.action/);
 });
 
 test('telas não usam o detector antigo que só navega ao soltar', () => {

@@ -12,6 +12,14 @@ import { friendlyError } from '../../utils/errors';
 import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { colors, fonts, text } from '../../theme';
 
+const QUICK_PILLS = [
+  '⚡ Por que a mitocôndria é a usina da célula?',
+  '🔬 Qual a diferença entre mitose e meiose?',
+  '🌿 Como a fotossíntese gera oxigênio?',
+  '🧬 O que é o modelo do mosaico fluido?',
+  '🦠 Por que antibiótico não mata vírus?',
+];
+
 // Screen 15: BioBot chat (Gemini), history saved in botChats/{uid}
 export default function BioBotScreen() {
   const { user, profile } = useAuth();
@@ -109,6 +117,22 @@ export default function BioBotScreen() {
             {sendError ? <Text style={styles.error}>{sendError}</Text> : null}
             {pendingQuestion ? <Pressable onPress={retryAnswer} disabled={typing} accessibilityRole="button" style={styles.retryReply}><Text style={styles.retryReplyText}>Tentar resposta novamente</Text></Pressable> : null}
           </ScrollView>
+
+          <View style={styles.pillsContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillsScroll}>
+              {QUICK_PILLS.map((pill, idx) => (
+                <Pressable
+                  key={idx}
+                  onPress={() => send(pill)}
+                  disabled={typing || !!pendingQuestion}
+                  style={({ pressed }) => [styles.pill, pressed && styles.pillPressed]}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.pillText}>{pill}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
 
           <View style={styles.composer}>
             <View style={styles.inputRow}>
@@ -238,6 +262,32 @@ const styles = StyleSheet.create({
   },
   retryReply: { minHeight: 48, alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: 14, borderRadius: 12, backgroundColor: colors.greenSoft },
   retryReplyText: { fontFamily: fonts.extrabold, fontSize: 14, color: colors.greenDark },
+  pillsContainer: {
+    paddingVertical: 8,
+    backgroundColor: '#F8FAFC',
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  pillsScroll: {
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  pill: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+  },
+  pillPressed: {
+    backgroundColor: '#E2E8F0',
+  },
+  pillText: {
+    fontFamily: fonts.bold,
+    fontSize: 12,
+    color: colors.ink,
+  },
   composer: { backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border },
   inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 4 },
   input: {

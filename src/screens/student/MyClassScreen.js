@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import AppTextInput from '../../components/AppTextInput';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Screen, Icon, LoadingView, EmptyState, Header } from '../../components';
+import { Screen, Icon, LoadingView, EmptyState, Header, AnonymousDoubtsModal } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
 import { listenClass, listenClassMembers, countPublishedQuizzes } from '../../services/classService';
 import { friendlyError } from '../../utils/errors';
@@ -21,6 +21,7 @@ export default function MyClassScreen({ navigation }) {
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
+  const [doubtsModalVisible, setDoubtsModalVisible] = useState(false);
 
   useEffect(() => {
     if (!classId) { setCls(null); setMembers([]); return undefined; }
@@ -64,6 +65,31 @@ export default function MyClassScreen({ navigation }) {
           <View style={styles.teacherTag}><Text style={styles.teacherTagText}>Professor</Text></View>
         </View>
 
+        {/* Mural de Dúvidas (Envio Privado para o Professor) */}
+        <Pressable
+          onPress={() => setDoubtsModalVisible(true)}
+          style={({ pressed }) => [styles.doubtCard, pressed && { opacity: 0.9 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir Mural de Dúvidas para enviar mensagens e dúvidas ao professor"
+        >
+          <View style={styles.doubtIconWrap}>
+            <Icon name="message-square" size={24} color={colors.white} />
+          </View>
+          <View style={{ flex: 1, gap: 2 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={styles.doubtCardTitle}>Mural de Dúvidas</Text>
+              <View style={styles.anonymousBadge}>
+                <Icon name="lock" size={10} color={colors.greenDark} />
+                <Text style={styles.anonymousBadgeText}>Direto com o Professor</Text>
+              </View>
+            </View>
+            <Text style={styles.doubtCardSub}>
+              Envie suas dúvidas ou recados diretamente para o professor. Apenas ele terá acesso para responder!
+            </Text>
+          </View>
+          <Icon name="chevron-right" size={20} color="#7C4DFF" />
+        </Pressable>
+
         <View style={styles.listTitle}>
           <Text style={text.label}>Colegas · {members.length}</Text>
           <Text style={styles.az}>A–Z</Text>
@@ -100,6 +126,12 @@ export default function MyClassScreen({ navigation }) {
           </View>
         )}
       </Screen>
+      <AnonymousDoubtsModal
+        visible={doubtsModalVisible}
+        onClose={() => setDoubtsModalVisible(false)}
+        classId={classId}
+        className={cls.name}
+      />
     </Screen>
   );
 }
@@ -152,6 +184,50 @@ const styles = StyleSheet.create({
   stat: { flex: 1, backgroundColor: colors.white, borderRadius: 14, paddingVertical: 10, paddingHorizontal: 12 },
   statValue: { fontFamily: fonts.extrabold, fontSize: 20 },
   content: { paddingTop: 16, paddingBottom: 42, gap: 12 },
+  doubtCard: {
+    backgroundColor: '#F3E8FF',
+    borderRadius: 14,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1.5,
+    borderColor: '#E9D5FF',
+    marginVertical: 4,
+  },
+  doubtIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#7C4DFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  doubtCardTitle: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
+    color: '#4C1D95',
+  },
+  doubtCardSub: {
+    fontFamily: fonts.medium,
+    fontSize: 12,
+    color: '#6D28D9',
+    lineHeight: 16,
+  },
+  anonymousBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    gap: 3,
+  },
+  anonymousBadgeText: {
+    fontFamily: fonts.bold,
+    fontSize: 9,
+    color: colors.greenDark,
+  },
   row: {
     flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14,
     borderRadius: 20, backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.border,
