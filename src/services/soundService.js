@@ -32,6 +32,15 @@ const soundAssets = {
   click: require('../../assets/sounds/click.wav'),
   start: require('../../assets/sounds/start.wav'),
   open: require('../../assets/sounds/open.wav'),
+  tap: require('../../assets/sounds/tap.wav'),
+  select: require('../../assets/sounds/select.wav'),
+  tab: require('../../assets/sounds/tab.wav'),
+  back: require('../../assets/sounds/back.wav'),
+  sheet: require('../../assets/sounds/sheet.wav'),
+  send: require('../../assets/sounds/send.wav'),
+  success: require('../../assets/sounds/success.wav'),
+  error: require('../../assets/sounds/error.wav'),
+  notify: require('../../assets/sounds/notify.wav'),
 };
 
 const players = {};
@@ -250,4 +259,68 @@ export function playStartSound() {
 // Opening a trail/unit.
 export function playOpenSound() {
   playWithImpact('open', 'Soft');
+}
+
+// Subtle UI sound family (G major, quieter than correct/victory).
+// [web notes as [freqFrom, freqTo, offsetSec, durSec], gain, haptic]
+const UI_SOUNDS = {
+  tap: [[[1175, 1175, 0, 0.05]], 0.04, 'Light'],
+  select: [[[784, 784, 0, 0.08], [1175, 1175, 0.035, 0.08]], 0.05, 'selection'],
+  tab: [[[988, 988, 0, 0.07]], 0.05, 'selection'],
+  back: [[[1175, 784, 0, 0.11]], 0.04, 'Light'],
+  sheet: [[[784, 1175, 0, 0.13]], 0.05, 'Soft'],
+  send: [[[587, 1568, 0, 0.13]], 0.06, 'Medium'],
+  success: [[[784, 784, 0, 0.1], [988, 988, 0.06, 0.1], [1175, 1175, 0.12, 0.15]], 0.06, 'success'],
+  error: [[[659, 659, 0, 0.12], [587, 587, 0.07, 0.15]], 0.05, 'warning'],
+  notify: [[[1175, 1175, 0, 0.13], [1568, 1568, 0.08, 0.18]], 0.07, 'Medium'],
+};
+
+let soundEnabled = true;
+export function setSoundEnabled(on) { soundEnabled = !!on; }
+
+const lastPlayed = {};
+
+// Generic subtle interaction sound + matching haptic. Same sound within 80ms is ignored.
+export function playUiSound(name) {
+  try {
+    const def = UI_SOUNDS[name];
+    if (!def) return;
+    const now = Date.now();
+    if (now - (lastPlayed[name] ?? 0) < 80) return;
+    lastPlayed[name] = now;
+    const [notes, peak, haptic] = def;
+    if (soundEnabled) {
+      if (Platform.OS === 'web') playWebNotes(notes, peak);
+      else playNativeSound(name);
+    }
+    if (haptic === 'selection') Haptics?.selectionAsync?.()?.catch?.(() => {});
+    else if (haptic === 'success' || haptic === 'warning') Haptics?.notificationAsync?.(Haptics.NotificationFeedbackType[haptic === 'success' ? 'Success' : 'Warning'])?.catch?.(() => {});
+    else Haptics?.impactAsync?.(Haptics.ImpactFeedbackStyle[haptic])?.catch?.(() => {});
+  } catch {}
+}
+
+function playWebNotes(notes, peak) {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    webCtx = webCtx || new AudioCtx();
+    const ctx = webCtx;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    notes.forEach(([f0, f1, off, dur]) => {
+      const t = ctx.currentTime + off;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f0, t);
+      if (f1 !== f0) osc.frequency.exponentialRampToValueAtTime(f1, t + 0.06);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(peak, t + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + dur);
+    });
+  } catch {}
 }
