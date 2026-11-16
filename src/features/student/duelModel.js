@@ -31,3 +31,11 @@ export function duelReward(duel, uid) {
   const outcome = duel.winnerId === 'draw' ? 'draw' : duel.winnerId === uid ? 'win' : 'loss';
   return { outcome, bonus: DUEL_POINTS[outcome], xp: duel.players[uid].score * XP_PER_CORRECT };
 }
+
+export function duelCandidates(members, uid, search = '') {
+  const term = search.trim().toLocaleLowerCase('pt-BR');
+  return (members ?? [])
+    .filter((member) => member?.id && member.id !== uid)
+    .map((member) => ({ ...member, name: member.name?.trim() || 'Aluno sem nome' }))
+    .filter((member) => !term || member.name.toLocaleLowerCase('pt-BR').includes(term));
+}

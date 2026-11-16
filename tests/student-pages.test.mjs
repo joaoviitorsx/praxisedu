@@ -61,3 +61,11 @@ test('recompensa do duelo separa XP por acerto e bônus de resultado', () => {
   assert.deepEqual(duelReward({ winnerId: 'draw', challengerId: 'a', opponentId: 'b', players: { a: { score: 2 } } }, 'a'), { outcome: 'draw', bonus: 15, xp: 30 });
   assert.throws(() => duelReward({ winnerId: 'intruso', challengerId: 'a', opponentId: 'b', players: { a: { score: 2 } } }, 'a'), /DUEL_NOT_READY/);
 });
+
+test('candidatos ao duelo excluem só o próprio aluno e aceitam nome ausente', async () => {
+  const { duelCandidates } = await import('../src/features/student/duelModel.js');
+  const members = [{ id: 'me', name: 'Eu' }, { id: 'a', name: 'Ana Souza' }, { id: 'b' }];
+  assert.deepEqual(duelCandidates(members, 'me').map((m) => m.id), ['a', 'b']);
+  assert.deepEqual(duelCandidates(members, 'me', ' ana ').map((m) => m.id), ['a']);
+  assert.deepEqual(duelCandidates(undefined, 'me'), []);
+});
