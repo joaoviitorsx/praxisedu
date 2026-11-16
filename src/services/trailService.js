@@ -21,22 +21,40 @@ export function listenProgress(uid, onData, onError) {
   return onValue(ref(db, `progress/${uid}`), (snap) => onData(snap.val() ?? {}), onError);
 }
 
+// RTDB get() can hang forever on a flaky connection; never leave the lesson stuck loading.
+function getWithTimeout(path, ms = 4000) {
+  return Promise.race([
+    get(ref(db, path)),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), ms)),
+  ]);
+}
+
 export async function getLessonQuestions(lessonId, classId) {
-  if (classId) {
-    const own = await get(ref(db, `classTrailQuestions/${classId}/${lessonId}`));
-    if (own.exists()) return orderedLessonQuestions(own.val());
+  try {
+    if (classId) {
+      const own = await getWithTimeout(`classTrailQuestions/${classId}/${lessonId}`);
+      if (own.exists()) return orderedLessonQuestions(own.val());
+    }
+    const snap = await getWithTimeout(`lessonQuestions/${lessonId}`);
+    return orderedLessonQuestions(snap.val() ?? sampleQuestions[lessonId]);
+  } catch (error) {
+    // offline/slow: fall back to the bundled seed so the lesson still opens
+    if (sampleQuestions[lessonId]) return orderedLessonQuestions(sampleQuestions[lessonId]);
+    throw error;
   }
-  const snap = await get(ref(db, `lessonQuestions/${lessonId}`));
-  return orderedLessonQuestions(snap.val() ?? sampleQuestions[lessonId]);
 }
 
 export async function getLessonMaterials(lessonId, classId) {
   if (!classId) return [];
-  const snapshot = await get(ref(db, `classTrails/${classId}/units`));
-  const units = snapshot.val() ?? {};
-  for (const unit of Object.values(units)) {
-    const lesson = unit.lessons?.[lessonId];
-    if (lesson) return normalizeMaterials(lesson.materials);
+  try {
+    const snapshot = await getWithTimeout(`classTrails/${classId}/units`);
+    const units = snapshot.val() ?? {};
+    for (const unit of Object.values(units)) {
+      const lesson = unit?.lessons?.[lessonId];
+      if (lesson) return normalizeMaterials(lesson.materials);
+    }
+  } catch {
+    // materials are optional; open the lesson without them
   }
   return [];
 }
