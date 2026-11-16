@@ -9,7 +9,7 @@ test('abas usam pager nativo com barra inferior e carregamento de vizinhas', () 
     const layout = read(`../src/app/${role}/(tabs)/_layout.tsx`);
     assert.match(layout, /expo-router\/js-top-tabs/);
     assert.match(layout, /tabBarPosition="bottom"/);
-    assert.match(layout, /swipeEnabled: true/);
+    assert.match(layout, /swipeEnabled: false/);
     assert.match(layout, /lazyPreloadDistance: 1/);
     assert.doesNotMatch(layout, /reverseOrder/);
   }
