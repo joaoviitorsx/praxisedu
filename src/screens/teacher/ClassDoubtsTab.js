@@ -308,7 +308,7 @@ export default function ClassDoubtsTab({ classId }) {
         </View>
       </KeyboardAvoidingView>
     </Modal>
-  </>;
+  </>
   );
 }
 
