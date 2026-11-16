@@ -21,7 +21,7 @@ export default function VideoEmbed({ source, originalUrl }) {
         javaScriptEnabled domStorageEnabled allowsFullscreenVideo allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction onError={() => setFailed(true)} />
       : <View style={styles.fallback}><Text style={styles.fallbackText}>Não foi possível carregar o vídeo incorporado.</Text></View>}
-    <Pressable onPress={() => WebBrowser.openBrowserAsync(originalUrl)} accessibilityRole="button" style={styles.open}><Text style={styles.openText}>Abrir vídeo em outra janela</Text></Pressable>
+    <Pressable onPress={() => WebBrowser.openBrowserAsync(originalUrl).catch(() => {})} accessibilityRole="button" style={styles.open}><Text style={styles.openText}>Abrir vídeo em outra janela</Text></Pressable>
   </View>;
 }
 
