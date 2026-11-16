@@ -10,34 +10,43 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Icon, Logo } from '../../components';
 import { colors, fonts, radius, spacing } from '../../theme';
-import { classMascotsImage } from '../../constants/mascotImages';
 import useReducedMotion from '../../hooks/useReducedMotion';
 
-const MASCOTS_RATIO = 808 / 242; // turma.png
-const SHEET_OVERLAP = 24;
+const heroMascots = require('../../../assets/mascotes/turma-hero.png');
+const MASCOTS_RATIO = 900 / 470;
+const SHEET_OVERLAP = 28;
 
-// soft floating bubbles (position in % of the hero, size in px)
+// floating bubbles (position in % of the hero, size in px)
 const BUBBLES = [
-  { left: '10%', top: '30%', size: 22, color: 'rgba(255,170,90,0.85)', delay: 0 },
-  { left: '84%', top: '12%', size: 16, color: colors.yellow, delay: 600 },
-  { left: '86%', top: '46%', size: 14, color: 'rgba(255,255,255,0.35)', delay: 1200 },
-  { left: '6%', top: '58%', size: 10, color: 'rgba(255,255,255,0.3)', delay: 900 },
+  { left: '8%', top: '15%', size: 26, color: '#FF9F50', delay: 0 },
+  { left: '82%', top: '8%', size: 16, color: colors.yellow, delay: 500 },
+  { left: '90%', top: '36%', size: 18, color: 'rgba(200,160,255,0.75)', delay: 1100 },
 ];
 
-function Bubble({ left, top, size, color, delay, reduceMotion }) {
-  const y = useSharedValue(0);
+function useLoop(reduceMotion, to, duration, delay = 0) {
+  const v = useSharedValue(0);
   useEffect(() => {
-    if (reduceMotion) return undefined;
+    if (reduceMotion) { cancelAnimation(v); v.value = 0; return undefined; }
     const t = setTimeout(() => {
-      y.value = withRepeat(withSequence(
-        withTiming(-10, { duration: 2400, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 2400, easing: Easing.inOut(Easing.quad) })
+      v.value = withRepeat(withSequence(
+        withTiming(to, { duration, easing: Easing.inOut(Easing.quad) }),
+        withTiming(0, { duration, easing: Easing.inOut(Easing.quad) })
       ), -1);
     }, delay);
-    return () => { clearTimeout(t); cancelAnimation(y); };
-  }, [y, delay, reduceMotion]);
+    return () => { clearTimeout(t); cancelAnimation(v); };
+  }, [v, reduceMotion, to, duration, delay]);
+  return v;
+}
+
+function Bubble({ left, top, size, color, delay, reduceMotion }) {
+  const y = useLoop(reduceMotion, -10, 2400, delay);
   const style = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
-  return <Animated.View pointerEvents="none" style={[{ position: 'absolute', left, top, width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style]} />;
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[{ position: 'absolute', left, top, width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style]}
+    />
+  );
 }
 
 export default function SplashScreen({ navigation }) {
@@ -47,78 +56,50 @@ export default function SplashScreen({ navigation }) {
   const compact = height < 720; // iPhone SE and similar
   const enter = (anim) => (reduceMotion ? undefined : anim);
 
-  // the logo floats slowly up and down (off when the user prefers reduced motion)
-  const float = useSharedValue(0);
-  useEffect(() => {
-    if (reduceMotion) {
-      cancelAnimation(float);
-      float.value = 0;
-      return;
-    }
-    float.value = withRepeat(
-      withSequence(
-        withTiming(-6, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.quad) })
-      ),
-      -1
-    );
-  }, [float, reduceMotion]);
+  const float = useLoop(reduceMotion, -6, 2000);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: float.value }] }));
+  const breathe = useLoop(reduceMotion, 0.02, 1800, 300);
+  const breatheStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: -breathe.value * 150 }, { scale: 1 + breathe.value }],
+  }));
 
-  // the class breathes gently (tiny scale bounce)
-  const breathe = useSharedValue(1);
-  useEffect(() => {
-    if (reduceMotion) { cancelAnimation(breathe); breathe.value = 1; return; }
-    breathe.value = withRepeat(withSequence(
-      withTiming(1.025, { duration: 1800, easing: Easing.inOut(Easing.quad) }),
-      withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.quad) })
-    ), -1);
-  }, [breathe, reduceMotion]);
-  const breatheStyle = useAnimatedStyle(() => ({ transform: [{ scale: breathe.value }] }));
-
-  const mascotsWidth = Math.min(width * 1.08, 560);
+  const mascotsWidth = Math.min(width, 600);
 
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
       <View style={styles.hero}>
         <LinearGradient
-          colors={[colors.purple, colors.purpleDark]}
-          start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }}
+          colors={['#9933FB', '#7E26E4', '#6E1FD0']}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
         />
-        {/* one soft halo behind the logo instead of scattered dots */}
-        <View pointerEvents="none" style={[styles.halo, { top: insets.top - 40 }]} />
         <View pointerEvents="none" style={styles.corner} />
         {BUBBLES.map((b, i) => <Bubble key={i} {...b} reduceMotion={reduceMotion} />)}
 
-        <View style={[styles.brand, { paddingTop: insets.top + (compact ? 12 : 28) }]}>
+        <View style={[styles.brand, { paddingTop: insets.top + (compact ? 8 : 24) }]}>
           <Animated.View entering={enter(ZoomIn.springify().damping(14).delay(100))} style={floatStyle}>
             <View style={styles.logoRing}>
-              <Logo variant="symbol" tone="white" size={compact ? 72 : 92} />
+              <Logo variant="symbol" tone="white" size={compact ? 96 : 124} />
             </View>
           </Animated.View>
           <Animated.View entering={enter(FadeInDown.delay(300).duration(500))} style={styles.wordmark}>
             <Text style={[styles.name, compact && styles.nameCompact]}>PRÁXIS</Text>
             <Text style={[styles.name, compact && styles.nameCompact, { color: colors.yellow }]}>EDU</Text>
           </Animated.View>
-          <Animated.Text
-            entering={enter(FadeInDown.delay(420).duration(500))}
-            style={[styles.headline, compact && styles.headlineCompact]}
-          >
+          <Animated.Text entering={enter(FadeInDown.delay(420).duration(500))} style={[styles.headline, compact && styles.headlineCompact]}>
             Aprender nunca foi tão divertido
           </Animated.Text>
         </View>
 
-        {/* the class stands on the edge of the sheet, sheet overlaps the grass */}
-        <Animated.View entering={enter(FadeInUp.delay(650).duration(600))} style={styles.mascots}>
+        <Animated.View entering={enter(FadeInUp.delay(600).duration(700))} style={styles.mascots}>
           <Animated.View style={breatheStyle}>
-          <Image
-            source={classMascotsImage}
-            style={{ width: mascotsWidth, height: mascotsWidth / MASCOTS_RATIO }}
-            contentFit="fill" cachePolicy="memory-disk" priority="high"
-            accessibilityLabel="Turma de mascotes do Práxis Edu"
-          />
+            <Image
+              source={heroMascots}
+              style={{ width: mascotsWidth, height: mascotsWidth / MASCOTS_RATIO }}
+              contentFit="cover" cachePolicy="memory-disk" priority="high"
+              accessibilityLabel="Turma de mascotes do Práxis Edu"
+            />
           </Animated.View>
         </Animated.View>
       </View>
@@ -128,7 +109,7 @@ export default function SplashScreen({ navigation }) {
         style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, spacing.lg) + spacing.sm }]}
       >
         <View style={styles.pill}>
-          <Icon name="leaf" size={18} color={colors.green} />
+          <Icon name="leaf" size={20} color={colors.green} />
           <Text style={styles.pillText}>Biologia no Ensino Médio</Text>
         </View>
         <View style={styles.buttons}>
@@ -141,38 +122,32 @@ export default function SplashScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.purpleDark },
-  hero: { flex: 1, overflow: 'hidden' },
-  halo: {
-    position: 'absolute', alignSelf: 'center', width: 340, height: 340, borderRadius: radius.pill,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-  },
+  root: { flex: 1, backgroundColor: '#F6F2FF' },
+  hero: { flex: 1, overflow: 'hidden', justifyContent: 'space-between' },
   corner: {
-    position: 'absolute', right: -90, top: -90, width: 240, height: 240, borderRadius: 120,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    position: 'absolute', right: -110, top: -110, width: 280, height: 280, borderRadius: 140,
+    backgroundColor: 'rgba(255,255,255,0.10)',
   },
-  brand: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, paddingHorizontal: spacing.screen },
-  logoRing: {
-    padding: 10, borderRadius: radius.pill, backgroundColor: 'rgba(255,255,255,0.14)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)',
-  },
-  wordmark: { flexDirection: 'row', gap: 10, marginTop: spacing.xs },
-  name: { fontFamily: fonts.extrabold, fontSize: 40, letterSpacing: 1, color: colors.white },
-  nameCompact: { fontSize: 34 },
-  headline: { fontFamily: fonts.semibold, fontSize: 18, lineHeight: 26, color: '#E9DDFF', textAlign: 'center' },
-  headlineCompact: { fontSize: 16, lineHeight: 22 },
-  mascots: { alignItems: 'center', marginBottom: SHEET_OVERLAP - 4, zIndex: 2 },
+  brand: { alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.screen },
+  logoRing: { padding: 12, borderRadius: radius.pill, backgroundColor: 'rgba(255,255,255,0.16)' },
+  wordmark: { flexDirection: 'row', gap: 12, marginTop: spacing.sm },
+  name: { fontFamily: fonts.extrabold, fontSize: 44, letterSpacing: 0.5, color: colors.white },
+  nameCompact: { fontSize: 36 },
+  headline: { fontFamily: fonts.semibold, fontSize: 19, color: '#F1E8FF', textAlign: 'center' },
+  headlineCompact: { fontSize: 16 },
+  mascots: { alignItems: 'center', marginBottom: SHEET_OVERLAP - 6 },
   sheet: {
-    marginTop: -SHEET_OVERLAP, backgroundColor: colors.background,
-    borderTopLeftRadius: 28, borderTopRightRadius: 28,
-    paddingTop: spacing.xxl, paddingHorizontal: spacing.screen, gap: spacing.lg, alignItems: 'center',
-    shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 16, shadowOffset: { width: 0, height: -4 }, elevation: 8,
+    marginTop: -SHEET_OVERLAP, backgroundColor: '#F6F2FF',
+    borderTopLeftRadius: 32, borderTopRightRadius: 32,
+    paddingTop: spacing.xl, paddingHorizontal: spacing.screen, gap: spacing.lg, alignItems: 'center',
+    shadowColor: '#4B1A9E', shadowOpacity: 0.18, shadowRadius: 18, shadowOffset: { width: 0, height: -6 }, elevation: 10,
   },
   pill: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: 6, paddingHorizontal: 14,
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: 10, paddingHorizontal: 22,
     borderRadius: radius.pill, backgroundColor: colors.white,
-    borderWidth: 1, borderColor: 'rgba(124,58,237,0.12)',
+    borderWidth: 1, borderColor: 'rgba(124,58,237,0.14)',
+    shadowColor: '#4B1A9E', shadowOpacity: 0.08, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2,
   },
-  pillText: { fontFamily: fonts.bold, fontSize: 15, color: colors.ink },
+  pillText: { fontFamily: fonts.bold, fontSize: 16, color: '#2E1065' },
   buttons: { width: '100%', gap: spacing.md },
 });
