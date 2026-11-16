@@ -1,5 +1,5 @@
 // Gemini through the REST API (generateContent). No extra SDK.
-const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyCgmic3Os0B33Z5kbjsxY3-AhpRlKe5EXg';
 const MODEL = process.env.EXPO_PUBLIC_GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
