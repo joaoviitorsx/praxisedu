@@ -27,7 +27,8 @@
       "expo-router",
       "expo-video",
       "expo-web-browser",
-      "expo-image"
+      "expo-image",
+      "expo-audio"
     ]
   }
 }

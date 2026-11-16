@@ -17,3 +17,4 @@ export { default as Mascot } from './Mascot';
 export { default as AppTextInput } from './AppTextInput';
 export { default as FadeIn } from './FadeIn';
 export { default as GradientBackdrop } from './GradientBackdrop';
+export { default as AnonymousDoubtsModal } from './AnonymousDoubtsModal';

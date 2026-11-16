@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Screen } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
 import { getLessonMaterials, getLessonQuestions, loseLife, completeLesson } from '../../services/trailService';
+import { playClickSound, playCorrectSound, playWrongSound, playVictorySound } from '../../services/soundService';
 import LessonMaterials from './LessonMaterials';
 import { lessonResult } from '../../features/student/trailModel';
 import { currentLives } from '../../utils/lives';
@@ -68,6 +69,11 @@ export default function LessonScreen({ navigation, route }) {
     busy.current = true; setChecking(true);
     setPicks((old) => [...old, choice]);
     setVerified(true);
+    if (correctChoice) {
+      playCorrectSound();
+    } else {
+      playWrongSound();
+    }
     try {
       if (!correctChoice) setLives(await loseLife(user.uid));
     } catch (e) {
@@ -86,6 +92,7 @@ export default function LessonScreen({ navigation, route }) {
     try {
       const calculated = lessonResult(questions, picks, null);
       const saved = await completeLesson({ uid: user.uid, lessonId, name: profile.name, classId: profile.classId, result: calculated });
+      playVictorySound();
       setResult(saved);
     } catch (e) { Alert.alert('Não foi possível salvar a lição', `${friendlyError(e)} Tente novamente.`); }
     finally { setSaving(false); busy.current = false; }
@@ -96,6 +103,7 @@ export default function LessonScreen({ navigation, route }) {
     busy.current = true; setSaving(true);
     try {
       const saved = await completeLesson({ uid: user.uid, lessonId, name: profile.name, classId: profile.classId, result: { correct: 0, total: 0, stars: 1 } });
+      playVictorySound();
       setResult(saved);
     } catch (e) { Alert.alert('Não foi possível concluir a etapa', `${friendlyError(e)} Tente novamente.`); }
     finally { setSaving(false); busy.current = false; }
@@ -133,7 +141,7 @@ export default function LessonScreen({ navigation, route }) {
             const selected = choice === optionIndex;
             const correct = verified && optionIndex === question.answer;
             const wrong = verified && selected && !correct;
-            return <Pressable key={optionIndex} disabled={verified} onPress={() => setChoice(optionIndex)} accessibilityRole="radio" accessibilityState={{ selected, disabled: verified }} accessibilityLabel={`${LETTERS[optionIndex]}. ${option}${correct ? ', resposta correta' : wrong ? ', resposta incorreta' : ''}`}
+            return <Pressable key={optionIndex} disabled={verified} onPress={() => { playClickSound(); setChoice(optionIndex); }} accessibilityRole="radio" accessibilityState={{ selected, disabled: verified }} accessibilityLabel={`${LETTERS[optionIndex]}. ${option}${correct ? ', resposta correta' : wrong ? ', resposta incorreta' : ''}`}
               style={({ pressed }) => [styles.option, selected && styles.optionSelected, correct && styles.optionCorrect, wrong && styles.optionWrong, pressed && !verified && styles.pressed]}>
               <View style={[styles.letter, selected && styles.letterSelected, correct && styles.letterCorrect, wrong && styles.letterWrong]}><Text style={[styles.letterText, (selected || correct) && styles.letterTextOn]}>{LETTERS[optionIndex]}</Text></View>
               <Text style={styles.optionText}>{option}</Text>{(correct || wrong) && <Icon name={correct ? 'check-circle' : 'x-circle'} size={21} color={correct ? colors.green : colors.red} />}

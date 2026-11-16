@@ -7,12 +7,17 @@ import { colors, fonts, text } from '../../theme';
 export default function LessonFeedback({ correct, correctAnswer, explanation, lives, checking, isLast, loading, onContinue, bottomInset }) {
   const reduceMotion = useReducedMotion();
   const reveal = useRef(new Animated.Value(0)).current;
+  const bounce = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (reduceMotion) { reveal.setValue(1); return; }
+    if (reduceMotion) { reveal.setValue(1); bounce.setValue(1); return; }
     reveal.setValue(0);
-    Animated.timing(reveal, { toValue: 1, duration: 220, useNativeDriver: true }).start();
-  }, [correct, reduceMotion, reveal]);
+    bounce.setValue(0);
+    Animated.parallel([
+      Animated.timing(reveal, { toValue: 1, duration: 220, useNativeDriver: true }),
+      Animated.spring(bounce, { toValue: 1, friction: 4, tension: 90, useNativeDriver: true }),
+    ]).start();
+  }, [correct, reduceMotion, reveal, bounce]);
 
   const tone = correct ? colors.green : colors.red;
   return <Animated.View style={[styles.panel, correct ? styles.correct : styles.wrong, {
@@ -22,7 +27,9 @@ export default function LessonFeedback({ correct, correctAnswer, explanation, li
   }]} accessibilityLiveRegion="polite">
     <ScrollView style={styles.details} contentContainerStyle={styles.detailsContent} showsVerticalScrollIndicator={false}>
       <View style={styles.heading}>
-        <View style={[styles.mark, { backgroundColor: tone }]}><Icon name={correct ? 'check' : 'x'} size={18} color={colors.white} strokeWidth={3} /></View>
+        <Animated.View style={[styles.mark, { backgroundColor: tone, transform: [{ scale: bounce }] }]}>
+          <Icon name={correct ? 'check' : 'x'} size={18} color={colors.white} strokeWidth={3} />
+        </Animated.View>
         <Text style={[styles.title, { color: correct ? colors.greenDark : colors.redText }]}>{correct ? 'Muito bem, você acertou!' : 'Não foi dessa vez'}</Text>
       </View>
       {!correct && <View style={styles.answer}>

@@ -11,10 +11,12 @@ import ClassPerformanceTab from './ClassPerformanceTab';
 import ActivitiesScreen from './ActivitiesScreen';
 import AttendanceTab from './AttendanceTab';
 import ClassTrailsTab from './ClassTrailsTab';
+import ClassDoubtsTab from './ClassDoubtsTab';
 import { colors, fonts } from '../../theme';
 
 const TABS = [
   { key: 'students', label: 'Alunos' },
+  { key: 'doubts', label: 'Dúvidas' },
   { key: 'attendance', label: 'Chamadas' },
   { key: 'performance', label: 'Desempenho' },
   { key: 'trails', label: 'Trilhas' },
@@ -94,6 +96,8 @@ export default function ClassPanelScreen() {
         </View>
       ) : tab === 'students' ? (
         <ClassStudentsTab members={members} code={cls.code} />
+      ) : tab === 'doubts' ? (
+        <ClassDoubtsTab classId={classId} />
       ) : tab === 'trails' ? (
         <ClassTrailsTab classId={classId} grade={cls.grade} />
       ) : tab === 'activities' ? (
