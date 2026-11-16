@@ -45,7 +45,7 @@ const soundAssets = {
 
 // Pool of 2 preloaded players per sound so a fast re-tap never waits on a
 // seek of the player that is still playing.
-const POOL = 2;
+const POOL = 3;
 const players = {};
 const nextIdx = {};
 
@@ -186,8 +186,18 @@ function playNativeSound(name) {
   try {
     const player = getPlayer(name);
     if (!player) return;
-    if (player.currentTime > 0) player.seekTo?.(0)?.catch?.(() => {});
-    player.play();
+    if (player.currentTime > 0) {
+      // Finished/used player: play() without a completed rewind can be silent.
+      const p = player.seekTo?.(0);
+      if (p?.then) p.then(() => player.play(), () => {});
+      else player.play();
+    } else {
+      player.play();
+    }
+    // Rewind the next pool player now so its turn starts instantly.
+    const pool = players[name];
+    const next = pool?.[nextIdx[name]];
+    if (next && next !== player && next.currentTime > 0 && !next.playing) next.seekTo?.(0)?.catch?.(() => {});
   } catch {
     // Fallback or ignore
   }
@@ -294,13 +304,13 @@ export function setSoundEnabled(on) { soundEnabled = !!on; }
 
 const lastPlayed = {};
 
-// Generic subtle interaction sound + matching haptic. Same sound within 80ms is ignored.
+// Generic subtle interaction sound + matching haptic. Same sound within 50ms is ignored.
 export function playUiSound(name) {
   try {
     const def = UI_SOUNDS[name];
     if (!def) return;
     const now = Date.now();
-    if (now - (lastPlayed[name] ?? 0) < 80) return;
+    if (now - (lastPlayed[name] ?? 0) < 50) return;
     lastPlayed[name] = now;
     const [notes, peak, haptic] = def;
     if (soundEnabled) {

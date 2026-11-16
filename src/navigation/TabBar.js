@@ -24,6 +24,13 @@ export default function TabBar({
   // expo-router 58 top tabs pass emitter/navigateToTab; the legacy bottom tabs still pass navigation.
   const events = emitter ?? navigation;
 
+  // One tab sound per actual tab change, whether by press or swipe.
+  const lastIndex = useRef(state.index);
+  useEffect(() => {
+    if (lastIndex.current !== state.index) playUiSound('tab');
+    lastIndex.current = state.index;
+  }, [state.index]);
+
   return (
     <View
       style={[
@@ -49,7 +56,6 @@ export default function TabBar({
           });
 
           if (!focused && !event.defaultPrevented) {
-            playUiSound('tab');
             if (navigateToTab) {
               navigateToTab(route.key);
             } else {
