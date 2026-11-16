@@ -1,6 +1,6 @@
 import { playUiSound } from '../services/soundService';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, fonts } from '../theme';
@@ -19,17 +19,30 @@ export default function TabBar({
   accentSoft,
   accentDark,
   featuredRoute,
+  position,
 }) {
   const insets = useSafeAreaInsets();
+  // Follow the pager position live so the active tab highlights during/after a swipe,
+  // even before the navigation state catches up.
+  const [liveIndex, setLiveIndex] = useState(state.index);
+  useEffect(() => { setLiveIndex(state.index); }, [state.index]);
+  useEffect(() => {
+    if (!position?.addListener) return undefined;
+    const id = position.addListener(({ value }) => {
+      const next = Math.round(value);
+      setLiveIndex((current) => (current === next ? current : next));
+    });
+    return () => position.removeListener?.(id);
+  }, [position]);
   // expo-router 58 top tabs pass emitter/navigateToTab; the legacy bottom tabs still pass navigation.
   const events = emitter ?? navigation;
 
   // One tab sound per actual tab change, whether by press or swipe.
   const lastIndex = useRef(state.index);
   useEffect(() => {
-    if (lastIndex.current !== state.index) playUiSound('tab');
-    lastIndex.current = state.index;
-  }, [state.index]);
+    if (lastIndex.current !== liveIndex) playUiSound('tab');
+    lastIndex.current = liveIndex;
+  }, [liveIndex]);
 
   return (
     <View
@@ -45,7 +58,7 @@ export default function TabBar({
       ]}
     >
       {state.routes.map((route) => {
-        const focused = state.routes[state.index]?.key === route.key;
+        const focused = state.routes[liveIndex]?.key === route.key;
         const label = descriptors[route.key].options.title ?? route.name;
 
         const onPress = () => {
