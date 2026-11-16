@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Screen } from '../../components';
@@ -13,6 +13,7 @@ import { friendlyError } from '../../utils/errors';
 import { colors, fonts } from '../../theme';
 import LessonFeedback from './LessonFeedback';
 import LessonCompletion from './LessonCompletion';
+import { confirmAction, showAlert } from '../../utils/alert';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -62,9 +63,7 @@ export default function LessonScreen({ navigation, route }) {
 
   function leave() {
     if (result || (!index && !verified)) return navigation.goBack();
-    Alert.alert('Sair da lição?', 'O progresso desta tentativa ainda não foi salvo.', [
-      { text: 'Continuar', style: 'cancel' }, { text: 'Sair', style: 'destructive', onPress: () => navigation.goBack() },
-    ]);
+    confirmAction('Sair da lição?', 'O progresso desta tentativa ainda não foi salvo.', 'Sair', () => navigation.goBack());
   }
 
   async function verify() {
@@ -82,7 +81,7 @@ export default function LessonScreen({ navigation, route }) {
     } catch (e) {
       setPicks((old) => old.slice(0, -1));
       setVerified(false);
-      Alert.alert('Não foi possível registrar a resposta', friendlyError(e));
+      showAlert('Não foi possível registrar a resposta', friendlyError(e));
     }
     finally { setChecking(false); busy.current = false; }
   }
@@ -97,7 +96,7 @@ export default function LessonScreen({ navigation, route }) {
       const saved = await completeLesson({ uid: user.uid, lessonId, name: profile.name, classId: profile.classId, result: calculated });
       playVictorySound();
       setResult(saved);
-    } catch (e) { Alert.alert('Não foi possível salvar a lição', `${friendlyError(e)} Tente novamente.`); }
+    } catch (e) { showAlert('Não foi possível salvar a lição', `${friendlyError(e)} Tente novamente.`); }
     finally { setSaving(false); busy.current = false; }
   }
 
@@ -108,7 +107,7 @@ export default function LessonScreen({ navigation, route }) {
       const saved = await completeLesson({ uid: user.uid, lessonId, name: profile.name, classId: profile.classId, result: { correct: 0, total: 0, stars: 1 } });
       playVictorySound();
       setResult(saved);
-    } catch (e) { Alert.alert('Não foi possível concluir a etapa', `${friendlyError(e)} Tente novamente.`); }
+    } catch (e) { showAlert('Não foi possível concluir a etapa', `${friendlyError(e)} Tente novamente.`); }
     finally { setSaving(false); busy.current = false; }
   }
 
@@ -132,7 +131,7 @@ export default function LessonScreen({ navigation, route }) {
       : reading ? <>
         <ScrollView contentContainerStyle={[styles.content, styles.studyContent]} showsVerticalScrollIndicator={false}>
           <View style={styles.studyHeadingRow}><View style={styles.studyHeadingCopy}><Text style={styles.studyHeading}>Materiais de estudo</Text><Text style={styles.studyDescription}>Conteúdo preparado pelo professor</Text></View><Text style={styles.studyCountText}>{materials.length} {materials.length === 1 ? 'material' : 'materiais'}</Text></View>
-          <LessonMaterials materials={materials} onError={(cause) => Alert.alert('Não foi possível abrir o material', friendlyError(cause))} />
+          <LessonMaterials materials={materials} onError={(cause) => showAlert('Não foi possível abrir o material', friendlyError(cause))} />
         </ScrollView>
         <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
           <Button title={questions.length ? 'Responder questões' : 'Concluir etapa'} onPress={questions.length ? () => setReading(false) : finishContent} loading={saving} variant="success" icon={questions.length ? 'arrow-right' : 'check'} />

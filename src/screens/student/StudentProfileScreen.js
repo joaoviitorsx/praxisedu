@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Screen } from '../../components';
@@ -10,6 +10,7 @@ import { getProfileBadges, getProfileProgress } from '../../features/student/stu
 import { friendlyError } from '../../utils/errors';
 import { initials } from '../../utils/format';
 import { colors, fonts } from '../../theme';
+import { confirmAction } from '../../utils/alert';
 
 const BADGE_COLORS = {
   green: [colors.greenSoft, colors.green], yellow: [colors.yellowSoft, colors.yellowDark],
@@ -139,7 +140,7 @@ export default function StudentProfileScreen({ navigation }) {
 
         <View style={styles.account}>
           <Text style={styles.sectionTitle}>Conta</Text>
-          <Button title="Sair da conta" icon="log-out" variant="dangerOutline" onPress={() => Alert.alert('Sair da conta?', 'Você poderá entrar novamente quando quiser.', [{ text: 'Cancelar', style: 'cancel' }, { text: 'Sair', style: 'destructive', onPress: signOut }])} />
+          <Button title="Sair da conta" icon="log-out" variant="dangerOutline" onPress={() => confirmAction('Sair da conta?', 'Você poderá entrar novamente quando quiser.', 'Sair', signOut)} />
         </View>
       </View>}
     </ScrollView>

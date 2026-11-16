@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, Alert, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { View, Text, Pressable, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen, Button, Icon, Mascot } from '../../components';
@@ -10,6 +10,7 @@ import { friendlyError } from '../../utils/errors';
 import { initials } from '../../utils/format';
 import { colors, fonts, text } from '../../theme';
 import { classMascotsImage } from '../../constants/mascotImages';
+import { showAlert } from '../../utils/alert';
 
 // Screen 25 (Entrar na turma) and 25ok (Entrou na turma).
 // `welcome` is kept by the navigator: it is set BEFORE the join is written, so the
@@ -64,7 +65,7 @@ function JoinForm({ onJoining, onJoinFailed }) {
         <View style={{ flex: 1 }} />
         <Button title="Entrar na turma" onPress={submit} loading={loading} disabled={code.length < 6} />
         <Pressable
-          onPress={() => Alert.alert('Onde encontro o código?', 'Peça ao seu professor. O código tem 3 letras e 3 números, como BIO101, e aparece na turma dele.')}
+          onPress={() => showAlert('Onde encontro o código?', 'Peça ao seu professor. O código tem 3 letras e 3 números, como BIO101, e aparece na turma dele.')}
           style={styles.help}
         >
           <Text style={styles.helpText}>Onde encontro o código?</Text>

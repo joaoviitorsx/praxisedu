@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, Input, LoadingView, Mascot } from '../../components';
@@ -15,6 +15,7 @@ import { friendlyError } from '../../utils/errors';
 import { colors, fonts, text } from '../../theme';
 import TeacherTrailMap from './TeacherTrailMap';
 import StageMaterialsEditor from './StageMaterialsEditor';
+import { confirmAction } from '../../utils/alert';
 
 const MASCOTS = ['mito', 'sapo', 'medusa', 'teco', 'mandu', 'borbo', 'dinho', 'guara', 'abelha', 'baleia'];
 const blankQuestion = () => ({ id: allocateTrailId(), text: '', options: ['', '', '', ''], answer: null, explanation: '' });
@@ -91,10 +92,7 @@ export default function TrailEditorScreen() {
     setActiveLessonId(lesson.id); setPage('stage');
   }
   function removeLesson(lesson) {
-    Alert.alert('Remover etapa?', 'Ela sairá da trilha quando você publicar. O progresso antigo não será apagado.', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Remover', style: 'destructive', onPress: () => { patch({ lessons: lessons.filter((item) => item.id !== lesson.id) }); setActiveLessonId(null); setPage('map'); } },
-    ]);
+    confirmAction('Remover etapa?', 'Ela sairá da trilha quando você publicar. O progresso antigo não será apagado.', 'Remover', () => { patch({ lessons: lessons.filter((item) => item.id !== lesson.id) }); setActiveLessonId(null); setPage('map'); });
   }
   async function generateFor(lesson) {
     if (!form.topic.trim() || !lesson.title.trim()) { setError('Informe o tema e o nome da etapa antes de gerar questões.'); return; }
@@ -148,9 +146,7 @@ export default function TrailEditorScreen() {
     if (page === 'stage') { setPage('map'); setError(''); return; }
     if (page === 'map') { setPage('topic'); setError(''); return; }
     if (!dirty) { router.back(); return; }
-    Alert.alert('Sair sem salvar?', 'As mudanças deste tópico ainda não foram salvas.', [
-      { text: 'Continuar editando', style: 'cancel' }, { text: 'Sair', style: 'destructive', onPress: () => router.back() },
-    ]);
+    confirmAction('Sair sem salvar?', 'As mudanças deste tópico ainda não foram salvas.', 'Sair', () => router.back());
   }
 
   const heroTitle = page === 'topic' ? 'Defina o tópico' : page === 'stage' ? `Etapa ${activeIndex + 1}` : 'Monte a trilha';
