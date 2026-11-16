@@ -43,19 +43,37 @@ const soundAssets = {
   notify: require('../../assets/sounds/notify.wav'),
 };
 
+// Pool of 2 preloaded players per sound so a fast re-tap never waits on a
+// seek of the player that is still playing.
+const POOL = 2;
 const players = {};
+const nextIdx = {};
 
 function getPlayer(name) {
   if (Platform.OS === 'web') return null;
-  if (!createAudioPlayer) return null;
+  if (!createAudioPlayer || !soundAssets[name]) return null;
   try {
     if (!players[name]) {
-      players[name] = createAudioPlayer(soundAssets[name]);
+      players[name] = Array.from({ length: POOL }, () => createAudioPlayer(soundAssets[name]));
+      nextIdx[name] = 0;
     }
-    return players[name];
+    const pool = players[name];
+    const player = pool[nextIdx[name]];
+    nextIdx[name] = (nextIdx[name] + 1) % POOL;
+    return player;
   } catch {
     return null;
   }
+}
+
+// Preload everything at import so the first tap doesn't pay the load cost.
+if (Platform.OS !== 'web' && createAudioPlayer) {
+  try {
+    Object.keys(soundAssets).filter((n) => n !== 'victory').forEach((n) => {
+      getPlayer(n);
+      nextIdx[n] = 0;
+    });
+  } catch {}
 }
 
 let webCtx = null;
@@ -163,17 +181,13 @@ function playWebTone(type) {
   }
 }
 
-async function playNativeSound(name) {
+// Fire-and-forget: never await before play(), or the tap feels laggy.
+function playNativeSound(name) {
   try {
     const player = getPlayer(name);
-    if (player) {
-      if (typeof player.seekTo === 'function') {
-        try {
-          await player.seekTo(0);
-        } catch {}
-      }
-      player.play();
-    }
+    if (!player) return;
+    if (player.currentTime > 0) player.seekTo?.(0)?.catch?.(() => {});
+    player.play();
   } catch {
     // Fallback or ignore
   }

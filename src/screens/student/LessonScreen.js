@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Screen } from '../../components';
 import { useAuth } from '../../contexts/AuthContext';
 import { getLessonMaterials, getLessonQuestions, loseLife, completeLesson } from '../../services/trailService';
-import { playClickSound, playCorrectSound, playWrongSound, playVictorySound } from '../../services/soundService';
+import { playUiSound, playCorrectSound, playWrongSound, playVictorySound } from '../../services/soundService';
 import LessonMaterials from './LessonMaterials';
 import { lessonResult } from '../../features/student/trailModel';
 import { currentLives } from '../../utils/lives';
@@ -134,7 +134,7 @@ export default function LessonScreen({ navigation, route }) {
           <LessonMaterials materials={materials} onError={(cause) => showAlert('Não foi possível abrir o material', friendlyError(cause))} />
         </ScrollView>
         <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
-          <Button title={questions.length ? 'Responder questões' : 'Concluir etapa'} onPress={questions.length ? () => setReading(false) : finishContent} loading={saving} variant="success" icon={questions.length ? 'arrow-right' : 'check'} />
+          <Button title={questions.length ? 'Responder questões' : 'Concluir etapa'} onPress={questions.length ? () => setReading(false) : finishContent} loading={saving} variant="success" icon={questions.length ? 'arrow-right' : 'check'} sound={questions.length ? 'tap' : false} />
         </View>
       </> : <>
         <ScrollView ref={scrollRef} contentContainerStyle={[styles.content, styles.questionContent]} showsVerticalScrollIndicator={false}>
@@ -143,7 +143,7 @@ export default function LessonScreen({ navigation, route }) {
             const selected = choice === optionIndex;
             const correct = verified && optionIndex === question.answer;
             const wrong = verified && selected && !correct;
-            return <Pressable key={optionIndex} disabled={verified} onPress={() => { playClickSound(); setChoice(optionIndex); }} accessibilityRole="radio" accessibilityState={{ selected, disabled: verified }} accessibilityLabel={`${LETTERS[optionIndex]}. ${option}${correct ? ', resposta correta' : wrong ? ', resposta incorreta' : ''}`}
+            return <Pressable key={optionIndex} disabled={verified} onPressIn={() => { if (!verified) playUiSound('select'); }} onPress={() => setChoice(optionIndex)} accessibilityRole="radio" accessibilityState={{ selected, disabled: verified }} accessibilityLabel={`${LETTERS[optionIndex]}. ${option}${correct ? ', resposta correta' : wrong ? ', resposta incorreta' : ''}`}
               style={({ pressed }) => [styles.option, selected && styles.optionSelected, correct && styles.optionCorrect, wrong && styles.optionWrong, pressed && !verified && styles.pressed]}>
               <View style={[styles.letter, selected && styles.letterSelected, correct && styles.letterCorrect, wrong && styles.letterWrong]}><Text style={[styles.letterText, (selected || correct) && styles.letterTextOn]}>{LETTERS[optionIndex]}</Text></View>
               <Text style={styles.optionText}>{option}</Text>{(correct || wrong) && <Icon name={correct ? 'check-circle' : 'x-circle'} size={21} color={correct ? colors.green : colors.red} />}
@@ -169,7 +169,7 @@ export default function LessonScreen({ navigation, route }) {
           />
         ) : (
           <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
-            <Button title="Verificar resposta" onPress={verify} disabled={choice === null} loading={checking} variant="primary" icon="check" />
+            <Button title="Verificar resposta" onPress={verify} disabled={choice === null} loading={checking} variant="primary" icon="check" sound={false} />
           </View>
         )}
       </>}
