@@ -7,7 +7,6 @@ import {
   Pressable,
   Modal,
   ScrollView,
-  Alert,
   TextInput,
   KeyboardAvoidingView,
   Platform,
@@ -25,6 +24,7 @@ import {
 } from '../../services/notesService';
 import { playClickSound, playCorrectSound, playWrongSound } from '../../services/soundService';
 import { colors, fonts, radius } from '../../theme';
+import { confirmAction, showAlert } from '../../utils/alert';
 
 function formatDate(timestamp) {
   if (!timestamp) return '';
@@ -98,7 +98,7 @@ export default function NotesScreen({ navigation }) {
 
   async function handleSaveNote() {
     if (!noteTitle.trim() && !noteContent.trim()) {
-      Alert.alert('Anotação vazia', 'Escreva ao menos um título ou conteúdo para salvar.');
+      showAlert('Anotação vazia', 'Escreva ao menos um título ou conteúdo para salvar.');
       return;
     }
 
@@ -123,7 +123,7 @@ export default function NotesScreen({ navigation }) {
       playCorrectSound();
       setModalVisible(false);
     } catch {
-      Alert.alert('Erro', 'Não foi possível salvar a anotação. Tente novamente.');
+      showAlert('Erro', 'Não foi possível salvar a anotação. Tente novamente.');
     } finally {
       setSaving(false);
     }
@@ -131,22 +131,15 @@ export default function NotesScreen({ navigation }) {
 
   function handleDeleteNote(note) {
     playClickSound();
-    Alert.alert('Excluir anotação', `Tem certeza que deseja apagar "${note.title || 'esta anotação'}"?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteNote(user.uid, note.id);
-            playWrongSound();
-            if (modalVisible) setModalVisible(false);
-          } catch {
-            Alert.alert('Erro', 'Não foi possível excluir a anotação.');
-          }
-        },
-      },
-    ]);
+    confirmAction('Excluir anotação', `Tem certeza que deseja apagar “${note.title || 'esta anotação'}”?`, 'Excluir', async () => {
+      try {
+        await deleteNote(user.uid, note.id);
+        playWrongSound();
+        setModalVisible(false);
+      } catch {
+        showAlert('Erro', 'Não foi possível excluir a anotação.');
+      }
+    });
   }
 
   const topicColorMap = useMemo(() => {
@@ -478,7 +471,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: radius.button,
     paddingHorizontal: 12,
     height: 42,
     gap: 8,
@@ -496,7 +489,7 @@ const styles = StyleSheet.create({
   topicChip: {
     paddingHorizontal: 14,
     paddingVertical: 7,
-    borderRadius: radius.full,
+    borderRadius: radius.pill,
     borderWidth: 1.5,
     borderColor: colors.border,
     backgroundColor: colors.surface,
@@ -528,7 +521,7 @@ const styles = StyleSheet.create({
   },
   noteCard: {
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    borderRadius: radius.card,
     padding: 16,
     borderWidth: 1,
     borderColor: colors.border,
@@ -554,7 +547,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: radius.full,
+    borderRadius: radius.pill,
   },
   tagDot: {
     width: 7,
@@ -617,7 +610,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.greenDark,
     paddingVertical: 13,
     paddingHorizontal: 20,
-    borderRadius: radius.full,
+    borderRadius: radius.pill,
     shadowColor: colors.greenDark,
     shadowOpacity: 0.35,
     shadowRadius: 10,
@@ -687,7 +680,7 @@ const styles = StyleSheet.create({
   modalTopicChip: {
     paddingHorizontal: 13,
     paddingVertical: 7,
-    borderRadius: radius.full,
+    borderRadius: radius.pill,
     borderWidth: 1.5,
     borderColor: colors.border,
     backgroundColor: colors.surface,
@@ -701,7 +694,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: radius.button,
     paddingHorizontal: 14,
     height: 46,
     fontFamily: fonts.bold,
@@ -712,7 +705,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: radius.button,
     padding: 14,
     fontFamily: fonts.medium,
     fontSize: 14,

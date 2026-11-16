@@ -16,7 +16,8 @@ import Icon from './Icon';
 import { useAuth } from '../contexts/AuthContext';
 import { sendAnonymousDoubt, listenStudentDoubts } from '../services/doubtService';
 import { playClickSound, playCorrectSound } from '../services/soundService';
-import { colors, fonts, radius } from '../theme';
+import { colors, fonts } from '../theme';
+import { friendlyError } from '../utils/errors';
 
 const TOPICS = [
   { id: 'geral', label: 'Geral' },
@@ -36,6 +37,7 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
   const [myDoubts, setMyDoubts] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
   const [successMsg, setSuccessMsg] = useState(false);
+  const [sendError, setSendError] = useState('');
 
   useEffect(() => {
     if (!visible || !classId || !user?.uid) return;
@@ -54,8 +56,9 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
   }, [visible, classId, user?.uid]);
 
   async function handleSend() {
-    if (!text.trim() || sending) return;
+    if (text.trim().length < 2 || sending) return;
     setSending(true);
+    setSendError('');
     try {
       await sendAnonymousDoubt(classId, {
         text,
@@ -69,8 +72,8 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
         setSuccessMsg(false);
         setActiveTab('list');
       }, 1500);
-    } catch {
-      // Handle error gracefully
+    } catch (cause) {
+      setSendError(friendlyError(cause));
     } finally {
       setSending(false);
     }
@@ -168,6 +171,7 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
               />
               <Text style={styles.counter}>{text.length}/400 caracteres</Text>
 
+              {!!sendError && <Text style={styles.errorText}>Não foi possível enviar: {sendError}</Text>}
               {successMsg ? (
                 <View style={styles.successBox}>
                   <Icon name="check-circle" size={20} color={colors.greenDark} />
@@ -178,7 +182,7 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
                   title={sending ? 'Enviando ao professor...' : 'Enviar Dúvida ao Professor'}
                   icon="send"
                   variant="success"
-                  disabled={!text.trim() || sending}
+                  disabled={text.trim().length < 2 || sending}
                   loading={sending}
                   onPress={handleSend}
                 />
@@ -244,6 +248,7 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
 }
 
 const styles = StyleSheet.create({
+  errorText: { fontFamily: fonts.semibold, fontSize: 13, color: colors.redText, marginBottom: 8 },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.45)',
@@ -299,7 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E8F5E9',
-    borderRadius: radius.md || 12,
+    borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 9,
     gap: 8,
@@ -315,7 +320,7 @@ const styles = StyleSheet.create({
   tabsRow: {
     flexDirection: 'row',
     backgroundColor: '#F3F4F6',
-    borderRadius: radius.md || 12,
+    borderRadius: 12,
     padding: 4,
     marginBottom: 16,
   },
@@ -395,15 +400,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    borderRadius: radius.md || 12,
+    borderRadius: 12,
     padding: 12,
     fontSize: 14,
-    fontFamily: fonts.regular,
+    fontFamily: fonts.medium,
     color: colors.ink,
     minHeight: 110,
   },
   counter: {
-    fontFamily: fonts.regular,
+    fontFamily: fonts.medium,
     fontSize: 11,
     color: colors.gray,
     textAlign: 'right',
@@ -416,7 +421,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 14,
     backgroundColor: '#E8F5E9',
-    borderRadius: radius.md || 12,
+    borderRadius: 12,
   },
   successText: {
     fontFamily: fonts.bold,
@@ -438,7 +443,7 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   emptyDesc: {
-    fontFamily: fonts.regular,
+    fontFamily: fonts.medium,
     fontSize: 13,
     color: colors.gray,
     textAlign: 'center',
@@ -446,7 +451,7 @@ const styles = StyleSheet.create({
   },
   doubtCard: {
     backgroundColor: '#F9FAFB',
-    borderRadius: radius.md || 12,
+    borderRadius: 12,
     padding: 14,
     borderWidth: 1,
     borderColor: '#E5E7EB',
@@ -493,7 +498,7 @@ const styles = StyleSheet.create({
     color: colors.greenDark,
   },
   doubtText: {
-    fontFamily: fonts.regular,
+    fontFamily: fonts.medium,
     fontSize: 14,
     lineHeight: 20,
     color: colors.ink,

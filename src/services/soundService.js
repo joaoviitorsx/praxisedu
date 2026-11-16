@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 let Haptics = null;
 try {
   Haptics = require('expo-haptics');
-} catch (e) {
+} catch {
   // Graceful fallback
 }
 
@@ -20,7 +20,7 @@ try {
       playsInSilentMode: true,
     }).catch(() => {});
   }
-} catch (e) {
+} catch {
   // Graceful fallback if native module is unavailable
 }
 

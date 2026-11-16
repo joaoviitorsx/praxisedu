@@ -64,8 +64,12 @@ export async function updateNote(userId, noteId, updates) {
     ...updates,
     updatedAt: Date.now(),
   };
-  if (payload.title !== undefined) payload.title = payload.title.trim();
-  if (payload.content !== undefined) payload.content = payload.content.trim();
+  if (payload.title !== undefined || payload.content !== undefined) {
+    const check = validateNote({ title: payload.title, content: payload.content });
+    if (!check.valid) throw new Error(check.error);
+    payload.title = check.title;
+    payload.content = check.content;
+  }
 
   await update(noteRef, payload);
 }

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Alert,
   ActivityIndicator,
   Modal,
   TextInput,
@@ -16,6 +15,7 @@ import { EmptyState, Icon, Button } from '../../components';
 import { listenClassDoubts, toggleDoubtStatus, deleteDoubt, replyDoubt } from '../../services/doubtService';
 import { playClickSound, playCorrectSound } from '../../services/soundService';
 import { colors, fonts, radius, text } from '../../theme';
+import { confirmAction, showAlert } from '../../utils/alert';
 
 export default function ClassDoubtsTab({ classId }) {
   const [doubts, setDoubts] = useState(undefined);
@@ -61,31 +61,20 @@ export default function ClassDoubtsTab({ classId }) {
       await toggleDoubtStatus(classId, item.id, item.status);
       if (item.status === 'pending') playCorrectSound();
     } catch {
-      Alert.alert('Erro', 'Não foi possível atualizar o status da dúvida.');
+      showAlert('Erro', 'Não foi possível atualizar o status da dúvida.');
     } finally {
       setUpdatingId(null);
     }
   }
 
   function handleDelete(item) {
-    Alert.alert(
-      'Excluir dúvida?',
-      'Esta dúvida será removida permanentemente do mural da turma.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteDoubt(classId, item.id);
-            } catch {
-              Alert.alert('Erro', 'Não foi possível excluir.');
-            }
-          },
-        },
-      ]
-    );
+    confirmAction('Excluir dúvida?', 'Esta dúvida será removida permanentemente do mural da turma.', 'Excluir', async () => {
+      try {
+        await deleteDoubt(classId, item.id);
+      } catch {
+        showAlert('Erro', 'Não foi possível excluir.');
+      }
+    });
   }
 
   function handleOpenReply(item) {
@@ -102,7 +91,7 @@ export default function ClassDoubtsTab({ classId }) {
       setReplyTarget(null);
       setReplyInput('');
     } catch {
-      Alert.alert('Erro', 'Não foi possível salvar a resposta do professor.');
+      showAlert('Erro', 'Não foi possível salvar a resposta do professor.');
     } finally {
       setSavingReply(false);
     }
@@ -127,7 +116,7 @@ export default function ClassDoubtsTab({ classId }) {
               </View>
             </View>
             <Text style={text.caption}>
-              Perguntas enviadas por alunos tímidos através da Caixinha da Timidez.
+              Dúvidas enviadas pelos alunos no Mural de Dúvidas. O nome de quem perguntou não aparece.
             </Text>
           </View>
 
@@ -187,7 +176,7 @@ export default function ClassDoubtsTab({ classId }) {
             </Pressable>
           </View>
 
-          <Text style={styles.questionText}>"{item.text}"</Text>
+          <Text style={styles.questionText}>“{item.text}”</Text>
 
           {item.teacherReply ? (
             <View style={styles.replyCard}>
@@ -247,7 +236,7 @@ export default function ClassDoubtsTab({ classId }) {
           message={
             filter === 'pending'
               ? 'Parabéns! Todas as dúvidas enviadas pelos alunos foram explicadas em sala.'
-              : 'Os alunos podem enviar dúvidas anônimas pela Caixinha da Timidez no celular deles.'
+              : 'Os alunos enviam dúvidas pelo Mural de Dúvidas, na tela Minha Turma do app.'
           }
         />
       }
@@ -270,7 +259,7 @@ export default function ClassDoubtsTab({ classId }) {
           {replyTarget ? (
             <View style={styles.modalOriginalDoubt}>
               <Text style={styles.modalOriginalTopic}>Assunto: {replyTarget.topic?.toUpperCase()}</Text>
-              <Text style={styles.modalOriginalText}>"{replyTarget.text}"</Text>
+              <Text style={styles.modalOriginalText}>“{replyTarget.text}”</Text>
             </View>
           ) : null}
 
@@ -308,7 +297,7 @@ export default function ClassDoubtsTab({ classId }) {
         </View>
       </KeyboardAvoidingView>
     </Modal>
-  </>;
+    </>
   );
 }
 
@@ -364,7 +353,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 14,
-    borderRadius: radius.md || 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     gap: 2,
@@ -411,7 +400,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: radius.md || 14,
+    borderRadius: 14,
     padding: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -586,7 +575,7 @@ const styles = StyleSheet.create({
     borderColor: '#CBD5E1',
     borderRadius: 10,
     padding: 12,
-    fontFamily: fonts.regular,
+    fontFamily: fonts.medium,
     fontSize: 14,
     color: colors.ink,
     backgroundColor: '#FFFFFF',

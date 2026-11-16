@@ -9,11 +9,7 @@ const LETTERS = ['A', 'B', 'C', 'D'];
 export default function LessonCompletion({ title, mascot, completionKind, result, questions, picks, materialsCount, topInset, bottomInset, onLeave }) {
   const reduceMotion = useReducedMotion();
   const entrance = useRef(new Animated.Value(0)).current;
-  const starAnims = [
-    useRef(new Animated.Value(0)).current,
-    useRef(new Animated.Value(0)).current,
-    useRef(new Animated.Value(0)).current,
-  ];
+  const starAnims = useRef([0, 1, 2].map(() => new Animated.Value(0))).current;
   const hasQuestions = questions.length > 0;
   const accuracy = hasQuestions ? Math.round(result.correct / result.total * 100) : null;
   const mistakes = questions.filter((question, index) => picks[index] !== question.answer);
@@ -34,7 +30,7 @@ export default function LessonCompletion({ title, mascot, completionKind, result
         Animated.spring(a, { toValue: 1, friction: 4, tension: 90, useNativeDriver: true })
       )),
     ]).start();
-  }, [entrance, reduceMotion]);
+  }, [entrance, starAnims, reduceMotion]);
 
   return <View style={styles.root}>
     <ScrollView contentContainerStyle={[styles.content, { paddingTop: topInset + 20 }]} showsVerticalScrollIndicator={false}>

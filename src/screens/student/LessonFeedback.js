@@ -26,6 +26,7 @@ export default function LessonFeedback({
   const bounce = useRef(new Animated.Value(0)).current;
   const [savedNote, setSavedNote] = useState(false);
   const [savingNote, setSavingNote] = useState(false);
+  const [noteError, setNoteError] = useState(false);
 
   useEffect(() => {
     if (reduceMotion) { reveal.setValue(1); bounce.setValue(1); return; }
@@ -41,6 +42,7 @@ export default function LessonFeedback({
     if (!uid || savedNote || savingNote) return;
     playClickSound();
     setSavingNote(true);
+    setNoteError(false);
     try {
       const noteTitle = questionText ? questionText.slice(0, 70) : 'Dica de Biologia';
       const noteContent = [
@@ -59,7 +61,8 @@ export default function LessonFeedback({
       playCorrectSound();
       setSavedNote(true);
     } catch {
-      // Ignora erro suavemente para não travar o fluxo da lição
+      // Não trava a lição: só avisa e deixa tentar de novo.
+      setNoteError(true);
     } finally {
       setSavingNote(false);
     }
@@ -114,7 +117,7 @@ export default function LessonFeedback({
               color={savedNote ? colors.greenDark : colors.ink}
             />
             <Text style={[styles.saveBtnText, savedNote && styles.saveBtnTextDone]}>
-              {savedNote ? 'Salvo no seu Caderno de Notas!' : savingNote ? 'Salvando no Caderno...' : 'Guardar no meu Caderno'}
+              {savedNote ? 'Salvo no seu Caderno de Notas!' : savingNote ? 'Salvando no Caderno...' : noteError ? 'Não deu para salvar. Tentar de novo' : 'Guardar no meu Caderno'}
             </Text>
           </Pressable>
         ) : null}

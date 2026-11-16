@@ -242,8 +242,8 @@
 
     "anonymousDoubts": {
       "$classId": {
-        ".indexOn": ["createdAt"],
-        ".read": "auth != null && (root.child('classes/' + $classId + '/teacherId').val() === auth.uid || root.child('classMembers/' + $classId + '/' + auth.uid).exists())",
+        ".indexOn": ["createdAt", "studentId"],
+        ".read": "auth != null && (root.child('classes/' + $classId + '/teacherId').val() === auth.uid || (root.child('classMembers/' + $classId + '/' + auth.uid).exists() && query.orderByChild === 'studentId' && query.equalTo === auth.uid))",
         "$doubtId": {
           ".write": "auth != null && (root.child('classes/' + $classId + '/teacherId').val() === auth.uid || (!data.exists() && newData.child('studentId').val() === auth.uid && root.child('classMembers/' + $classId + '/' + auth.uid).exists()))",
           ".validate": "newData.hasChildren(['text', 'topic', 'status', 'createdAt'])",

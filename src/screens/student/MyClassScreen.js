@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   content: { paddingTop: 16, paddingBottom: 42, gap: 12 },
   doubtCard: {
     backgroundColor: '#F3E8FF',
-    borderRadius: radius.md || 14,
+    borderRadius: 14,
     padding: 14,
     flexDirection: 'row',
     alignItems: 'center',

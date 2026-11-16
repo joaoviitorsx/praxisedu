@@ -1,4 +1,4 @@
-import { ref, push, set, update, remove, onValue, serverTimestamp } from 'firebase/database';
+import { ref, push, set, update, remove, onValue, serverTimestamp, query, orderByChild, equalTo } from 'firebase/database';
 import { db } from '../config/firebase';
 
 /**
@@ -33,7 +33,8 @@ export function listenClassDoubts(classId, onData, onError) {
  */
 export function listenStudentDoubts(classId, studentId, onData, onError) {
   if (!classId || !studentId) return () => {};
-  const doubtsRef = ref(db, `anonymousDoubts/${classId}`);
+  // Query by studentId: the rules only let a student read his own doubts.
+  const doubtsRef = query(ref(db, `anonymousDoubts/${classId}`), orderByChild('studentId'), equalTo(studentId));
   return onValue(
     doubtsRef,
     (snapshot) => {
