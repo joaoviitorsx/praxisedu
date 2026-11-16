@@ -1,7 +1,7 @@
 export function rankingRows(raw = {}, uid) {
   return Object.entries(raw ?? {}).map(([id, value]) => ({
-    id, name: value.name || 'Estudante', points: Math.max(0, Number(value.points) || 0),
-    duelsWon: value.duelsWon ?? 0, isMe: id === uid,
+    id, name: value?.name || 'Estudante', points: Math.max(0, Number(value?.points) || 0),
+    duelsWon: value?.duelsWon ?? 0, isMe: id === uid,
   })).sort((a, b) => b.points - a.points || a.name.localeCompare(b.name, 'pt-BR') || a.id.localeCompare(b.id))
     .map((row, index) => ({ ...row, position: index + 1 }));
 }
