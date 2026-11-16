@@ -110,6 +110,16 @@ export default function StudentProfileScreen({ navigation }) {
           </View><Icon name="chevron-right" size={21} color={colors.gray} />
         </Pressable> : <View style={styles.emptyClass}><Text style={styles.classDetail}>Sua turma não está disponível no momento.</Text></View>}
 
+        <Text style={[styles.sectionTitle, styles.sectionGap]}>Estudos & Anotações</Text>
+        <Pressable onPress={() => navigation.navigate('Notes')} style={({ pressed }) => [styles.classCard, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Abrir meu caderno de anotações">
+          <View style={[styles.classIcon, { backgroundColor: colors.yellowSoft }]}><Icon name="book-open" size={24} color={colors.yellowDark} /></View>
+          <View style={styles.classCopy}>
+            <Text style={styles.className} numberOfLines={1}>Meu Caderno Pessoal</Text>
+            <Text style={styles.classDetail} numberOfLines={2}>Resumos, macetes e conceitos de biologia salvos</Text>
+          </View>
+          <Icon name="chevron-right" size={21} color={colors.gray} />
+        </Pressable>
+
         <View style={[styles.sectionHeading, styles.sectionGap]}>
           <Text style={styles.sectionTitle}>Conquistas</Text>
           <Text style={styles.badgeCount}>{progress.earned} de {progress.total}</Text>

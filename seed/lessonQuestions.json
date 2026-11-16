@@ -3,92 +3,234 @@
     "q1": {
       "order": 1,
       "text": "Qual é a unidade básica da vida?",
-      "options": [
-        "Átomo",
-        "Célula",
-        "Tecido",
-        "Órgão"
-      ],
+      "options": ["Átomo", "Célula", "Tecido", "Órgão"],
       "answer": 1,
-      "explanation": "Todos os seres vivos são formados por células."
+      "explanation": "Todos os seres vivos são formados por células.",
+      "mnemonic": "Teoria Celular: Da menor bactéria ao ser humano, a célula é o tijolo fundamental da vida!"
     },
     "q2": {
       "order": 2,
       "text": "Células sem núcleo definido são chamadas de:",
-      "options": [
-        "Eucariontes",
-        "Procariontes",
-        "Gametas",
-        "Neurônios"
-      ],
+      "options": ["Eucariontes", "Procariontes", "Gametas", "Neurônios"],
       "answer": 1,
-      "explanation": "Procariontes, como as bactérias, não têm carioteca."
+      "explanation": "Procariontes, como as bactérias, não têm carioteca.",
+      "mnemonic": "PROcarionte = PRIMITIVA (sem carioteca). EUcarionte = EVOLUÍDA (tem núcleo e organelas)!"
     }
   },
   "g1_cyto_02": {
     "q1": {
       "order": 1,
       "text": "Qual organela realiza a respiração celular?",
-      "options": [
-        "Ribossomo",
-        "Mitocôndria",
-        "Complexo de Golgi",
-        "Lisossomo"
-      ],
+      "options": ["Ribossomo", "Mitocôndria", "Complexo de Golgi", "Lisossomo"],
       "answer": 1,
-      "explanation": "A mitocôndria produz ATP."
+      "explanation": "A mitocôndria produz ATP na respiração celular.",
+      "mnemonic": "Mitocôndria = A 'Moto/Usina' da célula (queima combustível e gera energia ATP)!"
     },
     "q2": {
       "order": 2,
       "text": "Onde ocorre a síntese de proteínas?",
-      "options": [
-        "Ribossomo",
-        "Vacúolo",
-        "Centríolo",
-        "Lisossomo"
-      ],
+      "options": ["Ribossomo", "Vacúolo", "Centríolo", "Lisossomo"],
       "answer": 0,
-      "explanation": "Os ribossomos traduzem o RNA mensageiro em proteínas."
+      "explanation": "Os ribossomos traduzem o RNA mensageiro em proteínas.",
+      "mnemonic": "Ribossomo = Rrrrico em proteínas (fábrica de montagem das cadeias proteicas)!"
     }
   },
   "g1_cyto_03": {
-    "q1": { "order": 1, "text": "Qual é a principal função da membrana plasmática?", "options": ["Produzir energia", "Controlar a entrada e saída de substâncias", "Armazenar DNA", "Fabricar ribossomos"], "answer": 1, "explanation": "A membrana delimita a célula e regula as trocas com o ambiente." },
-    "q2": { "order": 2, "text": "Como se chama a passagem de água por uma membrana sem gasto de energia?", "options": ["Fotossíntese", "Osmose", "Digestão", "Respiração"], "answer": 1, "explanation": "Osmose é o movimento de água através de uma membrana semipermeável." }
+    "q1": {
+      "order": 1,
+      "text": "Qual é a principal função da membrana plasmática?",
+      "options": ["Produzir energia", "Controlar a entrada e saída de substâncias", "Armazenar DNA", "Fabricar ribossomos"],
+      "answer": 1,
+      "explanation": "A membrana delimita a célula e regula as trocas com o ambiente.",
+      "mnemonic": "Membrana = O porteiro seletivo da célula (Mosaico Fluido com bicamada fosfolipídica)!"
+    },
+    "q2": {
+      "order": 2,
+      "text": "Como se chama a passagem de água por uma membrana sem gasto de energia?",
+      "options": ["Fotossíntese", "Osmose", "Digestão", "Respiração"],
+      "answer": 1,
+      "explanation": "Osmose é o movimento de água através de uma membrana semipermeável.",
+      "mnemonic": "Osmose = A água vai de onde tem menos soluto para onde tem mais soluto (a água busca diluir)!"
+    }
   },
   "g1_cyto_04": {
-    "q1": { "order": 1, "text": "Qual molécula é a principal fonte imediata de energia da célula?", "options": ["ATP", "DNA", "Amido", "Celulose"], "answer": 0, "explanation": "O ATP armazena energia utilizável nos processos celulares." },
-    "q2": { "order": 2, "text": "Na respiração celular aeróbica, qual gás é consumido?", "options": ["Nitrogênio", "Oxigênio", "Hélio", "Gás carbônico"], "answer": 1, "explanation": "O oxigênio participa das etapas finais da respiração aeróbica." }
+    "q1": {
+      "order": 1,
+      "text": "Qual molécula é a principal fonte imediata de energia da célula?",
+      "options": ["ATP", "DNA", "Amido", "Celulose"],
+      "answer": 0,
+      "explanation": "O ATP armazena energia utilizável nos processos celulares.",
+      "mnemonic": "ATP = A 'moeda energética' que a célula gasta em todos os seus processos vitais!"
+    },
+    "q2": {
+      "order": 2,
+      "text": "Na respiração celular aeróbica, qual gás é consumido?",
+      "options": ["Nitrogênio", "Oxigênio", "Hélio", "Gás carbônico"],
+      "answer": 1,
+      "explanation": "O oxigênio participa das etapas finais da respiração aeróbica como aceptor final de elétrons."
+    }
   },
   "g1_cyto_05": {
-    "q1": { "order": 1, "text": "Qual estrutura contém o material genético nas células eucariontes?", "options": ["Núcleo", "Ribossomo", "Membrana", "Citoplasma"], "answer": 0, "explanation": "Nas células eucariontes, o DNA fica principalmente no núcleo." },
-    "q2": { "order": 2, "text": "Qual organela produz grande parte do ATP da célula?", "options": ["Lisossomo", "Mitocôndria", "Vacúolo", "Centríolo"], "answer": 1, "explanation": "A mitocôndria realiza etapas da respiração celular." }
+    "q1": {
+      "order": 1,
+      "text": "Qual estrutura contém o material genético nas células eucariontes?",
+      "options": ["Núcleo", "Ribossomo", "Membrana", "Citoplasma"],
+      "answer": 0,
+      "explanation": "Nas células eucariontes, o DNA fica protegido dentro do núcleo pela carioteca."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual organela produz grande parte do ATP da célula?",
+      "options": ["Lisossomo", "Mitocôndria", "Vacúolo", "Centríolo"],
+      "answer": 1,
+      "explanation": "A mitocôndria realiza etapas da respiração celular."
+    }
   },
   "g1_micro_01": {
-    "q1": { "order": 1, "text": "Microrganismos são seres ou agentes que geralmente...", "options": ["Só vivem no mar", "Precisam de microscópio para ser vistos", "São sempre perigosos", "Não têm material genético"], "answer": 1, "explanation": "Muitos microrganismos são pequenos demais para serem vistos a olho nu." },
-    "q2": { "order": 2, "text": "Qual destes é um microrganismo celular?", "options": ["Bactéria", "Pedra", "Água", "Luz"], "answer": 0, "explanation": "Bactérias são seres unicelulares." }
+    "q1": {
+      "order": 1,
+      "text": "Microrganismos são seres ou agentes que geralmente...",
+      "options": ["Só vivem no mar", "Precisam de microscópio para ser vistos", "São sempre perigosos", "Não têm material genético"],
+      "answer": 1,
+      "explanation": "Muitos microrganismos são pequenos demais para serem vistos a olho nu."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual destes é um microrganismo celular?",
+      "options": ["Bactéria", "Pedra", "Água", "Luz"],
+      "answer": 0,
+      "explanation": "Bactérias são seres unicelulares."
+    }
   },
   "g1_micro_02": {
-    "q1": { "order": 1, "text": "As bactérias são classificadas como...", "options": ["Eucariontes", "Procariontes", "Plantas", "Animais"], "answer": 1, "explanation": "Bactérias não têm núcleo delimitado por membrana." },
-    "q2": { "order": 2, "text": "Qual afirmação sobre bactérias está correta?", "options": ["Todas causam doenças", "Nenhuma vive no solo", "Algumas ajudam na decomposição", "Todas são vírus"], "answer": 2, "explanation": "Muitas bactérias participam da decomposição da matéria orgânica." }
+    "q1": {
+      "order": 1,
+      "text": "As bactérias são classificadas como...",
+      "options": ["Eucariontes", "Procariontes", "Plantas", "Animais"],
+      "answer": 1,
+      "explanation": "Bactérias não têm núcleo delimitado por membrana."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual afirmação sobre bactérias está correta?",
+      "options": ["Todas causam doenças", "Nenhuma vive no solo", "Algumas ajudam na decomposição", "Todas são vírus"],
+      "answer": 2,
+      "explanation": "Muitas bactérias participam da decomposição da matéria orgânica e ciclo do nitrogênio."
+    }
   },
   "g1_micro_03": {
-    "q1": { "order": 1, "text": "O que os vírus precisam para se multiplicar?", "options": ["Uma célula hospedeira", "Apenas água", "Luz solar", "Solo fértil"], "answer": 0, "explanation": "Vírus dependem da maquinaria de uma célula hospedeira para se replicar." },
-    "q2": { "order": 2, "text": "Qual medida ajuda a prevenir algumas doenças virais?", "options": ["Compartilhar copos", "Vacinação", "Evitar lavar as mãos", "Usar antibiótico sempre"], "answer": 1, "explanation": "Vacinas preparam o sistema imunológico contra vírus específicos." }
+    "q1": {
+      "order": 1,
+      "text": "O que os vírus precisam para se multiplicar?",
+      "options": ["Uma célula hospedeira", "Apenas água", "Luz solar", "Solo fértil"],
+      "answer": 0,
+      "explanation": "Vírus dependem da maquinaria de uma célula hospedeira para se replicar.",
+      "mnemonic": "Vírus = O 'pirata celular'! É parasita intracelular obrigatório; sem célula ele não multiplica."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual medida ajuda a prevenir algumas doenças virais?",
+      "options": ["Compartilhar copos", "Vacinação", "Evitar lavar as mãos", "Usar antibiótico sempre"],
+      "answer": 1,
+      "explanation": "Vacinas preparam o sistema imunológico com anticorpos contra vírus específicos."
+    }
   },
   "g1_anat_01": {
-    "q1": { "order": 1, "text": "Onde começa a digestão dos alimentos?", "options": ["Estômago", "Boca", "Intestino grosso", "Fígado"], "answer": 1, "explanation": "A mastigação e a saliva iniciam a digestão na boca." },
-    "q2": { "order": 2, "text": "Em qual órgão ocorre a maior parte da absorção de nutrientes?", "options": ["Intestino delgado", "Esôfago", "Pulmão", "Coração"], "answer": 0, "explanation": "O intestino delgado absorve a maior parte dos nutrientes." }
+    "q1": {
+      "order": 1,
+      "text": "Onde começa a digestão química dos carboidratos nos alimentos?",
+      "options": ["Estômago", "Boca", "Intestino grosso", "Fígado"],
+      "answer": 1,
+      "explanation": "A enzima amilase salivar (ptialina) na saliva inicia a digestão do amido na boca.",
+      "mnemonic": "Boca = Começa tudo com a saliva! Ptialina corta o amido em maltose logo na mastigação."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Em qual órgão ocorre a maior parte da absorção de nutrientes?",
+      "options": ["Intestino delgado", "Esôfago", "Pulmão", "Coração"],
+      "answer": 0,
+      "explanation": "O intestino delgado, através das microvilosidades, absorve a maior parte dos nutrientes."
+    }
   },
   "g1_anat_02": {
-    "q1": { "order": 1, "text": "Qual é a principal função dos pulmões?", "options": ["Bombear sangue", "Realizar trocas gasosas", "Produzir bile", "Filtrar urina"], "answer": 1, "explanation": "Nos pulmões, o oxigênio entra no sangue e o gás carbônico é eliminado." },
-    "q2": { "order": 2, "text": "Qual estrutura leva o ar da laringe até os brônquios?", "options": ["Esôfago", "Traqueia", "Diafragma", "Alvéolo"], "answer": 1, "explanation": "A traqueia conduz o ar aos brônquios." }
+    "q1": {
+      "order": 1,
+      "text": "Qual é a principal função dos alvéolos pulmonares?",
+      "options": ["Bombear sangue", "Realizar trocas gasosas (hematose)", "Produzir bile", "Filtrar urina"],
+      "answer": 1,
+      "explanation": "Nos alvéolos pulmonares ocorre a hematose: o O2 entra no sangue e o CO2 é expelido."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual estrutura cartilaginosa leva o ar da laringe até os brônquios?",
+      "options": ["Esôfago", "Traqueia", "Diafragma", "Alvéolo"],
+      "answer": 1,
+      "explanation": "A traqueia é o tubo com anéis cartilaginosos que conduz o ar aos brônquios."
+    }
+  },
+  "g1_anat_03": {
+    "q1": {
+      "order": 1,
+      "text": "Qual é a principal função do coração no sistema cardiovascular?",
+      "options": ["Filtrar toxinas", "Bombear sangue para o corpo", "Armazenar oxigênio", "Produzir hemácias"],
+      "answer": 1,
+      "explanation": "O coração atua como uma bomba muscular propulsora do sangue para os circuitos pulmonar e sistêmico."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Quais vasos sanguíneos transportam sangue oxigenado para fora do coração em alta pressão?",
+      "options": ["Veias", "Artérias", "Capilares", "Vênulas"],
+      "answer": 1,
+      "explanation": "As artérias têm paredes espessas e elásticas para suportar a alta pressão do sangue ejetado pelo coração."
+    }
   },
   "g2_bota_01": {
-    "q1": { "order": 1, "text": "Qual grupo de plantas produz sementes, mas não frutos?", "options": ["Briófitas", "Pteridófitas", "Gimnospermas", "Algas"], "answer": 2, "explanation": "Gimnospermas têm sementes sem a proteção de frutos." },
-    "q2": { "order": 2, "text": "Qual grupo inclui as plantas com flores e frutos?", "options": ["Angiospermas", "Briófitas", "Fungos", "Bactérias"], "answer": 0, "explanation": "Angiospermas formam flores e frutos." }
+    "q1": {
+      "order": 1,
+      "text": "Qual grupo de plantas produz sementes, mas não frutos?",
+      "options": ["Briófitas", "Pteridófitas", "Gimnospermas", "Algas"],
+      "answer": 2,
+      "explanation": "Gimnospermas têm 'sementes nuas', sem a proteção de frutos (ex: pinheiro-do-paraná)."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual grupo vegetal mais evoluído possui flores e frutos verdadeiros?",
+      "options": ["Angiospermas", "Briófitas", "Fungos", "Gimnospermas"],
+      "answer": 0,
+      "explanation": "Angiospermas são o grupo vegetal mais diversificado, com flores que atraem polinizadores e frutos que protegem sementes.",
+      "mnemonic": "ANGIOspermas = Flores e Frutos! GIMNOspermas = Semente nua (sem fruto)."
+    }
   },
   "g2_bota_02": {
-    "q1": { "order": 1, "text": "O que as plantas absorvem do ar para a fotossíntese?", "options": ["Oxigênio", "Gás carbônico", "Nitrogênio líquido", "Hélio"], "answer": 1, "explanation": "O gás carbônico é usado para produzir matéria orgânica na fotossíntese." },
-    "q2": { "order": 2, "text": "Qual estrutura capta principalmente a luz para a fotossíntese?", "options": ["Raiz", "Clorofila nos cloroplastos", "Xilema", "Semente"], "answer": 1, "explanation": "A clorofila, presente nos cloroplastos, absorve luz." }
+    "q1": {
+      "order": 1,
+      "text": "O que as plantas absorvem do ar para realizar a fotossíntese?",
+      "options": ["Oxigênio", "Gás carbônico", "Nitrogênio líquido", "Hélio"],
+      "answer": 1,
+      "explanation": "O CO2 (gás carbônico) é fixado na fase química para formar glicose."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Qual pigmento verde capta a luz solar para a fotossíntese?",
+      "options": ["Raiz", "Clorofila nos cloroplastos", "Xilema", "Semente"],
+      "answer": 1,
+      "explanation": "A clorofila é o pigmento fotorreceptor que absorve a luz nos tilacoides dos cloroplastos."
+    }
+  },
+  "g2_bota_03": {
+    "q1": {
+      "order": 1,
+      "text": "Qual tecido vegetal é responsável por conduzir a seiva elaborada rica em açúcares?",
+      "options": ["Floema", "Xilema", "Epiderme", "Córtex"],
+      "answer": 0,
+      "explanation": "O Floema transporta a seiva elaborada (orgânica), enquanto o Xilema transporta a seiva bruta (água e sais minerais)."
+    },
+    "q2": {
+      "order": 2,
+      "text": "Quais estruturas na epiderme das folhas regulam a transpiração e as trocas gasosas da planta?",
+      "options": ["Estômatos", "Tricomas", "Raízes", "Pétalas"],
+      "answer": 0,
+      "explanation": "Os estômatos abrem e fecham seus ostíolos para controlar as trocas de CO2/O2 e a perda de água por transpiração."
+    }
   }
 }

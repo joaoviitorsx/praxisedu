@@ -11,6 +11,7 @@ import JoinClassScreen from '../screens/student/JoinClassScreen';
 import StudentProfileScreen from '../screens/student/StudentProfileScreen';
 import LessonScreen from '../screens/student/LessonScreen';
 import MyClassScreen from '../screens/student/MyClassScreen';
+import NotesScreen from '../screens/student/NotesScreen';
 import ClassFormScreen from '../screens/teacher/ClassFormScreen';
 import ClassPanelScreen from '../screens/teacher/ClassPanelScreen';
 import useClassGuard from './useClassGuard';
@@ -63,6 +64,7 @@ export default function AppNavigator() {
           <Stack.Screen name="StudentTabs" component={StudentTabs} />
           <Stack.Screen name="StudentProfile" component={StudentProfileScreen} />
           <Stack.Screen name="MyClass" component={MyClassScreen} />
+          <Stack.Screen name="Notes" component={NotesScreen} />
           <Stack.Screen name="Lesson" component={LessonScreen} options={{ animation: reduceMotion ? 'none' : 'fade_from_bottom' }} />
         </>
       )}

@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 const staticRoutes = {
   Splash: '/auth', Login: '/auth/login', Signup: '/auth/signup', ForgotPassword: '/auth/forgot-password',
   Classes: '/teacher/classes', Profile: '/teacher/profile', CreateQuiz: '/teacher/create-quiz', Attendance: '/teacher/attendance',
-  StudentProfile: '/student/profile', MyClass: '/student/my-class',
+  StudentProfile: '/student/profile', MyClass: '/student/my-class', Notes: '/student/notes',
   Trails: '/student/trails', Duels: '/student/duels', Classroom: '/student/classroom',
   BioBot: '/student/biobot', Ranking: '/student/ranking',
 };

@@ -9,6 +9,11 @@ const LETTERS = ['A', 'B', 'C', 'D'];
 export default function LessonCompletion({ title, mascot, completionKind, result, questions, picks, materialsCount, topInset, bottomInset, onLeave }) {
   const reduceMotion = useReducedMotion();
   const entrance = useRef(new Animated.Value(0)).current;
+  const starAnims = [
+    useRef(new Animated.Value(0)).current,
+    useRef(new Animated.Value(0)).current,
+    useRef(new Animated.Value(0)).current,
+  ];
   const hasQuestions = questions.length > 0;
   const accuracy = hasQuestions ? Math.round(result.correct / result.total * 100) : null;
   const mistakes = questions.filter((question, index) => picks[index] !== question.answer);
@@ -16,9 +21,19 @@ export default function LessonCompletion({ title, mascot, completionKind, result
   const subtitle = completionKind === 'trail' ? 'Você concluiu todas as etapas da trilha.' : completionKind === 'topic' ? 'Você concluiu todas as etapas deste tópico.' : '';
 
   useEffect(() => {
-    if (reduceMotion) { entrance.setValue(1); return; }
+    if (reduceMotion) {
+      entrance.setValue(1);
+      starAnims.forEach((a) => a.setValue(1));
+      return;
+    }
     entrance.setValue(0);
-    Animated.spring(entrance, { toValue: 1, friction: 7, tension: 70, useNativeDriver: true }).start();
+    starAnims.forEach((a) => a.setValue(0));
+    Animated.sequence([
+      Animated.spring(entrance, { toValue: 1, friction: 7, tension: 70, useNativeDriver: true }),
+      Animated.stagger(150, starAnims.map((a) =>
+        Animated.spring(a, { toValue: 1, friction: 4, tension: 90, useNativeDriver: true })
+      )),
+    ]).start();
   }, [entrance, reduceMotion]);
 
   return <View style={styles.root}>
@@ -36,7 +51,11 @@ export default function LessonCompletion({ title, mascot, completionKind, result
         <View style={styles.summaryCopy}><Text style={styles.summaryLabel}>SEU RESULTADO</Text><Text style={styles.summaryTitle}>{title}</Text></View>
         <View style={styles.summaryScoreRow}><Text style={styles.summaryScore}>{hasQuestions ? `${result.correct}/${result.total}` : materialsCount}</Text><Text style={styles.summaryScoreLabel}>{hasQuestions ? 'respostas certas' : materialsCount === 1 ? 'material explorado' : 'materiais explorados'}</Text></View>
         {hasQuestions && <View style={styles.stars} accessibilityLabel={`${result.stars} de 3 estrelas`}>
-          {[0, 1, 2].map((star) => <Icon key={star} name="star" size={28} color={colors.yellowDark} fill={star < result.stars ? colors.yellow : colors.white} strokeWidth={2.4} />)}
+          {[0, 1, 2].map((star) => (
+            <Animated.View key={star} style={{ transform: [{ scale: starAnims[star] }] }}>
+              <Icon name="star" size={32} color={colors.yellowDark} fill={star < result.stars ? colors.yellow : colors.white} strokeWidth={2.4} />
+            </Animated.View>
+          ))}
         </View>}
         <View style={styles.metrics}>
           <View style={styles.metric}><Icon name="zap" size={19} color={colors.green} /><Text style={styles.metricText}>+{result.xp ?? 0} XP</Text></View>

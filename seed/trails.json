@@ -73,6 +73,11 @@
             "order": 2,
             "title": "Sistema respiratório",
             "questionsCount": 2
+          },
+          "g1_anat_03": {
+            "order": 3,
+            "title": "Sistema cardiovascular",
+            "questionsCount": 2
           }
         }
       }
@@ -95,6 +100,11 @@
           "g2_bota_02": {
             "order": 2,
             "title": "Fotossíntese",
+            "questionsCount": 2
+          },
+          "g2_bota_03": {
+            "order": 3,
+            "title": "Fisiologia vegetal",
             "questionsCount": 2
           }
         }
