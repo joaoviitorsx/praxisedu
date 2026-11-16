@@ -16,6 +16,9 @@ import LessonCompletion from './LessonCompletion';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
+// Lesson id prefix (g1_cyto_01) -> notebook topic.
+const NOTE_TOPIC_BY_PREFIX = { cyto: 'citologia', anat: 'fisiologia', bota: 'fisiologia', micro: 'geral' };
+
 export default function LessonScreen({ navigation, route }) {
   const { user, profile } = useAuth();
   const insets = useSafeAreaInsets();
@@ -156,7 +159,7 @@ export default function LessonScreen({ navigation, route }) {
             explanation={question.explanation}
             mnemonic={question.mnemonic}
             questionText={question.text}
-            topic={route?.params?.topic || 'citologia'}
+            topic={NOTE_TOPIC_BY_PREFIX[lessonId.split('_')[1]] ?? 'geral'}
             uid={user?.uid}
             lives={lives}
             checking={checking}

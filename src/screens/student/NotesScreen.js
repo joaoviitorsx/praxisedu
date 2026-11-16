@@ -228,7 +228,7 @@ export default function NotesScreen({ navigation }) {
               searchQuery
                 ? 'Nenhuma anotação encontrada'
                 : selectedTopic !== 'todos'
-                ? `Nenhuma nota de ${selectedTopic}`
+                ? `Nenhuma nota de ${NOTE_TOPICS.find((t) => t.id === selectedTopic)?.label ?? selectedTopic}`
                 : 'Seu caderno está vazio'
             }
             message={
@@ -422,7 +422,7 @@ export default function NotesScreen({ navigation }) {
               placeholderTextColor={colors.gray}
               value={noteTitle}
               onChangeText={setNoteTitle}
-              maxLength={120}
+              maxLength={100}
             />
 
             {/* Note Content Input */}
@@ -432,6 +432,7 @@ export default function NotesScreen({ navigation }) {
               placeholder="Escreva seus resumos, macetes, observações das aulas ou pontos importantes para fixar..."
               placeholderTextColor={colors.gray}
               value={noteContent}
+              maxLength={10000}
               onChangeText={setNoteContent}
               multiline
               textAlignVertical="top"

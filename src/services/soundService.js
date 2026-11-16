@@ -47,13 +47,18 @@ function getPlayer(name) {
   }
 }
 
+let webCtx = null;
+
 // Web Audio API synthesizer for instant zero-latency feedback on Web
 function playWebTone(type) {
   if (Platform.OS !== 'web' || typeof window === 'undefined') return;
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    // One shared context: browsers limit how many can be open at once.
+    webCtx = webCtx || new AudioCtx();
+    const ctx = webCtx;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
 
     if (type === 'correct') {
       // 2-tone pleasant ascending chime (587Hz -> 880Hz)
@@ -144,7 +149,7 @@ export function playCorrectSound() {
   // 2. Trigger haptic
   try {
     if (Haptics?.notificationAsync) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)?.catch?.(() => {});
     }
   } catch {}
 }
@@ -158,7 +163,7 @@ export function playWrongSound() {
 
   try {
     if (Haptics?.notificationAsync) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)?.catch?.(() => {});
     }
   } catch {}
 }
@@ -172,7 +177,7 @@ export function playVictorySound() {
 
   try {
     if (Haptics?.notificationAsync) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)?.catch?.(() => {});
     }
   } catch {}
 }
@@ -186,7 +191,7 @@ export function playClickSound() {
 
   try {
     if (Haptics?.impactAsync) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)?.catch?.(() => {});
     }
   } catch {}
 }

@@ -95,7 +95,7 @@ export default function ClassroomScreen() {
             ? 'O tempo desta atividade terminou. Aguarde o professor iniciar uma nova rodada!'
             : 'O Modo Sala é uma atividade interativa ao vivo! Quando o professor liberar um quiz no painel dele, as perguntas aparecerão aqui automaticamente.'}
         </Text>
-        <View style={styles.hintCard}><Icon name="info" size={20} color={colors.blue} /><Text style={styles.hintCardText}>Para testar: o professor deve entrar na turma, abrir Atividades e tocar em “Modo Sala” em qualquer quiz publicado.</Text></View>
+        <View style={styles.hintCard}><Icon name="info" size={20} color={colors.blue} /><Text style={styles.hintCardText}>Mantenha esta tela aberta: o quiz aparece sozinho, sem precisar atualizar.</Text></View>
       </View>
       : quiz === undefined || answer === undefined ? <LoadingView message="Preparando quiz da turma..." />
       : !quiz || !quiz.questions.length ? <View style={styles.center}><EmptyState title="Quiz indisponível" message="O professor precisa publicar questões válidas antes de iniciar esta atividade." /></View>
