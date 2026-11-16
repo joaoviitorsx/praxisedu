@@ -1,12 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Animated, Easing, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, EmptyState, Icon, LoadingView, Mascot, Screen } from '../../components';
+import useReducedMotion from '../../hooks/useReducedMotion';
 import { useAuth } from '../../contexts/AuthContext';
 import { listenStudentRoom, listenServerOffset, listenOwnClassroomAnswer, getPublishedClassroomQuiz, submitClassroomAnswers } from '../../services/classroomStudentService';
 import { roomIsOpen } from '../../features/student/classroomModel';
 import { friendlyError } from '../../utils/errors';
 import { colors, fonts, text } from '../../theme';
+
+function LiveDot() {
+  const reduceMotion = useReducedMotion();
+  const pulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    const loop = Animated.loop(Animated.timing(pulse, { toValue: 1, duration: 1400, easing: Easing.out(Easing.quad), useNativeDriver: Platform.OS !== 'web' }));
+    loop.start();
+    return () => loop.stop();
+  }, [pulse, reduceMotion]);
+  return <View style={styles.dotWrap}>{!reduceMotion && <Animated.View style={[styles.dotRing, { opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 0] }), transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 2.4] }) }] }]} />}<View style={styles.dot} /></View>;
+}
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 const timeLabel = (milliseconds) => {
@@ -83,19 +96,17 @@ export default function ClassroomScreen() {
   }
 
   return <Screen padded={false}>
-    <View style={[styles.header, { paddingTop: insets.top + 18 }]}><Text style={styles.kicker}>ATIVIDADE AO VIVO</Text><View style={styles.titleRow}><Text style={styles.heading}>Modo Sala</Text>{open && <View style={styles.timer}><Icon name="clock" size={18} color={colors.yellow} /><Text style={styles.timerText}>{timeLabel(room.endsAt - serverNow)}</Text></View>}</View><Text style={styles.subtitle}>{room?.quizTitle ?? 'Aprenda junto com sua turma'}</Text></View>
+    <View style={[styles.header, { paddingTop: insets.top + 18 }]}><Text style={styles.kicker}>AO VIVO</Text><View style={styles.titleRow}><Text style={styles.heading}>Modo Sala</Text>{open && <View style={styles.timer}><Icon name="clock" size={18} color={colors.yellow} /><Text style={styles.timerText}>{timeLabel(room.endsAt - serverNow)}</Text></View>}</View><Text style={styles.subtitle}>{room?.quizTitle ?? 'Aprenda junto com sua turma'}</Text></View>
     {error ? <View style={styles.center}><EmptyState isError title="Não foi possível carregar o Modo Sala" message={error} actionLabel="Tentar novamente" actionVariant="success" onAction={() => setRetry((value) => value + 1)} /></View>
       : room === undefined || offset === undefined ? <LoadingView message="Verificando atividade da turma..." />
       : !room || (!open && !answer) ? <View style={styles.center}>
-        <View style={styles.liveBadge}><View style={styles.liveDot} /><Text style={styles.liveBadgeText}>Sincronizado • Aguardando professor</Text></View>
-        <View style={styles.mascot}><Mascot name="sapo" size={110} thinking /></View>
-        <Text style={styles.waitingTitle}>Sala de Espera Ativa</Text>
-        <Text style={styles.waitingMessage}>
-          {room?.active
-            ? 'O tempo desta atividade terminou. Aguarde o professor iniciar uma nova rodada!'
-            : 'O Modo Sala é uma atividade interativa ao vivo! Quando o professor liberar um quiz no painel dele, as perguntas aparecerão aqui automaticamente.'}
-        </Text>
-        <View style={styles.hintCard}><Icon name="info" size={20} color={colors.blue} /><Text style={styles.hintCardText}>Mantenha esta tela aberta: o quiz aparece sozinho, sem precisar atualizar.</Text></View>
+        <View style={styles.lobby}>
+          <View style={styles.livePill}><LiveDot /><Text style={styles.livePillText}>{room?.active ? 'Rodada encerrada' : 'Você está na sala'}</Text></View>
+          <Mascot name="sapo" size={104} />
+          <Text style={styles.lobbyTitle}>{room?.active ? 'Tempo esgotado!' : 'Esperando o professor começar'}</Text>
+          <Text style={styles.lobbyText}>{room?.active ? 'Fique por aqui: a próxima rodada abre nesta tela.' : 'O quiz abre aqui sozinho. Não precisa atualizar.'}</Text>
+        </View>
+        <View style={styles.steps}>{[['clock', 'Espere'], ['zap', 'Responda'], ['trophy', 'Veja o placar']].map(([icon, label], step) => <View key={label} style={styles.step}><View style={styles.stepIcon}><Icon name={icon} size={18} color={colors.greenDark} /></View><Text style={styles.stepText}>{step + 1}. {label}</Text></View>)}</View>
       </View>
       : quiz === undefined || answer === undefined ? <LoadingView message="Preparando quiz da turma..." />
       : !quiz || !quiz.questions.length ? <View style={styles.center}><EmptyState title="Quiz indisponível" message="O professor precisa publicar questões válidas antes de iniciar esta atividade." /></View>
@@ -110,14 +121,19 @@ export default function ClassroomScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: 20, paddingBottom: 14, backgroundColor: colors.surface, borderBottomWidth: 2, borderColor: colors.border }, kicker: { ...text.label, color: colors.orangeText }, titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginTop: 4 }, heading: { fontFamily: fonts.extrabold, fontSize: 26, color: colors.ink }, timer: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: colors.ink, borderRadius: 13, paddingHorizontal: 12 }, timerText: { fontFamily: fonts.extrabold, fontSize: 18, color: colors.yellow }, subtitle: { fontFamily: fonts.semibold, fontSize: 14, color: colors.gray, marginTop: 3 },
+  header: { paddingHorizontal: 20, paddingBottom: 14, backgroundColor: colors.surface, borderBottomWidth: 2, borderColor: colors.border }, kicker: { ...text.label, color: colors.greenDark }, titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginTop: 4 }, heading: { fontFamily: fonts.extrabold, fontSize: 26, color: colors.ink }, timer: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: colors.ink, borderRadius: 13, paddingHorizontal: 12 }, timerText: { fontFamily: fonts.extrabold, fontSize: 18, color: colors.yellow }, subtitle: { fontFamily: fonts.semibold, fontSize: 14, color: colors.gray, marginTop: 3 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 }, mascot: { alignItems: 'center' }, content: { padding: 20, paddingBottom: 30 }, progressRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 }, counter: { ...text.label }, remaining: { fontFamily: fonts.bold, fontSize: 12, color: colors.orangeText }, track: { height: 10, backgroundColor: colors.border, borderRadius: 8, overflow: 'hidden', marginTop: 10 }, fill: { height: '100%', backgroundColor: colors.orange }, question: { fontFamily: fonts.extrabold, fontSize: 23, lineHeight: 31, color: colors.ink, marginTop: 26, marginBottom: 22 }, options: { gap: 12 }, option: { minHeight: 64, backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.border, borderRadius: 16, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10 }, optionSelected: { borderColor: colors.orange, backgroundColor: colors.orangeSoft }, pressed: { opacity: 0.7 }, letter: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }, letterSelected: { backgroundColor: colors.orange }, letterText: { fontFamily: fonts.extrabold, color: colors.gray, fontSize: 16 }, letterTextSelected: { color: colors.white }, optionText: { flex: 1, fontFamily: fonts.bold, fontSize: 16, lineHeight: 23, color: colors.ink }, info: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 20 }, infoText: { flex: 1, ...text.caption, lineHeight: 19 }, footer: { paddingHorizontal: 20, paddingVertical: 12, backgroundColor: colors.surface, borderTopWidth: 2, borderColor: colors.border },
   sentIcon: { width: 76, height: 76, borderRadius: 38, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center', marginBottom: 18 }, sentTitle: { ...text.h1, textAlign: 'center' }, sentText: { ...text.body, color: colors.gray, textAlign: 'center', lineHeight: 24, marginTop: 8 }, sentCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: colors.greenSoft, padding: 14, borderRadius: 16, marginTop: 22 }, sentCardText: { flex: 1, fontFamily: fonts.semibold, color: colors.greenDark },
-  liveBadge: { flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: colors.greenSoft, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, marginBottom: 16 },
-  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.green },
-  liveBadgeText: { fontFamily: fonts.bold, fontSize: 13, color: colors.greenDark },
-  waitingTitle: { ...text.h2, fontSize: 22, color: colors.ink, textAlign: 'center', marginTop: 14 },
-  waitingMessage: { ...text.body, color: colors.gray, textAlign: 'center', lineHeight: 22, marginTop: 8, maxWidth: 320 },
-  hintCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: colors.blueSoft, padding: 14, borderRadius: 16, marginTop: 24, maxWidth: 340 },
-  hintCardText: { flex: 1, fontFamily: fonts.semibold, fontSize: 13, color: colors.blue, lineHeight: 18 },
+  lobby: { width: '100%', maxWidth: 360, alignItems: 'center', backgroundColor: colors.surface, borderWidth: 2, borderBottomWidth: 6, borderColor: colors.border, borderRadius: 24, paddingHorizontal: 20, paddingTop: 18, paddingBottom: 22 },
+  livePill: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.greenSoft, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, marginBottom: 12 },
+  livePillText: { fontFamily: fonts.bold, fontSize: 13, color: colors.greenDark },
+  dotWrap: { width: 10, height: 10, alignItems: 'center', justifyContent: 'center' },
+  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.green },
+  dotRing: { position: 'absolute', width: 10, height: 10, borderRadius: 5, backgroundColor: colors.green },
+  lobbyTitle: { fontFamily: fonts.extrabold, fontSize: 22, lineHeight: 28, color: colors.ink, textAlign: 'center', marginTop: 12 },
+  lobbyText: { fontFamily: fonts.semibold, fontSize: 15, lineHeight: 21, color: colors.gray, textAlign: 'center', marginTop: 6 },
+  steps: { width: '100%', maxWidth: 360, flexDirection: 'row', gap: 8, marginTop: 14 },
+  step: { flex: 1, alignItems: 'center', gap: 6, backgroundColor: colors.yellowSoft, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.yellow, borderRadius: 16, paddingVertical: 10, paddingHorizontal: 4 },
+  stepIcon: { width: 32, height: 32, borderRadius: 10, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
+  stepText: { fontFamily: fonts.bold, fontSize: 12, color: colors.ink, textAlign: 'center' },
 });
