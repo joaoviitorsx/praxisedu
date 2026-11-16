@@ -1,14 +1,17 @@
+import { playUiSound } from '../services/soundService';
 import { Alert, Platform } from 'react-native';
 
 // Alert.alert does nothing on react-native-web, so fall back to the browser dialogs.
 const isWeb = Platform.OS === 'web' && typeof window !== 'undefined';
 
 export function showAlert(title, message) {
+  playUiSound('notify');
   if (isWeb) window.alert(message ? `${title}\n\n${message}` : title);
   else Alert.alert(title, message);
 }
 
 export function confirmAction(title, message, confirmLabel, onConfirm) {
+  playUiSound('sheet');
   if (isWeb) {
     if (window.confirm(`${title}\n\n${message}`)) onConfirm();
     return;

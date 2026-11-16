@@ -1,3 +1,4 @@
+import { playUiSound } from '../services/soundService';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, fonts, text } from '../theme';
 import Icon from './Icon';
@@ -15,8 +16,8 @@ export default function ConfirmModal({ visible, title, message, confirmLabel = '
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
           <View style={styles.actions}>
-            <Button title={confirmLabel} variant="danger" onPress={onConfirm} loading={loading} />
-            <Pressable onPress={onCancel} style={styles.cancel}>
+            <Button title={confirmLabel} variant="danger" sound="send" onPress={onConfirm} loading={loading} />
+            <Pressable onPress={() => { playUiSound('back'); onCancel?.(); }} style={styles.cancel}>
               <Text style={styles.cancelText}>Cancelar</Text>
             </Pressable>
           </View>

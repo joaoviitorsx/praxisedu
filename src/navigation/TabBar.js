@@ -1,3 +1,4 @@
+import { playUiSound } from '../services/soundService';
 
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, View, Text, Pressable, StyleSheet } from 'react-native';
@@ -48,6 +49,7 @@ export default function TabBar({
           });
 
           if (!focused && !event.defaultPrevented) {
+            playUiSound('tab');
             if (navigateToTab) {
               navigateToTab(route.key);
             } else {

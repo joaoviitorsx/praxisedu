@@ -1,3 +1,4 @@
+import { playUiSound } from '../services/soundService';
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, View, Text, StyleSheet } from 'react-native';
 import { colors, fonts } from '../theme';
@@ -13,6 +14,7 @@ export default function Toast({ message, onHide }) {
   useEffect(() => {
     if (!message) return undefined;
     entrance.setValue(0);
+    playUiSound('success');
     Animated.timing(entrance, { toValue: 1, duration: reduceMotion ? 120 : 200, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
     const timer = setTimeout(() => hideRef.current?.(), 2200);
     return () => clearTimeout(timer);

@@ -1,3 +1,4 @@
+import { playUiSound } from '../services/soundService';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, fonts, spacing } from '../theme';
@@ -9,7 +10,7 @@ export default function Header({ title, subtitle, backLabel, onBack, right, back
   return (
     <View style={[styles.header, { backgroundColor: background, paddingTop: insets.top + 8 }]}>
       {backLabel && (
-        <Pressable onPress={onBack} style={styles.back} hitSlop={8}>
+        <Pressable onPress={() => { playUiSound('back'); onBack?.(); }} style={styles.back} hitSlop={8}>
           <Icon name="chevron-left" size={22} color={colors.white} strokeWidth={2.6} />
           <Text style={styles.backLabel}>{backLabel}</Text>
         </Pressable>

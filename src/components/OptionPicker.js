@@ -1,3 +1,4 @@
+import { playUiSound } from '../services/soundService';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, fonts, text } from '../theme';
 
@@ -11,7 +12,7 @@ export default function OptionPicker({ label, options, value, onChange, accent =
         {options.map((o) => {
           const on = o.value === value;
           return (
-            <Pressable key={String(o.value)} onPress={() => onChange(o.value)} style={styles.item} accessibilityRole="button">
+            <Pressable key={String(o.value)} onPress={() => { if (!on) playUiSound('select'); onChange(o.value); }} style={styles.item} accessibilityRole="button">
               <View style={[styles.edge, { backgroundColor: on ? accent : colors.border }]}>
                 <View style={[styles.face, on && { borderColor: accent, backgroundColor: accentSoft }]}>
                   <Text style={[styles.label, on && { fontFamily: fonts.extrabold, color: accent }]}>{o.label}</Text>
