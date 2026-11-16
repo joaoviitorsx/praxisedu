@@ -6,9 +6,12 @@ import { colors, fonts } from '../theme';
 import { Icon } from '../components';
 import useReducedMotion from '../hooks/useReducedMotion';
 
+/** @param {{ navigation?: any, featuredRoute?: string, [key: string]: any }} props */
 export default function TabBar({
   state,
   descriptors,
+  emitter,
+  navigateToTab,
   navigation,
   icons,
   accent,
@@ -17,6 +20,8 @@ export default function TabBar({
   featuredRoute,
 }) {
   const insets = useSafeAreaInsets();
+  // expo-router 58 top tabs pass emitter/navigateToTab; the legacy bottom tabs still pass navigation.
+  const events = emitter ?? navigation;
 
   return (
     <View
@@ -35,26 +40,24 @@ export default function TabBar({
         const focused = state.routes[state.index]?.key === route.key;
         const label = descriptors[route.key].options.title ?? route.name;
 
-        const routeNavigation = descriptors[route.key].navigation;
-
         const onPress = () => {
-          const event = navigation?.emit?.({
+          const event = events.emit({
             type: 'tabPress',
             target: route.key,
             canPreventDefault: true,
           });
 
-          if (!focused && !event?.defaultPrevented) {
-            if (navigation?.navigate) {
-              navigation.navigate(route.name);
+          if (!focused && !event.defaultPrevented) {
+            if (navigateToTab) {
+              navigateToTab(route.key);
             } else {
-              routeNavigation.navigate(route.name);
+              navigation.navigate(route.name);
             }
           }
         };
 
         const onLongPress = () => {
-          navigation?.emit?.({
+          events.emit({
             type: 'tabLongPress',
             target: route.key,
           });

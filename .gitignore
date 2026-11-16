@@ -42,3 +42,9 @@ yarn-error.*
 
 # env
 .env
+
+# local AI tooling (graphify, ponytail)
+graphify-out/
+.graphifyignore
+.claude/
+CLAUDE.md
