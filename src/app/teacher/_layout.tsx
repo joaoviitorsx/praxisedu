@@ -9,5 +9,5 @@ export default function TeacherLayout() {
   if (loading || (user && !profile)) return <LoadingView message="Carregando..." />;
   if (!user) return <Redirect href="/auth" />;
   if (profile.role !== 'teacher') return <Redirect href={profile.classId ? '/student/trails' : '/join-class'} />;
-  return <Stack screenOptions={{ headerShown: false, animation: reduceMotion ? 'none' : 'fade_from_bottom', animationDuration: 240 }} />;
+  return <Stack screenOptions={{ headerShown: false, animation: reduceMotion ? 'none' : 'slide_from_right', animationDuration: 240, gestureEnabled: true, fullScreenGestureEnabled: true, animationMatchesGesture: true }} />;
 }

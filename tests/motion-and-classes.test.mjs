@@ -11,8 +11,8 @@ test('interações e navegação respeitam movimento reduzido', () => {
   assert.match(read('../src/components/Toast.js'), /Animated\.timing/);
   assert.match(read('../src/navigation/TabBar.js'), /Animated\.timing/);
   assert.match(read('../src/app/_layout.tsx'), /animation: reduceMotion \? 'none'/);
-  assert.match(read('../src/app/teacher/_layout.tsx'), /fade_from_bottom/);
-  assert.match(read('../src/app/student/_layout.tsx'), /fade_from_bottom/);
+  assert.match(read('../src/app/teacher/_layout.tsx'), /slide_from_right[^}]*fullScreenGestureEnabled: true/);
+  assert.match(read('../src/app/student/_layout.tsx'), /slide_from_right[^}]*fullScreenGestureEnabled: true/);
 });
 
 test('contador de turmas mostra quantidade e rótulo inclusive no estado vazio', () => {

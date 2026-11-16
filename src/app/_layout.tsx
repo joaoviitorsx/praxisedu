@@ -18,7 +18,7 @@ export default function RootLayout() {
           <LoadingView message="Preparando o Práxis Edu..." />
         ) : (
           <AuthProvider>
-            <Stack screenOptions={{ headerShown: false, animation: reduceMotion ? 'none' : 'slide_from_right', animationDuration: 240, contentStyle: { backgroundColor: colors.background } }} />
+            <Stack screenOptions={{ headerShown: false, animation: reduceMotion ? 'none' : 'slide_from_right', animationDuration: 240, gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: colors.background } }} />
           </AuthProvider>
         )}
       </SafeAreaProvider>
