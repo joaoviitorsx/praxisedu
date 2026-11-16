@@ -57,8 +57,12 @@ export default function ClassesScreen({ navigation, route }) {
   const studentsTotal = classes.reduce((sum, cls) => sum + cls.studentsCount, 0);
 
   async function copyCode(cls) {
-    await Clipboard.setStringAsync(cls.code);
-    setToast('Código copiado');
+    try {
+      await Clipboard.setStringAsync(cls.code);
+      setToast('Código copiado');
+    } catch {
+      setToast(`Código: ${cls.code}`);
+    }
   }
 
   async function confirmDelete() {

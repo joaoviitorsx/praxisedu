@@ -35,7 +35,7 @@ export default function ClassFormScreen({ navigation, route }) {
           const cls = await getClass(classId);
           if (!active) return;
           if (!cls) throw new Error('CLASS_NOT_FOUND');
-          setName(cls.name); setGrade(cls.grade); setShift(cls.shift); setCode(cls.code);
+          setName(cls.name ?? ''); setGrade(cls.grade); setShift(cls.shift); setCode(cls.code);
         } else {
           const newCode = await generateClassCode();
           if (active) setCode(newCode);
@@ -51,12 +51,16 @@ export default function ClassFormScreen({ navigation, route }) {
   }, [classId, isEdit]);
 
   async function copyCode() {
-    await Clipboard.setStringAsync(code);
-    setToast('Código copiado');
+    try {
+      await Clipboard.setStringAsync(code);
+      setToast('Código copiado');
+    } catch {
+      setToast(`Código: ${code}`);
+    }
   }
 
   function shareCode() {
-    Share.share({ message: `Entre na minha turma "${name || 'Biologia'}" no Práxis Edu com o código ${code}.` });
+    Share.share({ message: `Entre na minha turma "${name || 'Biologia'}" no Práxis Edu com o código ${code}.` }).catch(() => {});
   }
 
   async function save() {
