@@ -33,6 +33,7 @@ export default function BioBotScreen() {
   const [pendingQuestion, setPendingQuestion] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
   const scrollRef = useRef(null);
+  const busy = useRef(false);
 
   useEffect(() => {
     setLoadError('');
@@ -41,7 +42,8 @@ export default function BioBotScreen() {
 
   async function send(rawText) {
     const question = rawText.trim();
-    if (!question || typing || pendingQuestion) return;
+    if (!question || typing || pendingQuestion || busy.current) return;
+    busy.current = true;
     setDraft('');
     setSendError('');
     setTyping(true);
@@ -58,12 +60,14 @@ export default function BioBotScreen() {
       else setDraft(question);
       setSendError(friendlyError(e));
     } finally {
+      busy.current = false;
       setTyping(false);
     }
   }
 
   async function retryAnswer() {
-    if (!pendingQuestion || typing) return;
+    if (!pendingQuestion || typing || busy.current) return;
+    busy.current = true;
     setTyping(true);
     setSendError('');
     try {
@@ -74,10 +78,10 @@ export default function BioBotScreen() {
       await saveChatMessage(user.uid, 'model', answer);
       setPendingQuestion('');
     } catch (e) { setSendError(friendlyError(e)); }
-    finally { setTyping(false); }
+    finally { busy.current = false; setTyping(false); }
   }
 
-  const firstName = profile.name.split(' ')[0];
+  const firstName = (profile?.name ?? '').trim().split(' ')[0] || 'estudante';
   const greeting = `Olá ${firstName}! O que quer revisar de Biologia hoje?`;
 
   return (

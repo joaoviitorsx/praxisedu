@@ -95,7 +95,7 @@ export default function TrailEditorScreen() {
     confirmAction('Remover etapa?', 'Ela sairá da trilha quando você publicar. O progresso antigo não será apagado.', 'Remover', () => { patch({ lessons: lessons.filter((item) => item.id !== lesson.id) }); setActiveLessonId(null); setPage('map'); });
   }
   async function generateFor(lesson) {
-    if (!form.topic.trim() || !lesson.title.trim()) { setError('Informe o tema e o nome da etapa antes de gerar questões.'); return; }
+    if (!form.topic?.trim() || !lesson.title?.trim()) { setError('Informe o tema e o nome da etapa antes de gerar questões.'); return; }
     setGenerating(true); setError('');
     try {
       const generated = await generateQuestions(`${topicLabel(form.topic)} — ${lesson.title}`, 3);

@@ -46,8 +46,8 @@ export default function MyClassScreen({ navigation }) {
 
   const position = members.findIndex((m) => m.id === user.uid) + 1;
   const classmates = members
-    .filter((m) => m.name.toLowerCase().includes(search.trim().toLowerCase()))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .filter((m) => (m.name ?? '').toLowerCase().includes(search.trim().toLowerCase()))
+    .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
 
   return (
     <Screen padded={false} lightStatusBar>
