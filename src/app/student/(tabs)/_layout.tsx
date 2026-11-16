@@ -7,7 +7,7 @@ const icons = { trails: 'book-open', duels: 'swords', classroom: 'presentation',
 export const unstable_settings = { anchor: 'trails' };
 
 export default function StudentTabsLayout() {
-  return <TopTabs backBehavior="initialRoute" tabBarPosition="bottom" screenOptions={{ lazy: true, lazyPreloadDistance: 1, swipeEnabled: false, animationEnabled: true }} tabBar={(props) => (
+  return <TopTabs backBehavior="initialRoute" tabBarPosition="bottom" screenOptions={{ lazy: false, swipeEnabled: true, animationEnabled: true }} tabBar={(props) => (
     <TabBar {...props} icons={icons} accent={colors.green} accentSoft={colors.greenSoft} accentDark={colors.greenDark} featuredRoute="biobot" />
   )}>
     <TopTabs.Screen name="trails" options={{ title: 'Trilhas' }} />

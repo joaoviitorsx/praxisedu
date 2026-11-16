@@ -9,8 +9,10 @@ test('abas usam pager nativo com barra inferior e carregamento de vizinhas', () 
     const layout = read(`../src/app/${role}/(tabs)/_layout.tsx`);
     assert.match(layout, /expo-router\/js-top-tabs/);
     assert.match(layout, /tabBarPosition="bottom"/);
-    assert.match(layout, /swipeEnabled: false/);
-    assert.match(layout, /lazyPreloadDistance: 1/);
+    // Swipe on; all pages mounted up front so no scene mounts mid-drag (that left the pager stuck half-way on iOS).
+    assert.match(layout, /swipeEnabled: true/);
+    assert.match(layout, /lazy: false/);
+    assert.match(read(`../src/app/${role}/_layout.tsx`), /<Stack\.Screen name="\(tabs\)" options=\{\{ fullScreenGestureEnabled: false \}\} \/>/);
     assert.doesNotMatch(layout, /reverseOrder/);
   }
 });
