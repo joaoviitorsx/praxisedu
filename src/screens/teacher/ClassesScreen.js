@@ -166,21 +166,27 @@ export default function ClassesScreen({ navigation, route }) {
 
 const ClassCard = memo(function ClassCard({ cls, onOpen, onMenu }) {
   return (
-    <Card onPress={onOpen} accessibilityLabel={`Abrir turma ${cls.name}`} style={styles.classCard}>
       <View style={styles.cardTop}>
-        <View style={styles.cardIcon}>
-          <Icon name="school" size={24} color={colors.blue} />
-        </View>
-        <View style={styles.cardCopy}>
-          <Text style={styles.cardEyebrow}>{cls.grade}º ANO</Text>
-          <Text style={styles.cardName} numberOfLines={2}>{cls.name}</Text>
-          <View style={styles.chips}>
-            <Chip label={cls.code} spaced />
-            {cls.roomActive && <Chip label="Modo Sala: ATIVO" color={colors.ink} background={colors.yellow} />}
-          </View>
-        </View>
         <Pressable
-          onPress={(e) => { e.stopPropagation(); onMenu(e.nativeEvent.pageY + 20); }}
+          onPress={onOpen}
+          style={styles.cardMainTap}
+          accessibilityLabel={`Abrir turma ${cls.name}`}
+          accessibilityRole="button"
+        >
+          <View style={styles.cardIcon}>
+            <Icon name="school" size={24} color={colors.blue} />
+          </View>
+          <View style={styles.cardCopy}>
+            <Text style={styles.cardEyebrow}>{cls.grade}º ANO</Text>
+            <Text style={styles.cardName} numberOfLines={2}>{cls.name}</Text>
+            <View style={styles.chips}>
+              <Chip label={cls.code} spaced />
+              {cls.roomActive && <Chip label="Modo Sala: ATIVO" color={colors.ink} background={colors.yellow} />}
+            </View>
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={(e) => { e.stopPropagation?.(); onMenu(e.nativeEvent?.pageY ? e.nativeEvent.pageY + 20 : 100); }}
           style={({ pressed }) => [styles.menuButton, pressed && styles.pressed]}
           accessibilityRole="button"
           accessibilityLabel="Ações da turma"
@@ -188,12 +194,14 @@ const ClassCard = memo(function ClassCard({ cls, onOpen, onMenu }) {
           <Icon name="more-vertical" size={22} color={colors.gray} />
         </Pressable>
       </View>
-      <View style={styles.stats}>
-        <Stat value={cls.studentsCount} label="alunos" />
-        <Stat value={cls.quizzesCount} label="quizzes" />
-        <Stat value={cls.quizzesCount ? `${cls.accuracy}%` : '—'} label="acertos" color={colors.green} />
-      </View>
-      <View style={styles.cardAction}><Text style={styles.cardActionText}>Abrir turma</Text><Icon name="arrow-right" size={18} color={colors.blue} /></View>
+      <Pressable onPress={onOpen} accessibilityRole="button" accessibilityLabel={`Abrir turma ${cls.name}`}>
+        <View style={styles.stats}>
+          <Stat value={cls.studentsCount} label="alunos" />
+          <Stat value={cls.quizzesCount} label="quizzes" />
+          <Stat value={cls.quizzesCount ? `${cls.accuracy}%` : '—'} label="acertos" color={colors.green} />
+        </View>
+        <View style={styles.cardAction}><Text style={styles.cardActionText}>Abrir turma</Text><Icon name="arrow-right" size={18} color={colors.blue} /></View>
+      </Pressable>
     </Card>
   );
 });
@@ -234,6 +242,7 @@ const styles = StyleSheet.create({
   countLabel: { fontFamily: fonts.extrabold, fontSize: 9, letterSpacing: 0.6, color: colors.white },
   classCard: { gap: 14, borderColor: '#CBD9F7' },
   cardTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  cardMainTap: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   cardIcon: { width: 48, height: 48, borderRadius: 14, backgroundColor: colors.blueSoft, alignItems: 'center', justifyContent: 'center' },
   cardCopy: { flex: 1, minWidth: 0 }, cardEyebrow: { fontFamily: fonts.extrabold, fontSize: 10, letterSpacing: 0.7, color: colors.blue, marginBottom: 2 },
   cardName: { fontFamily: fonts.extrabold, fontSize: 17, lineHeight: 23, color: colors.ink },
