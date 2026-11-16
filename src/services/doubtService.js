@@ -87,6 +87,19 @@ export async function toggleDoubtStatus(classId, doubtId, currentStatus) {
 }
 
 /**
+ * Add an official response/comment from the teacher to the student's doubt.
+ */
+export async function replyDoubt(classId, doubtId, teacherReply) {
+  if (!classId || !doubtId) return;
+  const doubtRef = ref(db, `anonymousDoubts/${classId}/${doubtId}`);
+  await update(doubtRef, {
+    teacherReply: teacherReply ? teacherReply.trim() : null,
+    status: 'addressed',
+    addressedAt: serverTimestamp(),
+  });
+}
+
+/**
  * Delete a doubt from the wall.
  */
 export async function deleteDoubt(classId, doubtId) {

@@ -223,6 +223,15 @@ export default function AnonymousDoubtsModal({ visible, onClose, classId, classN
                       </View>
                     </View>
                     <Text style={styles.doubtText}>{item.text}</Text>
+                    {item.teacherReply ? (
+                      <View style={styles.replyCard}>
+                        <View style={styles.replyHeader}>
+                          <Icon name="message-circle" size={13} color={colors.blue} />
+                          <Text style={styles.replyAuthor}>Recado do Professor:</Text>
+                        </View>
+                        <Text style={styles.replyText}>{item.teacherReply}</Text>
+                      </View>
+                    ) : null}
                   </View>
                 ))
               )}
@@ -487,6 +496,32 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     fontSize: 14,
     lineHeight: 20,
+    color: colors.ink,
+  },
+  replyCard: {
+    marginTop: 6,
+    backgroundColor: '#EFF6FF',
+    borderLeftWidth: 3,
+    borderLeftColor: colors.blue,
+    borderRadius: 8,
+    padding: 10,
+    gap: 4,
+  },
+  replyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  replyAuthor: {
+    fontFamily: fonts.bold,
+    fontSize: 11,
+    color: colors.blueDark,
+    letterSpacing: 0.3,
+  },
+  replyText: {
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    lineHeight: 18,
     color: colors.ink,
   },
 });

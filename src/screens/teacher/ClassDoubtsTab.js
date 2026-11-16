@@ -7,9 +7,13 @@ import {
   View,
   Alert,
   ActivityIndicator,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import { EmptyState, Icon } from '../../components';
-import { listenClassDoubts, toggleDoubtStatus, deleteDoubt } from '../../services/doubtService';
+import { EmptyState, Icon, Button } from '../../components';
+import { listenClassDoubts, toggleDoubtStatus, deleteDoubt, replyDoubt } from '../../services/doubtService';
 import { playClickSound, playCorrectSound } from '../../services/soundService';
 import { colors, fonts, radius, text } from '../../theme';
 
@@ -17,6 +21,9 @@ export default function ClassDoubtsTab({ classId }) {
   const [doubts, setDoubts] = useState(undefined);
   const [filter, setFilter] = useState('pending'); // 'pending' | 'addressed' | 'all'
   const [updatingId, setUpdatingId] = useState(null);
+  const [replyTarget, setReplyTarget] = useState(null);
+  const [replyInput, setReplyInput] = useState('');
+  const [savingReply, setSavingReply] = useState(false);
 
   useEffect(() => {
     if (!classId) {
@@ -81,8 +88,29 @@ export default function ClassDoubtsTab({ classId }) {
     );
   }
 
+  function handleOpenReply(item) {
+    setReplyTarget(item);
+    setReplyInput(item.teacherReply || '');
+  }
+
+  async function handleSaveReply() {
+    if (!replyTarget || savingReply) return;
+    setSavingReply(true);
+    try {
+      await replyDoubt(classId, replyTarget.id, replyInput);
+      playCorrectSound();
+      setReplyTarget(null);
+      setReplyInput('');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível salvar a resposta do professor.');
+    } finally {
+      setSavingReply(false);
+    }
+  }
+
   return (
-    <FlatList
+    <>
+      <FlatList
       data={filteredDoubts}
       keyExtractor={(item) => item.id}
       style={styles.root}
@@ -161,6 +189,16 @@ export default function ClassDoubtsTab({ classId }) {
 
           <Text style={styles.questionText}>"{item.text}"</Text>
 
+          {item.teacherReply ? (
+            <View style={styles.replyCard}>
+              <View style={styles.replyHeader}>
+                <Icon name="message-circle" size={13} color={colors.blueDark} />
+                <Text style={styles.replyAuthor}>Sua resposta enviada aos alunos:</Text>
+              </View>
+              <Text style={styles.replyText}>{item.teacherReply}</Text>
+            </View>
+          ) : null}
+
           <View style={styles.cardFooter}>
             <Pressable
               onPress={() => handleToggleStatus(item)}
@@ -182,7 +220,18 @@ export default function ClassDoubtsTab({ classId }) {
                   item.status === 'addressed' ? styles.actionTextDone : styles.actionTextPending,
                 ]}
               >
-                {item.status === 'addressed' ? 'Explicada na aula (Tocar para reabrir)' : 'Marcar como Explicada na Aula'}
+                {item.status === 'addressed' ? 'Explicada' : 'Marcar como Explicada'}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => handleOpenReply(item)}
+              style={styles.replyBtn}
+              accessibilityRole="button"
+            >
+              <Icon name="edit-3" size={14} color={colors.blueDark} />
+              <Text style={styles.replyBtnText}>
+                {item.teacherReply ? 'Editar Resposta' : 'Responder'}
               </Text>
             </Pressable>
           </View>
@@ -203,6 +252,63 @@ export default function ClassDoubtsTab({ classId }) {
         />
       }
     />
+
+    {/* Modal para Responder Dúvida */}
+    <Modal visible={!!replyTarget} animationType="fade" transparent onRequestClose={() => setReplyTarget(null)}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalOverlay}>
+        <View style={styles.modalSheet}>
+          <View style={styles.modalHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Icon name="message-circle" size={18} color={colors.blueDark} />
+              <Text style={styles.modalTitle}>Responder Dúvida do Aluno</Text>
+            </View>
+            <Pressable onPress={() => setReplyTarget(null)} hitSlop={8}>
+              <Icon name="x" size={18} color={colors.ink} />
+            </Pressable>
+          </View>
+
+          {replyTarget ? (
+            <View style={styles.modalOriginalDoubt}>
+              <Text style={styles.modalOriginalTopic}>Assunto: {replyTarget.topic?.toUpperCase()}</Text>
+              <Text style={styles.modalOriginalText}>"{replyTarget.text}"</Text>
+            </View>
+          ) : null}
+
+          <Text style={styles.modalInputLabel}>Sua resposta pedagógica (visível para o aluno):</Text>
+          <TextInput
+            style={styles.modalTextInput}
+            placeholder="Ex: Excelente dúvida! Na mitocôndria, a respiração celular ocorre nas cristas mitocondriais..."
+            placeholderTextColor={colors.gray}
+            multiline
+            numberOfLines={4}
+            maxLength={400}
+            value={replyInput}
+            onChangeText={setReplyInput}
+            textAlignVertical="top"
+          />
+
+          <View style={styles.modalActions}>
+            <Pressable
+              onPress={() => setReplyTarget(null)}
+              style={styles.modalCancelBtn}
+            >
+              <Text style={styles.modalCancelText}>Cancelar</Text>
+            </Pressable>
+            <View style={{ flex: 1 }}>
+              <Button
+                title={savingReply ? 'Salvando...' : 'Salvar Resposta'}
+                onPress={handleSaveReply}
+                disabled={!replyInput.trim() || savingReply}
+                loading={savingReply}
+                variant="primary"
+                icon="send"
+              />
+            </View>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  </>;
   );
 }
 
@@ -347,15 +453,19 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     paddingTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   actionBtn: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 9,
-    paddingHorizontal: 14,
+    paddingHorizontal: 10,
     borderRadius: 8,
-    gap: 8,
+    gap: 6,
   },
   actionBtnPending: {
     backgroundColor: '#FFF7ED',
@@ -376,5 +486,124 @@ const styles = StyleSheet.create({
   },
   actionTextDone: {
     color: colors.greenDark,
+  },
+  replyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  replyBtnText: {
+    fontFamily: fonts.bold,
+    fontSize: 12,
+    color: colors.blueDark,
+  },
+  replyCard: {
+    backgroundColor: '#EFF6FF',
+    borderLeftWidth: 3,
+    borderLeftColor: colors.blue,
+    borderRadius: 8,
+    padding: 10,
+    gap: 4,
+  },
+  replyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  replyAuthor: {
+    fontFamily: fonts.bold,
+    fontSize: 11,
+    color: colors.blueDark,
+    letterSpacing: 0.3,
+  },
+  replyText: {
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.ink,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  modalSheet: {
+    backgroundColor: colors.white,
+    borderRadius: 18,
+    padding: 20,
+    gap: 14,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  modalTitle: {
+    fontFamily: fonts.extrabold,
+    fontSize: 16,
+    color: colors.ink,
+  },
+  modalOriginalDoubt: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 10,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  modalOriginalTopic: {
+    fontFamily: fonts.bold,
+    fontSize: 10,
+    color: colors.gray,
+    letterSpacing: 0.6,
+  },
+  modalOriginalText: {
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.ink,
+    fontStyle: 'italic',
+  },
+  modalInputLabel: {
+    fontFamily: fonts.bold,
+    fontSize: 12,
+    color: colors.ink,
+  },
+  modalTextInput: {
+    minHeight: 90,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    padding: 12,
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: colors.ink,
+    backgroundColor: '#FFFFFF',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 4,
+  },
+  modalCancelBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  modalCancelText: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    color: colors.gray,
   },
 });

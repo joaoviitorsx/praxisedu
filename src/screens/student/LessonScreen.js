@@ -148,10 +148,28 @@ export default function LessonScreen({ navigation, route }) {
             </Pressable>;
           })}</View>
         </ScrollView>
-        {verified ? <LessonFeedback key={index} correct={correctChoice} correctAnswer={`${LETTERS[question.answer]}. ${question.options[question.answer]}`} explanation={question.explanation} lives={lives} checking={checking} loading={saving || checking} isLast={isLast} onContinue={advance} bottomInset={Math.max(insets.bottom, 12) + 10} />
-          : <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
+        {verified ? (
+          <LessonFeedback
+            key={index}
+            correct={correctChoice}
+            correctAnswer={`${LETTERS[question.answer]}. ${question.options[question.answer]}`}
+            explanation={question.explanation}
+            mnemonic={question.mnemonic}
+            questionText={question.text}
+            topic={route?.params?.topic || 'citologia'}
+            uid={user?.uid}
+            lives={lives}
+            checking={checking}
+            loading={saving || checking}
+            isLast={isLast}
+            onContinue={advance}
+            bottomInset={Math.max(insets.bottom, 12) + 10}
+          />
+        ) : (
+          <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 10 }]}>
             <Button title="Verificar resposta" onPress={verify} disabled={choice === null} loading={checking} variant="primary" icon="check" />
-          </View>}
+          </View>
+        )}
       </>}
   </Screen>;
 }
