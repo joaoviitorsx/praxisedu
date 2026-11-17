@@ -166,6 +166,7 @@ export default function ClassesScreen({ navigation, route }) {
 
 const ClassCard = memo(function ClassCard({ cls, onOpen, onMenu }) {
   return (
+    <Card style={styles.classCard}>
       <View style={styles.cardTop}>
         <Pressable
           onPress={onOpen}
